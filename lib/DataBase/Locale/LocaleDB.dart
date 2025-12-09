@@ -78,15 +78,23 @@ class DBHelper {
     // Restituisce true se count è maggiore di 0, altrimenti false
     return (count ?? 0) > 0;
   }
+
+  // Funzione per ELIMINARE il database
   Future<void> deleteDB() async {
+    // 1. Ottieni il percorso
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, 'gestione_spese.db');
-    
-    // Cancella il file fisicamente
+
+    // 2. Se il database è aperto in memoria, CHIUDILO prima di cancellarlo
+    // Questo previene l'errore "database_closed"
+    if (_database != null) {
+      await _database!.close();
+      _database = null; // Resetta la variabile
+    }
+
+    // 3. Cancella il file fisico
     await deleteDatabase(path);
     
-    // IMPORTANTE: Resetta la variabile statica, altrimenti l'app pensa che sia ancora aperto
-    _database = null; 
-    print("DATABASE CANCELLATO CORRETTAMENTE");
+    print("DATABASE CANCELLATO E CHIUSO CORRETTAMENTE");
   }
 }

@@ -1,12 +1,13 @@
-import 'dart:io'; // Per gestire i File
+import 'dart:io'; 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart'; // Per la fotocamera
-import 'package:path_provider/path_provider.dart'; // Per le cartelle
-import 'package:path/path.dart' as path; // Per manipolare i percorsi
+import 'package:image_picker/image_picker.dart'; 
+import 'package:path_provider/path_provider.dart'; 
+import 'package:path/path.dart' as path; 
 
-import '../Database/Locale/LocaleDB.dart';
-import '../Database/Locale/LocaleModel.dart';
-import '../MonthPage/MonthPage.dart'; // Importa la tua pagina principale
+import '../l10n/app_localizations.dart'; 
+
+import '../../Database/Locale/LocaleDB.dart';
+import '../../Database/Locale/LocaleModel.dart';
 
 class NewLocale extends StatefulWidget {
   const NewLocale({super.key});
@@ -16,18 +17,12 @@ class NewLocale extends StatefulWidget {
 }
 
 class _NewLocaleState extends State<NewLocale> {
-  // Controller per leggere il testo dai campi
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _pdController = TextEditingController();
-
-  // Variabile per mostrare l'anteprima della foto
   File? _imageFile;
 
-  // Funzione per scegliere l'immagine
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    
-    // CAMBIATO: Usa .gallery invece di .camera
     final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
@@ -37,40 +32,35 @@ class _NewLocaleState extends State<NewLocale> {
     }
   }
 
-  // Funzione per salvare tutto
   Future<void> _saveData() async {
+    final testo = AppLocalizations.of(context)!;
+
     if (_nomeController.text.isEmpty || _pdController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Inserisci Nome e P/D")),
+        // CORRETTO: Usa la nuova chiave 'erroreCampi'
+        SnackBar(content: Text(testo.erroreCampi)),
       );
       return;
     }
 
     String? finalImagePath;
 
-    // SE l'utente ha scattato una foto, dobbiamo salvarla in modo permanente
     if (_imageFile != null) {
-      // 1. Troviamo la cartella sicura dell'app
       final appDir = await getApplicationDocumentsDirectory();
-      // 2. Creiamo un nome file unico (es: timestamp.jpg)
       final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-      // 3. Copiamo la foto dalla cache (tmp) alla cartella sicura
       final savedImage = await _imageFile!.copy('${appDir.path}/$fileName');
-      
       finalImagePath = savedImage.path;
     }
 
-    // Creiamo il modello
     final newItem = ItemModel(
       nome: _nomeController.text,
-      pd: _pdController.text, // Qui salviamo P o D
-      imagePath: finalImagePath, // Può essere null se non c'è foto
+      pd: _pdController.text,
+      imagePath: finalImagePath,
     );
 
-    // Salviamo nel DB
     await DBHelper().insertItem(newItem);
 
-    // Navighiamo alla pagina principale
+    // Navigazione disabilitata per ora
     /*
     if (mounted) {
       Navigator.of(context).pushReplacement(
@@ -82,15 +72,18 @@ class _NewLocaleState extends State<NewLocale> {
 
   @override
   Widget build(BuildContext context) {
+    final testo = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Nuovo Locale")),
-      body: SingleChildScrollView( // Per evitare errori se la tastiera copre lo schermo
+      appBar: AppBar(
+        title: Text(testo.nuovoLocale),
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // --- SEZIONE FOTO ---
             GestureDetector(
-              onTap: _pickImage, // Cliccando si apre la fotocamera
+              onTap: _pickImage,
               child: Container(
                 height: 200,
                 width: double.infinity,
@@ -100,38 +93,37 @@ class _NewLocaleState extends State<NewLocale> {
                   border: Border.all(color: Colors.grey),
                 ),
                 child: _imageFile != null
-                    ? Image.file(_imageFile!, fit: BoxFit.cover) // Mostra la foto
-                    : const Column(
+                    ? Image.file(_imageFile!, fit: BoxFit.cover)
+                    : Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.camera_alt, size: 50, color: Colors.grey),
-                          Text("Tocca per scattare foto"),
+                          const Icon(Icons.camera_alt, size: 50, color: Colors.grey),
+                          Text(testo.scattaFoto), 
                         ],
                       ),
               ),
             ),
             const SizedBox(height: 20),
 
-            // --- CAMPI DI TESTO ---
             TextField(
               controller: _nomeController,
-              decoration: const InputDecoration(
-                labelText: "Nome Locale",
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: testo.nomeLocale, 
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 15),
             TextField(
               controller: _pdController,
-              decoration: const InputDecoration(
-                labelText: "P / D", // Pranzo o Cena?
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                // CORRETTO: Usa la nuova chiave 'responsabileDipendente'
+                labelText: testo.responsabileDipendente, 
+                border: const OutlineInputBorder(),
               ),
             ),
             
             const SizedBox(height: 30),
 
-            // --- BOTTONE SALVA ---
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -141,7 +133,7 @@ class _NewLocaleState extends State<NewLocale> {
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text("SALVA E CONTINUA", style: TextStyle(fontSize: 18)),
+                child: Text(testo.salva, style: const TextStyle(fontSize: 18)), 
               ),
             ),
           ],

@@ -1,0 +1,11 @@
+{
+    "titoloApp": "Gestione Spese",
+    "nuovoLocale": "Nuovo Locale",
+    "nomeLocale": "Nome Locale",
+    "scattaFoto": "Tocca per scegliere foto",
+    "salva": "SALVA E CONTINUA",
+    "cambiaLingua": "English",
+    "selezionaLingua": "Seleziona Lingua",
+    "responsabileDipendente": "Responsabile/Dipendente",
+    "erroreCampi": "Inserisci Nome se Responsabile/Dipendente"
+}

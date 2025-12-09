@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
-import 'DataBase/Locale/LocaleDB.dart'; // Assicurati di importare il DBHelper
+import 'DataBase/Locale/LocaleDB.dart';
 import 'NewLocale/NewLocale.dart';
 
 class RootPage extends StatelessWidget {
   const RootPage({super.key});
 
   Future<bool> _checkDatabaseAndRows() async {
-    // Chiamiamo il metodo che abbiamo appena creato nel DBHelper
+    // --- ZONA TEST: Scommenta QUI per CANCELLARE il DB ---
+    await DBHelper().deleteDB(); 
+    // -----------------------------------------------------
+
+    // Ora che è (eventualmente) cancellato, controlla se ci sono dati
+    // (Se lo hai cancellato sopra, qui restituirà false e ricreerà il DB vuoto)
     return await DBHelper().hasData();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: _checkDatabaseAndRows(), // Usiamo la nuova funzione
+      future: _checkDatabaseAndRows(), 
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        // --- ZONA TEST: Scommenta la riga sotto per CANCELLARE il DB ---
-        DBHelper().deleteDB(); 
-        // ---------------------------------------------------------------
         
+        // NON METTERE MAI CODICE LOGICO QUI DENTRO!
+        // Qui si gestisce solo la grafica (if loading, if error, if data)
+
         // 1. Attesa (Loading)
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -34,6 +39,7 @@ class RootPage extends StatelessWidget {
              )
            );
         }
+
         // 3. Dati caricati
         final bool haDati = snapshot.data ?? false;
 
