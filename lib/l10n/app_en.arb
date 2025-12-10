@@ -1,13 +1,18 @@
 {
-    "titoloApp": "Expense Manager",
-    "nuovoLocale": "New Place",
-    "nomeLocale": "Place Name",
-    "scattaFoto": "Tap to pick photo",
-    "salva": "SAVE AND CONTINUE",
-    "cambiaLingua": "Italiano",
-    "selezionaLingua": "Select Language",
-    "responsabileDipendente": "Manager/Employee",
-    "erroreCampi": "Enter Name if Manager/Employee",
-    "dipendente": "Employee",
-    "responsabile": "Manager"
+    "appTitle": "Expense Manager",
+    "btnSalva": "SAVE AND CONTINUE",
+    "lingua_seleziona": "Select Language",
+    "lingua_nome": "English",
+
+    "newLocale_titolo": "New Place",
+    "newLocale_nomeLabel": "Place Name",
+    "newLocale_fotoHint": "Tap to pick photo",
+    "newLocale_successo": "Place created successfully!",
+
+    "ruolo_label": "Manager/Employee",
+    "ruolo_dipendente": "Employee",
+    "ruolo_responsabile": "Manager",
+
+    "error_campiMancanti": "Enter Name if Manager/Employee",
+    "error_erroreSalvataggio": "Error saving the place"
 }

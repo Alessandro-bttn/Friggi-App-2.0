@@ -9,35 +9,41 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get titoloApp => 'Expense Manager';
+  String get appTitle => 'Expense Manager';
 
   @override
-  String get nuovoLocale => 'New Place';
+  String get btnSalva => 'SAVE AND CONTINUE';
 
   @override
-  String get nomeLocale => 'Place Name';
+  String get lingua_seleziona => 'Select Language';
 
   @override
-  String get scattaFoto => 'Tap to pick photo';
+  String get lingua_nome => 'English';
 
   @override
-  String get salva => 'SAVE AND CONTINUE';
+  String get newLocale_titolo => 'New Place';
 
   @override
-  String get cambiaLingua => 'Italiano';
+  String get newLocale_nomeLabel => 'Place Name';
 
   @override
-  String get selezionaLingua => 'Select Language';
+  String get newLocale_fotoHint => 'Tap to pick photo';
 
   @override
-  String get responsabileDipendente => 'Manager/Employee';
+  String get newLocale_successo => 'Place created successfully!';
 
   @override
-  String get erroreCampi => 'Enter Name if Manager/Employee';
+  String get ruolo_label => 'Manager/Employee';
 
   @override
-  String get dipendente => 'Employee';
+  String get ruolo_dipendente => 'Employee';
 
   @override
-  String get responsabile => 'Manager';
+  String get ruolo_responsabile => 'Manager';
+
+  @override
+  String get error_campiMancanti => 'Enter Name if Manager/Employee';
+
+  @override
+  String get error_erroreSalvataggio => 'Error saving the place';
 }

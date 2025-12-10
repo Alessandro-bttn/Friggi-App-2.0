@@ -9,35 +9,41 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get titoloApp => 'Administrador de Gastos';
+  String get appTitle => 'Administrador de Gastos';
 
   @override
-  String get nuovoLocale => 'Nuevo Lugar';
+  String get btnSalva => 'GUARDAR Y CONTINUAR';
 
   @override
-  String get nomeLocale => 'Nombre del Lugar';
+  String get lingua_seleziona => 'Seleccionar Idioma';
 
   @override
-  String get scattaFoto => 'Toca para elegir foto';
+  String get lingua_nome => 'Español';
 
   @override
-  String get salva => 'GUARDAR Y CONTINUAR';
+  String get newLocale_titolo => 'Nuevo Lugar';
 
   @override
-  String get cambiaLingua => 'Español';
+  String get newLocale_nomeLabel => 'Nombre del Lugar';
 
   @override
-  String get selezionaLingua => 'Seleccionar Idioma';
+  String get newLocale_fotoHint => 'Toca para elegir foto';
 
   @override
-  String get responsabileDipendente => 'Responsable/Empleado';
+  String get newLocale_successo => '¡Lugar creado con éxito!';
 
   @override
-  String get erroreCampi => 'Ingrese Nombre si Responsable/Empleado';
+  String get ruolo_label => 'Responsable/Empleado';
 
   @override
-  String get dipendente => 'Empleado';
+  String get ruolo_dipendente => 'Empleado';
 
   @override
-  String get responsabile => 'Responsable';
+  String get ruolo_responsabile => 'Responsable';
+
+  @override
+  String get error_campiMancanti => 'Ingrese Nombre si Responsable/Empleado';
+
+  @override
+  String get error_erroreSalvataggio => 'Error al guardar el lugar';
 }

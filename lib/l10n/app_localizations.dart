@@ -100,71 +100,83 @@ abstract class AppLocalizations {
     Locale('it'),
   ];
 
-  /// No description provided for @titoloApp.
+  /// No description provided for @appTitle.
   ///
   /// In it, this message translates to:
   /// **'Gestione Spese'**
-  String get titoloApp;
+  String get appTitle;
 
-  /// No description provided for @nuovoLocale.
-  ///
-  /// In it, this message translates to:
-  /// **'Nuovo Locale'**
-  String get nuovoLocale;
-
-  /// No description provided for @nomeLocale.
-  ///
-  /// In it, this message translates to:
-  /// **'Nome Locale'**
-  String get nomeLocale;
-
-  /// No description provided for @scattaFoto.
-  ///
-  /// In it, this message translates to:
-  /// **'Tocca per scegliere foto'**
-  String get scattaFoto;
-
-  /// No description provided for @salva.
+  /// No description provided for @btnSalva.
   ///
   /// In it, this message translates to:
   /// **'SALVA E CONTINUA'**
-  String get salva;
+  String get btnSalva;
 
-  /// No description provided for @cambiaLingua.
-  ///
-  /// In it, this message translates to:
-  /// **'English'**
-  String get cambiaLingua;
-
-  /// No description provided for @selezionaLingua.
+  /// No description provided for @lingua_seleziona.
   ///
   /// In it, this message translates to:
   /// **'Seleziona Lingua'**
-  String get selezionaLingua;
+  String get lingua_seleziona;
 
-  /// No description provided for @responsabileDipendente.
+  /// No description provided for @lingua_nome.
+  ///
+  /// In it, this message translates to:
+  /// **'Italiano'**
+  String get lingua_nome;
+
+  /// No description provided for @newLocale_titolo.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo Locale'**
+  String get newLocale_titolo;
+
+  /// No description provided for @newLocale_nomeLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome Locale'**
+  String get newLocale_nomeLabel;
+
+  /// No description provided for @newLocale_fotoHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Tocca per scegliere foto'**
+  String get newLocale_fotoHint;
+
+  /// No description provided for @newLocale_successo.
+  ///
+  /// In it, this message translates to:
+  /// **'Locale creato con successo!'**
+  String get newLocale_successo;
+
+  /// No description provided for @ruolo_label.
   ///
   /// In it, this message translates to:
   /// **'Responsabile/Dipendente'**
-  String get responsabileDipendente;
+  String get ruolo_label;
 
-  /// No description provided for @erroreCampi.
-  ///
-  /// In it, this message translates to:
-  /// **'Inserisci Nome se Responsabile/Dipendente'**
-  String get erroreCampi;
-
-  /// No description provided for @dipendente.
+  /// No description provided for @ruolo_dipendente.
   ///
   /// In it, this message translates to:
   /// **'Dipendente'**
-  String get dipendente;
+  String get ruolo_dipendente;
 
-  /// No description provided for @responsabile.
+  /// No description provided for @ruolo_responsabile.
   ///
   /// In it, this message translates to:
   /// **'Responsabile'**
-  String get responsabile;
+  String get ruolo_responsabile;
+
+  /// No description provided for @error_campiMancanti.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci Nome se Responsabile/Dipendente'**
+  String get error_campiMancanti;
+
+  /// No description provided for @error_erroreSalvataggio.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante il salvataggio del locale'**
+  String get error_erroreSalvataggio;
 }
 
 class _AppLocalizationsDelegate

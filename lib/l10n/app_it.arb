@@ -1,13 +1,18 @@
 {
-    "titoloApp": "Gestione Spese",
-    "nuovoLocale": "Nuovo Locale",
-    "nomeLocale": "Nome Locale",
-    "scattaFoto": "Tocca per scegliere foto",
-    "salva": "SALVA E CONTINUA",
-    "cambiaLingua": "English",
-    "selezionaLingua": "Seleziona Lingua",
-    "responsabileDipendente": "Responsabile/Dipendente",
-    "erroreCampi": "Inserisci Nome se Responsabile/Dipendente",
-    "dipendente": "Dipendente",
-    "responsabile": "Responsabile"
+    "appTitle": "Gestione Spese",
+    "btnSalva": "SALVA E CONTINUA",
+    "lingua_seleziona": "Seleziona Lingua",
+    "lingua_nome": "Italiano",
+
+    "newLocale_titolo": "Nuovo Locale",
+    "newLocale_nomeLabel": "Nome Locale",
+    "newLocale_fotoHint": "Tocca per scegliere foto",
+    "newLocale_successo": "Locale creato con successo!",
+
+    "ruolo_label": "Responsabile/Dipendente",
+    "ruolo_dipendente": "Dipendente",
+    "ruolo_responsabile": "Responsabile",
+
+    "error_campiMancanti": "Inserisci Nome se Responsabile/Dipendente",
+    "error_erroreSalvataggio": "Errore durante il salvataggio del locale"
 }

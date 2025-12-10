@@ -9,35 +9,42 @@ class AppLocalizationsIt extends AppLocalizations {
   AppLocalizationsIt([String locale = 'it']) : super(locale);
 
   @override
-  String get titoloApp => 'Gestione Spese';
+  String get appTitle => 'Gestione Spese';
 
   @override
-  String get nuovoLocale => 'Nuovo Locale';
+  String get btnSalva => 'SALVA E CONTINUA';
 
   @override
-  String get nomeLocale => 'Nome Locale';
+  String get lingua_seleziona => 'Seleziona Lingua';
 
   @override
-  String get scattaFoto => 'Tocca per scegliere foto';
+  String get lingua_nome => 'Italiano';
 
   @override
-  String get salva => 'SALVA E CONTINUA';
+  String get newLocale_titolo => 'Nuovo Locale';
 
   @override
-  String get cambiaLingua => 'English';
+  String get newLocale_nomeLabel => 'Nome Locale';
 
   @override
-  String get selezionaLingua => 'Seleziona Lingua';
+  String get newLocale_fotoHint => 'Tocca per scegliere foto';
 
   @override
-  String get responsabileDipendente => 'Responsabile/Dipendente';
+  String get newLocale_successo => 'Locale creato con successo!';
 
   @override
-  String get erroreCampi => 'Inserisci Nome se Responsabile/Dipendente';
+  String get ruolo_label => 'Responsabile/Dipendente';
 
   @override
-  String get dipendente => 'Dipendente';
+  String get ruolo_dipendente => 'Dipendente';
 
   @override
-  String get responsabile => 'Responsabile';
+  String get ruolo_responsabile => 'Responsabile';
+
+  @override
+  String get error_campiMancanti => 'Inserisci Nome se Responsabile/Dipendente';
+
+  @override
+  String get error_erroreSalvataggio =>
+      'Errore durante il salvataggio del locale';
 }

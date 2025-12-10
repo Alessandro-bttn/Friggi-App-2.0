@@ -1,20 +1,27 @@
-import 'dart:io'; 
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart'; 
+// 1. DART CORE (Librerie di base)
+import 'dart:io';
 
-// IMPORTA LE LINGUE
+// 2. PACCHETTI FLUTTER E TERZE PARTI
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+// È consigliato usare questo import ufficiale per le traduzioni generate:
 import '../l10n/app_localizations.dart'; 
 
-// IMPORTA IL SERVIZIO NOTIFICHE
+// 3. SERVIZI (Globali)
+// (Verifica se la tua cartella si chiama 'service' o 'Services')
 import '../notifications/notification_service.dart'; 
 
-// IMPORTA I NUOVI WIDGET E LA LOGICA
-import 'widgets/role_selector.dart'; 
-import 'widgets/image_input.dart';
-import 'widgets/save.dart'; // Assumo che NewLocaleLogic sia qui dentro
+// 4. LOGICA DI BUSINESS (Specifica di questa pagina)
+import 'widgets/save.dart'; 
 
-// IMPORTA LA PAGINA DI DESTINAZIONE
+// 5. WIDGETS (Componenti grafici)
+import 'widgets/image_input.dart';
+import 'widgets/role_selector.dart';
+
+// 6. PAGINE (Navigazione)
 import '../../MonthPage/MonthPage.dart';
+
+// ... resto della classe NewLocale ...
 
 class NewLocale extends StatefulWidget {
   const NewLocale({super.key});
@@ -28,7 +35,6 @@ class _NewLocaleState extends State<NewLocale> {
   String? _selectedRole; 
   File? _imageFile;
 
-  // Funzione UI: Scelta immagine
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -40,19 +46,16 @@ class _NewLocaleState extends State<NewLocale> {
     }
   }
 
-  // Funzione UI: Gestione del click su Salva
   Future<void> _onSavePressed() async {
     final testo = AppLocalizations.of(context)!;
 
-    // 1. Validazione UI (Visuale)
+    // 1. Validazione UI
     if (_nomeController.text.isEmpty || _selectedRole == null) {
-      // --- MODIFICA: USA IL NUOVO SISTEMA DI NOTIFICHE ---
-      NotificationService().showError(testo.erroreCampi);
+      NotificationService().showError(testo.error_campiMancanti);
       return;
     }
 
-    // 2. Chiamata alla Business Logic (Esterna)
-    // Avvolgiamo tutto in un try-catch per gestire eventuali errori del DB
+    // 2. Chiamata alla Business Logic
     try {
       await NewLocaleLogic.salvaLocale(
         nome: _nomeController.text,
@@ -60,8 +63,7 @@ class _NewLocaleState extends State<NewLocale> {
         imageFile: _imageFile,
       );
 
-      // (Opzionale) Mostra notifica di successo verde
-      // NotificationService().showSuccess("Locale creato con successo!");
+      NotificationService().showSuccess(testo.newLocale_successo);
 
       // 3. Navigazione
       if (mounted) {
@@ -70,8 +72,7 @@ class _NewLocaleState extends State<NewLocale> {
         );
       }
     } catch (e) {
-      // Se c'è un errore nel salvataggio, lo mostriamo col pop-up rosso
-      NotificationService().showError("Errore durante il salvataggio: $e");
+      NotificationService().showError(testo.error_erroreSalvataggio + " $e");
     }
   }
 
@@ -81,7 +82,8 @@ class _NewLocaleState extends State<NewLocale> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(testo.nuovoLocale),
+        // CORRETTO: Usa la nuova chiave 'newLocale_titolo'
+        title: Text(testo.newLocale_titolo),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -89,8 +91,8 @@ class _NewLocaleState extends State<NewLocale> {
           children: [
             
             ImageInput(
-              imageFile: _imageFile,       
-              labelText: testo.scattaFoto, 
+              imageFile: _imageFile,
+              labelText: testo.newLocale_fotoHint, 
               onTap: _pickImage,           
             ),
             
@@ -99,7 +101,7 @@ class _NewLocaleState extends State<NewLocale> {
             TextField(
               controller: _nomeController,
               decoration: InputDecoration(
-                labelText: testo.nomeLocale, 
+                labelText: testo.newLocale_nomeLabel, 
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.store),
               ),
@@ -127,7 +129,7 @@ class _NewLocaleState extends State<NewLocale> {
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                 ),
-                child: Text(testo.salva, style: const TextStyle(fontSize: 18)), 
+                child: Text(testo.btnSalva, style: const TextStyle(fontSize: 18)), 
               ),
             ),
           ],

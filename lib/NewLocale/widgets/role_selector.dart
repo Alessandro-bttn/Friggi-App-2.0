@@ -1,6 +1,6 @@
-// File: lib/widgets/role_selector.dart
 import 'package:flutter/material.dart';
-import '../../l10n/app_localizations.dart';
+import '../../l10n/app_localizations.dart'; 
+
 
 class RoleSelector extends StatelessWidget {
   final String? selectedValue;
@@ -17,8 +17,9 @@ class RoleSelector extends StatelessWidget {
     final testo = AppLocalizations.of(context)!;
 
     final Map<String, String> opzioni = {
-      'Responsabile': testo.responsabile, 
-      'Dipendente': testo.dipendente,
+      // CORREZIONE 1: Nuove chiavi per i valori del menu
+      'Responsabile': testo.ruolo_responsabile, 
+      'Dipendente': testo.ruolo_dipendente,
     };
 
     return DropdownButtonFormField<String>(
@@ -26,7 +27,7 @@ class RoleSelector extends StatelessWidget {
       initialValue: selectedValue,
 
       decoration: InputDecoration(
-        labelText: testo.responsabileDipendente,
+        labelText: testo.ruolo_label,
         border: const OutlineInputBorder(),
         prefixIcon: const Icon(Icons.person_outline),
       ),
@@ -37,7 +38,7 @@ class RoleSelector extends StatelessWidget {
         );
       }).toList(),
       onChanged: onChanged,
-      validator: (value) => value == null ? testo.erroreCampi : null,
+      validator: (value) => value == null ? testo.error_campiMancanti : null,
     );
   }
 }

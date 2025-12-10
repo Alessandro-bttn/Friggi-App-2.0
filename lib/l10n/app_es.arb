@@ -1,13 +1,18 @@
 {
-    "titoloApp": "Administrador de Gastos",
-    "nuovoLocale": "Nuevo Lugar",
-    "nomeLocale": "Nombre del Lugar",
-    "scattaFoto": "Toca para elegir foto",
-    "salva": "GUARDAR Y CONTINUAR",
-    "cambiaLingua": "Español",
-    "selezionaLingua": "Seleccionar Idioma",
-    "responsabileDipendente": "Responsable/Empleado",
-    "erroreCampi": "Ingrese Nombre si Responsable/Empleado",
-    "dipendente": "Empleado",
-    "responsabile": "Responsable"
+    "appTitle": "Administrador de Gastos",
+    "btnSalva": "GUARDAR Y CONTINUAR",
+    "lingua_seleziona": "Seleccionar Idioma",
+    "lingua_nome": "Español",
+
+    "newLocale_titolo": "Nuevo Lugar",
+    "newLocale_nomeLabel": "Nombre del Lugar",
+    "newLocale_fotoHint": "Toca para elegir foto",
+    "newLocale_successo": "¡Lugar creado con éxito!",
+
+    "ruolo_label": "Responsable/Empleado",
+    "ruolo_dipendente": "Empleado",
+    "ruolo_responsabile": "Responsable",
+
+    "error_campiMancanti": "Ingrese Nombre si Responsable/Empleado",
+    "error_erroreSalvataggio": "Error al guardar el lugar"
 }
