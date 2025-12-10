@@ -52,23 +52,27 @@ Questo documento traccia lo stato di avanzamento dello sviluppo dell'app per la 
 
 ## 📂 Struttura del Progetto
 
+## 📂 Struttura del Progetto
+
 ```text
 lib/
-├── database/
-│   ├── LocaleDB.dart       # Gestione SQLite (Singleton)
-│   └── LocaleModel.dart    # Modello dati (ItemModel)
+├── DataBase/
+│   └── Dipendente/
+│       └── Locale/
+│           ├── LocaleDB.dart       # Gestione SQLite (Singleton)
+│           └── LocaleModel.dart    # Modello dati (ItemModel)
 ├── l10n/
 │   ├── app_it.arb          # Traduzioni Italiano
 │   ├── app_en.arb          # Traduzioni Inglese
-│   └── l10n.yaml           # Configurazione generatore
-├── pages/
-│   ├── new_locale.dart     # Form creazione locale
-│   └── month_page.dart     # Dashboard principale (Placeholder)
-├── services/
-│   └── preferences_service.dart # Gestione impostazioni globali
-├── utils/
-│   └── image_helper.dart   # Logica salvataggio file fisici
-├── widgets/
-│   └── role_selector.dart  # Dropdown menu custom
-├── main.dart               # Configurazione App e Provider Lingua
-└── root_page.dart          # Logica di smistamento iniziale
+│   └── app_es.arb          # Traduzioni Spagnolo
+├── Lingua/
+│   └── language_controller.dart # Gestore cambio lingua (Provider)
+├── MonthPage/
+│   └── MonthPage.dart      # Dashboard principale
+├── NewLocale/
+│   ├── widgets/
+│   │   ├── image_helper.dart   # Logica salvataggio file fisici
+│   │   └── role_selector.dart  # Dropdown menu custom
+│   └── NewLocale.dart      # Form creazione locale
+├── main.dart               # Configurazione App
+└── rootPage.dart           # Logica di smistamento iniziale
