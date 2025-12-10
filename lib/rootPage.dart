@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'DataBase/Locale/LocaleDB.dart';
 import 'NewLocale/NewLocale.dart';
+import '../MonthPage/MonthPage.dart';
 
 class RootPage extends StatelessWidget {
   const RootPage({super.key});
@@ -20,9 +21,6 @@ class RootPage extends StatelessWidget {
     return FutureBuilder<bool>(
       future: _checkDatabaseAndRows(), 
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        
-        // NON METTERE MAI CODICE LOGICO QUI DENTRO!
-        // Qui si gestisce solo la grafica (if loading, if error, if data)
 
         // 1. Attesa (Loading)
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -52,9 +50,3 @@ class RootPage extends StatelessWidget {
     );
   }
 }
-class MonthPage extends StatelessWidget {
-  const MonthPage({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("Mese")));
-}
-

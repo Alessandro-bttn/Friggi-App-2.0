@@ -34,4 +34,10 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get erroreCampi => 'Inserisci Nome se Responsabile/Dipendente';
+
+  @override
+  String get dipendente => 'Dipendente';
+
+  @override
+  String get responsabile => 'Responsabile';
 }

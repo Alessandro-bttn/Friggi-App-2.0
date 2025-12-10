@@ -7,5 +7,7 @@
     "cambiaLingua": "Español",
     "selezionaLingua": "Seleccionar Idioma",
     "responsabileDipendente": "Responsable/Empleado",
-    "erroreCampi": "Ingrese Nombre si Responsable/Empleado"
+    "erroreCampi": "Ingrese Nombre si Responsable/Empleado",
+    "dipendente": "Empleado",
+    "responsabile": "Responsable"
 }

@@ -7,5 +7,7 @@
     "cambiaLingua": "Italiano",
     "selezionaLingua": "Select Language",
     "responsabileDipendente": "Manager/Employee",
-    "erroreCampi": "Enter Name if Manager/Employee"
+    "erroreCampi": "Enter Name if Manager/Employee",
+    "dipendente": "Employee",
+    "responsabile": "Manager"
 }

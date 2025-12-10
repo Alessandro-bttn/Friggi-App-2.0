@@ -153,6 +153,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Inserisci Nome se Responsabile/Dipendente'**
   String get erroreCampi;
+
+  /// No description provided for @dipendente.
+  ///
+  /// In it, this message translates to:
+  /// **'Dipendente'**
+  String get dipendente;
+
+  /// No description provided for @responsabile.
+  ///
+  /// In it, this message translates to:
+  /// **'Responsabile'**
+  String get responsabile;
 }
 
 class _AppLocalizationsDelegate
