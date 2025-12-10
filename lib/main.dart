@@ -1,56 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-// Questa riga sotto diventerà valida dopo il primo avvio dell'app:
 import 'l10n/app_localizations.dart';
 
-import 'rootPage.dart'; // Assicurati che il nome del file corrisponda (minuscole/maiuscole)
-import 'Lingua/language_controller.dart'; // Assicurati di aver creato questo file
+import 'rootPage.dart';
+import 'Lingua/language_controller.dart'; 
+import 'service/preferences_service.dart'; // /// 1. IMPORTA IL SERVIZIO
 
-void main() {
+// Creiamo l'istanza globale del controller
+final languageController = LanguageController();
+
+// /// 2. TRASFORMA IL MAIN IN ASYNC
+void main() async {
+  // /// 3. ASSICURA CHE I WIDGET SIANO PRONTI
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // /// 4. SVEGLIA IL MAGGIORDOMO (Carica le preferenze)
+  await PreferencesService().init();
+
+  // /// 5. LEGGI LA LINGUA SALVATA
+  // Ora che il servizio è pronto, diciamo al controller di aggiornarsi
+  languageController.loadSavedLanguage();
+
   runApp(const MyApp());
 }
-
-// Creiamo l'istanza globale del controller per poterla chiamare dalle altre pagine
-final languageController = LanguageController();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // ListenableBuilder ascolta il controller: quando cambi lingua, ricostruisce l'app
     return ListenableBuilder(
       listenable: languageController,
       builder: (context, child) {
+        
+        // /// 6. LEGGI IL TEMA SALVATO
+        // Leggiamo se l'utente preferisce il tema scuro
+        final bool isDark = PreferencesService().temaScuro;
+
         return MaterialApp(
-          // --- CONFIGURAZIONE LOCALIZZAZIONE ---
           title: 'Gestione Spese',
           
-          // Imposta la lingua corrente in base al controller
+          // --- LOCALIZZAZIONE ---
           locale: languageController.locale, 
-          
-          // Elenco dei file di traduzione e dei widget standard
           localizationsDelegates: const [
-            AppLocalizations.delegate, // Le tue traduzioni (app_it.arb, app_en.arb)
+            AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          
-          // Lingue supportate
           supportedLocales: const [
-            Locale('it'), // Italiano
-            Locale('en'), // Inglese
-            Locale('es'), // Spagnolo
+            Locale('it'), 
+            Locale('en'), 
+            Locale('es'), 
           ],
-          // --------------------------------------
+          
+          // --- GESTIONE TEMI (Chiaro / Scuro) ---
+          // Impostiamo il ThemeMode in base alla preferenza salvata
+          themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
 
+          // TEMA CHIARO
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple, 
+              brightness: Brightness.light
+            ),
             useMaterial3: true,
           ),
           
-          // Il main delega la navigazione iniziale alla RootPage
+          // TEMA SCURO (Definiamo come deve apparire)
+          darkTheme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple, 
+              brightness: Brightness.dark // <--- Importante per la modalità scura
+            ),
+            useMaterial3: true,
+          ),
+
           home: const RootPage(),
         );
       },

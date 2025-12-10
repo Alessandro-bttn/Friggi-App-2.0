@@ -58,9 +58,9 @@ Questo documento traccia lo stato di avanzamento dello sviluppo dell'app per la 
 lib/
 ├── DataBase/
 │   └── Dipendente/
-│       └── Locale/
-│           ├── LocaleDB.dart       # Gestione SQLite (Singleton)
-│           └── LocaleModel.dart    # Modello dati (ItemModel)
+│   └── Locale/
+│      ├── LocaleDB.dart       # Gestione SQLite (Singleton)     
+│      └── LocaleModel.dart    # Modello dati (ItemModel)         
 ├── l10n/
 │   ├── app_it.arb          # Traduzioni Italiano
 │   ├── app_en.arb          # Traduzioni Inglese

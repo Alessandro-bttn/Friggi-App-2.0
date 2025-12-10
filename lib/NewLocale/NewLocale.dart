@@ -5,13 +5,10 @@ import 'package:image_picker/image_picker.dart';
 // IMPORTA LE LINGUE
 import '../l10n/app_localizations.dart'; 
 
-// IMPORTA IL DB E IL MODELLO
-import '../../Database/Locale/LocaleDB.dart';
-import '../../Database/Locale/LocaleModel.dart';
-
-// IMPORTA I NUOVI FILE (WIDGET E HELPER)
+// IMPORTA I NUOVI WIDGET E LA LOGICA
 import 'widgets/role_selector.dart'; 
-import 'widgets/image_helper.dart';
+import 'widgets/image_input.dart';
+import 'widgets/save.dart';
 
 // IMPORTA LA PAGINA DI DESTINAZIONE
 import '../../MonthPage/MonthPage.dart';
@@ -25,13 +22,10 @@ class NewLocale extends StatefulWidget {
 
 class _NewLocaleState extends State<NewLocale> {
   final TextEditingController _nomeController = TextEditingController();
-  
-  // Variabile per il ruolo selezionato
   String? _selectedRole; 
-  
   File? _imageFile;
 
-  // Funzione per scegliere immagine (UI Logic)
+  // Funzione UI: Scelta immagine
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -43,11 +37,12 @@ class _NewLocaleState extends State<NewLocale> {
     }
   }
 
-  // Funzione di salvataggio principale
-  Future<void> _saveData() async {
+  // Funzione UI: Gestione del click su Salva
+  Future<void> _onSavePressed() async {
     final testo = AppLocalizations.of(context)!;
 
-    // 1. Validazione
+    // 1. Validazione UI (Visuale)
+    // La UI decide SE chiamare la logica. Se i dati mancano, ferma tutto qui.
     if (_nomeController.text.isEmpty || _selectedRole == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(testo.erroreCampi)),
@@ -55,30 +50,17 @@ class _NewLocaleState extends State<NewLocale> {
       return;
     }
 
-    String? finalImagePath;
-
-    // 2. Salvataggio Immagine (Delegato all'helper esterno)
-    if (_imageFile != null) {
-      // Usiamo la funzione creata nel file esterno: molto più pulito!
-      finalImagePath = await ImageHelper.saveImageToAppDir(_imageFile!);
-    }
-
-    // 3. Creazione Modello
-    final newItem = ItemModel(
+    // 2. Chiamata alla Business Logic (Esterna)
+    // La UI non sa come si salva, dice solo "Salva questi dati".
+    await NewLocaleLogic.salvaLocale(
       nome: _nomeController.text,
-      pd: _selectedRole!, 
-      imagePath: finalImagePath,
+      ruolo: _selectedRole!,
+      imageFile: _imageFile,
     );
-
-    // 4. Salvataggio DB
-    // L'await qui è fondamentale: aspetta che il DB risponda prima di proseguire
-    await DBHelper().insertItem(newItem);
     
-    print("Dati salvati correttamente nel DB: ${newItem.toMap()}");
-
-    // 5. Navigazione verso MonthPage
+    // 3. Navigazione
+    // La UI gestisce il cambio pagina dopo che la logica ha finito (await)
     if (mounted) {
-      // pushReplacement serve a NON far tornare indietro l'utente a questa schermata
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const MonthPage()),
       );
@@ -97,34 +79,15 @@ class _NewLocaleState extends State<NewLocale> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // --- BOX FOTO ---
-            GestureDetector(
-              onTap: _pickImage,
-              child: Container(
-                height: 200,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey),
-                ),
-                child: _imageFile != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(9),
-                        child: Image.file(_imageFile!, fit: BoxFit.cover),
-                      )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.camera_alt, size: 50, color: Colors.grey),
-                          Text(testo.scattaFoto), 
-                        ],
-                      ),
-              ),
+            
+            ImageInput(
+              imageFile: _imageFile,       
+              labelText: testo.scattaFoto, 
+              onTap: _pickImage,           
             ),
+            
             const SizedBox(height: 20),
 
-            // --- NOME ---
             TextField(
               controller: _nomeController,
               decoration: InputDecoration(
@@ -136,7 +99,6 @@ class _NewLocaleState extends State<NewLocale> {
             
             const SizedBox(height: 15),
             
-            // --- MENU A TENDINA (Widget Esterno) ---
             RoleSelector(
               selectedValue: _selectedRole,
               onChanged: (newValue) {
@@ -148,11 +110,10 @@ class _NewLocaleState extends State<NewLocale> {
             
             const SizedBox(height: 30),
 
-            // --- BOTTONE SALVA ---
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _saveData, // Chiama la funzione sopra
+                onPressed: _onSavePressed,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   backgroundColor: Theme.of(context).primaryColor,
