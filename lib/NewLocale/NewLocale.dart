@@ -1,27 +1,23 @@
-// 1. DART CORE (Librerie di base)
+// 1. DART CORE
 import 'dart:io';
 
-// 2. PACCHETTI FLUTTER E TERZE PARTI
+// 2. PACCHETTI FLUTTER
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-// È consigliato usare questo import ufficiale per le traduzioni generate:
 import '../l10n/app_localizations.dart'; 
 
-// 3. SERVIZI (Globali)
-// (Verifica se la tua cartella si chiama 'service' o 'Services')
-import '../notifications/notification_service.dart'; 
+// 3. SERVIZI
+import '../notifications/notification_service.dart';
 
-// 4. LOGICA DI BUSINESS (Specifica di questa pagina)
+// 4. LOGICA DI BUSINESS
 import 'widgets/save.dart'; 
 
-// 5. WIDGETS (Componenti grafici)
+// 5. WIDGETS
 import 'widgets/image_input.dart';
 import 'widgets/role_selector.dart';
 
-// 6. PAGINE (Navigazione)
+// 6. PAGINE
 import '../../MonthPage/MonthPage.dart';
-
-// ... resto della classe NewLocale ...
 
 class NewLocale extends StatefulWidget {
   const NewLocale({super.key});
@@ -34,15 +30,34 @@ class _NewLocaleState extends State<NewLocale> {
   final TextEditingController _nomeController = TextEditingController();
   String? _selectedRole; 
   File? _imageFile;
+  
+  // Variabile per evitare il doppio click sulla galleria (Crash "Already Active")
+  bool _isPickingImage = false; 
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (_isPickingImage) return;
 
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
+    setState(() {
+      _isPickingImage = true;
+    });
+
+    try {
+      final picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      print("Errore immagine: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPickingImage = false;
+        });
+      }
     }
   }
 
@@ -72,7 +87,9 @@ class _NewLocaleState extends State<NewLocale> {
         );
       }
     } catch (e) {
-      NotificationService().showError(testo.error_erroreSalvataggio + " $e");
+      // CORREZIONE QUI: Uso l'interpolazione della stringa (segno del dollaro)
+      // invece del segno +
+      NotificationService().showError("${testo.error_erroreSalvataggio}: $e");
     }
   }
 
@@ -82,7 +99,6 @@ class _NewLocaleState extends State<NewLocale> {
 
     return Scaffold(
       appBar: AppBar(
-        // CORRETTO: Usa la nuova chiave 'newLocale_titolo'
         title: Text(testo.newLocale_titolo),
       ),
       body: SingleChildScrollView(

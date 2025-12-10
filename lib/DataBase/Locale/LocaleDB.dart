@@ -97,4 +97,20 @@ class DBHelper {
     
     print("DATABASE CANCELLATO E CHIUSO CORRETTAMENTE");
   }
+  
+  // 5. Ottieni elemento per ID (se necessario)
+  Future<ItemModel?> getItemById(int id) async {
+    final db = await database;
+    final maps = await db.query(
+      'items',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isNotEmpty) {
+      return ItemModel.fromMap(maps.first);
+    } else {
+      return null;
+    }
+  }
 }
