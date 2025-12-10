@@ -5,10 +5,13 @@ import 'package:image_picker/image_picker.dart';
 // IMPORTA LE LINGUE
 import '../l10n/app_localizations.dart'; 
 
+// IMPORTA IL SERVIZIO NOTIFICHE
+import '../notifications/notification_service.dart'; 
+
 // IMPORTA I NUOVI WIDGET E LA LOGICA
 import 'widgets/role_selector.dart'; 
 import 'widgets/image_input.dart';
-import 'widgets/save.dart';
+import 'widgets/save.dart'; // Assumo che NewLocaleLogic sia qui dentro
 
 // IMPORTA LA PAGINA DI DESTINAZIONE
 import '../../MonthPage/MonthPage.dart';
@@ -42,28 +45,33 @@ class _NewLocaleState extends State<NewLocale> {
     final testo = AppLocalizations.of(context)!;
 
     // 1. Validazione UI (Visuale)
-    // La UI decide SE chiamare la logica. Se i dati mancano, ferma tutto qui.
     if (_nomeController.text.isEmpty || _selectedRole == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(testo.erroreCampi)),
-      );
+      // --- MODIFICA: USA IL NUOVO SISTEMA DI NOTIFICHE ---
+      NotificationService().showError(testo.erroreCampi);
       return;
     }
 
     // 2. Chiamata alla Business Logic (Esterna)
-    // La UI non sa come si salva, dice solo "Salva questi dati".
-    await NewLocaleLogic.salvaLocale(
-      nome: _nomeController.text,
-      ruolo: _selectedRole!,
-      imageFile: _imageFile,
-    );
-    
-    // 3. Navigazione
-    // La UI gestisce il cambio pagina dopo che la logica ha finito (await)
-    if (mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const MonthPage()),
+    // Avvolgiamo tutto in un try-catch per gestire eventuali errori del DB
+    try {
+      await NewLocaleLogic.salvaLocale(
+        nome: _nomeController.text,
+        ruolo: _selectedRole!,
+        imageFile: _imageFile,
       );
+
+      // (Opzionale) Mostra notifica di successo verde
+      // NotificationService().showSuccess("Locale creato con successo!");
+
+      // 3. Navigazione
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MonthPage()),
+        );
+      }
+    } catch (e) {
+      // Se c'è un errore nel salvataggio, lo mostriamo col pop-up rosso
+      NotificationService().showError("Errore durante il salvataggio: $e");
     }
   }
 

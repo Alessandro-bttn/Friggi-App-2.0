@@ -4,21 +4,21 @@ import 'l10n/app_localizations.dart';
 
 import 'rootPage.dart';
 import 'Lingua/language_controller.dart'; 
-import 'service/preferences_service.dart'; // /// 1. IMPORTA IL SERVIZIO
+import 'service/preferences_service.dart'; 
 
 // Creiamo l'istanza globale del controller
 final languageController = LanguageController();
 
-// /// 2. TRASFORMA IL MAIN IN ASYNC
+// --- MODIFICA 1: CHIAVE GLOBALE PER LE NOTIFICHE ---
+// Questa chiave permette al NotificationService di trovare lo schermo
+// anche senza avere il "context" della pagina specifica.
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
-  // /// 3. ASSICURA CHE I WIDGET SIANO PRONTI
   WidgetsFlutterBinding.ensureInitialized();
 
-  // /// 4. SVEGLIA IL MAGGIORDOMO (Carica le preferenze)
   await PreferencesService().init();
 
-  // /// 5. LEGGI LA LINGUA SALVATA
-  // Ora che il servizio è pronto, diciamo al controller di aggiornarsi
   languageController.loadSavedLanguage();
 
   runApp(const MyApp());
@@ -33,11 +33,11 @@ class MyApp extends StatelessWidget {
       listenable: languageController,
       builder: (context, child) {
         
-        // /// 6. LEGGI IL TEMA SALVATO
-        // Leggiamo se l'utente preferisce il tema scuro
         final bool isDark = PreferencesService().temaScuro;
 
         return MaterialApp(
+          navigatorKey: navigatorKey, 
+
           title: 'Gestione Spese',
           
           // --- LOCALIZZAZIONE ---
@@ -54,11 +54,9 @@ class MyApp extends StatelessWidget {
             Locale('es'), 
           ],
           
-          // --- GESTIONE TEMI (Chiaro / Scuro) ---
-          // Impostiamo il ThemeMode in base alla preferenza salvata
+          // --- GESTIONE TEMI ---
           themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
 
-          // TEMA CHIARO
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.deepPurple, 
@@ -67,11 +65,10 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           
-          // TEMA SCURO (Definiamo come deve apparire)
           darkTheme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.deepPurple, 
-              brightness: Brightness.dark // <--- Importante per la modalità scura
+              brightness: Brightness.dark 
             ),
             useMaterial3: true,
           ),
