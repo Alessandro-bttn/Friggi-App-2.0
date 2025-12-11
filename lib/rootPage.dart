@@ -8,11 +8,9 @@ class RootPage extends StatelessWidget {
 
   Future<bool> _checkDatabaseAndRows() async {
     // --- ZONA TEST: Scommenta QUI per CANCELLARE il DB ---
-    await DBHelper().deleteDB(); 
+    // await DBHelper().deleteDB(); 
     // -----------------------------------------------------
 
-    // Ora che è (eventualmente) cancellato, controlla se ci sono dati
-    // (Se lo hai cancellato sopra, qui restituirà false e ricreerà il DB vuoto)
     return await DBHelper().hasData();
   }
 

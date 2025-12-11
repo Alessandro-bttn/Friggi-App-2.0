@@ -1,17 +1,13 @@
-// File: lib/NewLocale/logic/new_locale_logic.dart
 import 'dart:io';
 
-// IMPORTA I TUOI HELPER E MODELLI
+// IMPORTA I DATABASE, MODELLI E SERVIZI
 import '../../Database/Locale/LocaleDB.dart';
 import '../../Database/Locale/LocaleModel.dart';
+import '../../service/preferences_service.dart';
 import '../widgets/image_helper.dart';
 
 class NewLocaleLogic {
   
-  /// Questa funzione si occupa di tutto il "lavoro sporco":
-  /// 1. Salva la foto (se c'è)
-  /// 2. Crea l'oggetto ItemModel
-  /// 3. Lo scrive nel Database
   static Future<void> salvaLocale({
     required String nome,
     required String ruolo,
@@ -32,7 +28,14 @@ class NewLocaleLogic {
       imagePath: finalImagePath,
     );
 
-    // 3. Scrittura su DB
-    await DBHelper().insertItem(newItem);
+    // 3. Scrittura su DB e RECUPERO ID
+    // La funzione insertItem restituisce l'ID della riga appena creata (es. 1, 2, 3...)
+    int nuovoId = await DBHelper().insertItem(newItem);
+
+    // 4. SALVATAGGIO NELLE PREFERENZE (ROOT PRINCIPALE)
+    // Diciamo all'app: "Da ora in poi, lavora su questo locale qui"
+    PreferencesService().idLocaleCorrente = nuovoId;
+    
+    print("Locale creato con ID: $nuovoId e impostato come corrente.");
   }
 }
