@@ -7,9 +7,12 @@ import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
 import '../service/preferences_service.dart';
 
-// IMPORTA I TUOI NUOVI WIDGET
+// IMPORTA I WIDGET
 import 'TopBar/month_app_bar.dart';
 import 'calander/calendar_grid.dart';
+
+// IMPORTA LA LOGICA APPENA CREATA
+import 'logic/month_logic.dart'; 
 
 class MonthPage extends StatefulWidget {
   const MonthPage({super.key});
@@ -47,6 +50,20 @@ class _MonthPageState extends State<MonthPage> {
     }
   }
 
+  // --- FUNZIONI DI CAMBIO MESE ---
+  void _vaiMeseSuccessivo() {
+    setState(() {
+      dataOggi = MonthLogic.getNextMonth(dataOggi);
+    });
+  }
+
+  void _vaiMesePrecedente() {
+    setState(() {
+      dataOggi = MonthLogic.getPreviousMonth(dataOggi);
+    });
+  }
+  // ------------------------------
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -57,18 +74,38 @@ class _MonthPageState extends State<MonthPage> {
     }
 
     return Scaffold(
-      // 1. APP BAR ESTERNALIZZATA
       appBar: MonthAppBar(
         localeCorrente: localeCorrente,
         dataOggi: dataOggi,
         onMenuPressed: () {
-          // Logica per aprire il drawer
           print("Menu cliccato");
         },
       ),
 
-      // 2. CORPO ESTERNALIZZATO
-      body: const CalendarGrid(),
+      // 2. GESTIONE SWIPE (GESTURE DETECTOR)
+      // Avvolgiamo il corpo in un GestureDetector per sentire il dito
+      body: GestureDetector(
+        onHorizontalDragEnd: (DragEndDetails details) {
+          // primaryVelocity ci dice la velocità e la direzione dello swipe.
+          // > 0 : Swipe verso destra (Da Sinistra a Destra) -> Vado indietro nel tempo
+          // < 0 : Swipe verso sinistra (Da Destra a Sinistra) -> Vado avanti nel tempo
+          
+          if (details.primaryVelocity! > 0) {
+            // Swipe Destra -> Mese Precedente
+            _vaiMesePrecedente();
+          } else if (details.primaryVelocity! < 0) {
+            // Swipe Sinistra -> Mese Successivo
+            _vaiMeseSuccessivo();
+          }
+        },
+        // Il Container trasparente serve a catturare il tocco anche negli spazi vuoti
+        child: Container(
+          color: Colors.transparent, 
+          width: double.infinity,
+          height: double.infinity,
+          child: CalendarGrid(meseCorrente: dataOggi),
+        ),
+      ),
       
     );
   }

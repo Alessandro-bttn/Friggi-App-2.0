@@ -46,4 +46,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get error_erroreSalvataggio => 'Error al guardar el lugar';
+
+  @override
+  String get calendar_mon => 'Lun';
+
+  @override
+  String get calendar_tue => 'Mar';
+
+  @override
+  String get calendar_wed => 'Mié';
+
+  @override
+  String get calendar_thu => 'Jue';
+
+  @override
+  String get calendar_fri => 'Vie';
+
+  @override
+  String get calendar_sat => 'Sáb';
+
+  @override
+  String get calendar_sun => 'Dom';
 }

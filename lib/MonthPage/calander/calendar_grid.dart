@@ -1,98 +1,107 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart'; 
+import 'day_cell.dart'; 
 
 class CalendarGrid extends StatelessWidget {
-  const CalendarGrid({super.key});
+  final DateTime meseCorrente;
+
+  const CalendarGrid({
+    super.key, 
+    required this.meseCorrente
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // HEADER: Giorni della settimana
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: ["lun", "mar", "mer", "gio", "ven", "sab", "dom"]
-                .map((giorno) => Text(
-                      giorno,
-                      style: TextStyle(
-                        // Usa un colore che si legge bene sia su bianco che su nero
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), 
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ))
-                .toList(),
-          ),
-        ),
-        
-        // GRIGLIA: I giorni del mese
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.all(8),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7, // 7 colonne
-              childAspectRatio: 0.6, // Rettangoli un po' più alti per sfruttare lo schermo
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4,
-            ),
-            // TODO: In futuro questo diventerà dinamico
-            itemCount: 31, 
-            itemBuilder: (context, index) {
-              final int giorno = index + 1;
-              return _DayCell(giorno: giorno);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
+    final testo = AppLocalizations.of(context)!;
 
-class _DayCell extends StatelessWidget {
-  final int giorno;
+    // 1. CREA LA LISTA DEI GIORNI TRADOTTA
+    final List<String> giorniSettimana = [
+      testo.calendar_mon,
+      testo.calendar_tue,
+      testo.calendar_wed,
+      testo.calendar_thu,
+      testo.calendar_fri,
+      testo.calendar_sat,
+      testo.calendar_sun,
+    ];
 
-  const _DayCell({required this.giorno});
+    // Calcoli logici del calendario
+    final int year = meseCorrente.year;
+    final int month = meseCorrente.month;
+    final int daysInMonth = DateTime(year, month + 1, 0).day;
+    final int firstDayWeekday = DateTime(year, month, 1).weekday;
+    final int startingOffset = firstDayWeekday - 1;
+    final int totalCells = startingOffset + daysInMonth;
 
-  @override
-  Widget build(BuildContext context) {
-    // Recuperiamo i colori dal tema attuale
-    final theme = Theme.of(context);
-
-    return Container(
-      decoration: BoxDecoration(
-        // COLORE SFONDO: Cambia automticamente (Bianco in Light, Scuro in Dark)
-        color: theme.cardColor, 
-        
-        borderRadius: BorderRadius.circular(8), // Bordi un po' più morbidi
-        
-        // BORDO: Sottile e del colore dei divisori del tema
-        border: Border.all(color: theme.dividerColor),
-        
-        // OMBRA LEGGERA (Opzionale, sta bene sul bianco)
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          )
-        ],
-      ),
+    return SafeArea(
+      top: false, 
+      bottom: true, 
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          // HEADER: Giorni della settimana
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
-              "$giorno",
-              // COLORE TESTO: Automatico (Nero su Light, Bianco su Dark)
-              style: TextStyle(
-                color: theme.colorScheme.onSurface, 
-                fontSize: 16,
-                fontWeight: FontWeight.bold
-              ),
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: giorniSettimana
+                  .map((giorno) => Text(
+                        giorno,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), 
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ))
+                  .toList(),
             ),
           ),
-          // Qui aggiungeremo i pallini delle spese
+          
+          // GRIGLIA
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final availableHeight = constraints.maxHeight;
+                
+                final int numeroRighe = (totalCells / 7).ceil();
+                const int numeroColonne = 7;
+                const double spacing = 2.0;
+
+                final heightNetta = availableHeight - ((numeroRighe - 1) * spacing);
+                final cellHeight = heightNetta / numeroRighe;
+
+                final widthNetta = constraints.maxWidth - ((numeroColonne - 1) * spacing);
+                final cellWidth = widthNetta / numeroColonne;
+
+                final double dynamicAspectRatio = cellWidth / cellHeight;
+
+                return GridView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 2), 
+                  physics: const NeverScrollableScrollPhysics(), 
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: numeroColonne,
+                    childAspectRatio: dynamicAspectRatio,
+                    crossAxisSpacing: spacing,
+                    mainAxisSpacing: spacing,
+                  ),
+                  itemCount: totalCells, 
+                  itemBuilder: (context, index) {
+                    if (index < startingOffset) {
+                      return const SizedBox(); 
+                    }
+                    final int giorno = index - startingOffset + 1;
+
+                    return DayCell(
+                      giorno: giorno,
+                      onTap: () {
+                        // Per ora stampiamo solo il messaggio
+                        print("Hai cliccato il giorno $giorno / $month / $year");
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

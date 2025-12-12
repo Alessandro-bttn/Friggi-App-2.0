@@ -14,5 +14,13 @@
     "ruolo_responsabile": "Responsabile",
 
     "error_campiMancanti": "Inserisci Nome se Responsabile/Dipendente",
-    "error_erroreSalvataggio": "Errore durante il salvataggio del locale"
+    "error_erroreSalvataggio": "Errore durante il salvataggio del locale",
+
+    "calendar_mon": "Lun",
+    "calendar_tue": "Mar",
+    "calendar_wed": "Mer",
+    "calendar_thu": "Gio",
+    "calendar_fri": "Ven",
+    "calendar_sat": "Sab",
+    "calendar_sun": "Dom"
 }

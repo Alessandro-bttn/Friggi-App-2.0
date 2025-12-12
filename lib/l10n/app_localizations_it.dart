@@ -47,4 +47,25 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get error_erroreSalvataggio =>
       'Errore durante il salvataggio del locale';
+
+  @override
+  String get calendar_mon => 'Lun';
+
+  @override
+  String get calendar_tue => 'Mar';
+
+  @override
+  String get calendar_wed => 'Mer';
+
+  @override
+  String get calendar_thu => 'Gio';
+
+  @override
+  String get calendar_fri => 'Ven';
+
+  @override
+  String get calendar_sat => 'Sab';
+
+  @override
+  String get calendar_sun => 'Dom';
 }

@@ -177,6 +177,48 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Errore durante il salvataggio del locale'**
   String get error_erroreSalvataggio;
+
+  /// No description provided for @calendar_mon.
+  ///
+  /// In it, this message translates to:
+  /// **'Lun'**
+  String get calendar_mon;
+
+  /// No description provided for @calendar_tue.
+  ///
+  /// In it, this message translates to:
+  /// **'Mar'**
+  String get calendar_tue;
+
+  /// No description provided for @calendar_wed.
+  ///
+  /// In it, this message translates to:
+  /// **'Mer'**
+  String get calendar_wed;
+
+  /// No description provided for @calendar_thu.
+  ///
+  /// In it, this message translates to:
+  /// **'Gio'**
+  String get calendar_thu;
+
+  /// No description provided for @calendar_fri.
+  ///
+  /// In it, this message translates to:
+  /// **'Ven'**
+  String get calendar_fri;
+
+  /// No description provided for @calendar_sat.
+  ///
+  /// In it, this message translates to:
+  /// **'Sab'**
+  String get calendar_sat;
+
+  /// No description provided for @calendar_sun.
+  ///
+  /// In it, this message translates to:
+  /// **'Dom'**
+  String get calendar_sun;
 }
 
 class _AppLocalizationsDelegate

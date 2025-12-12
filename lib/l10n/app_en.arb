@@ -14,5 +14,13 @@
     "ruolo_responsabile": "Manager",
 
     "error_campiMancanti": "Enter Name if Manager/Employee",
-    "error_erroreSalvataggio": "Error saving the place"
+    "error_erroreSalvataggio": "Error saving the place",
+    
+    "calendar_mon": "Mon",
+    "calendar_tue": "Tue",
+    "calendar_wed": "Wed",
+    "calendar_thu": "Thu",
+    "calendar_fri": "Fri",
+    "calendar_sat": "Sat",
+    "calendar_sun": "Sun"
 }

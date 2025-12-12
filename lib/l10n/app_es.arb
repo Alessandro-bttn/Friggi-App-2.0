@@ -14,5 +14,13 @@
     "ruolo_responsabile": "Responsable",
 
     "error_campiMancanti": "Ingrese Nombre si Responsable/Empleado",
-    "error_erroreSalvataggio": "Error al guardar el lugar"
+    "error_erroreSalvataggio": "Error al guardar el lugar",
+
+    "calendar_mon": "Lun",
+    "calendar_tue": "Mar",
+    "calendar_wed": "Mié",
+    "calendar_thu": "Jue",
+    "calendar_fri": "Vie",
+    "calendar_sat": "Sáb",
+    "calendar_sun": "Dom"
 }
