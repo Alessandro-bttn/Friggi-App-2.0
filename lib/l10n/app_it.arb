@@ -22,5 +22,22 @@
     "calendar_thu": "Gio",
     "calendar_fri": "Ven",
     "calendar_sat": "Sab",
-    "calendar_sun": "Dom"
+    "calendar_sun": "Dom",
+
+    "menu_titolo": "Menu",
+    "menu_gestioneDipendenti": "Gestione Dipendenti",
+    "menu_statistiche": "Statistiche",
+    "menu_impostazioni": "Impostazioni",
+
+    "dipendenti_titolo": "Dipendenti",
+    "dipendenti_nessuno": "Nessun dipendente trovato",
+    "dipendenti_nuovo": "Nuovo Dipendente",
+    "dipendenti_modifica": "Modifica Dipendente",
+    "label_nome": "Nome",
+    "label_cognome": "Cognome",
+    "label_ore": "Ore Previste",
+    "label_colore": "Colore Identificativo",
+    "msg_elimina_conferma": "Vuoi eliminare questo dipendente?",
+    "btn_annulla": "Annulla",
+    "btn_conferma": "Conferma"
 }

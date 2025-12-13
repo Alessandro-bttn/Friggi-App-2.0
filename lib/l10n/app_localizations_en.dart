@@ -67,4 +67,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calendar_sun => 'Sun';
+
+  @override
+  String get menu_titolo => 'Menu';
+
+  @override
+  String get menu_gestioneDipendenti => 'Employee Management';
+
+  @override
+  String get menu_statistiche => 'Statistics';
+
+  @override
+  String get menu_impostazioni => 'Settings';
+
+  @override
+  String get dipendenti_titolo => 'Employees';
+
+  @override
+  String get dipendenti_nessuno => 'No employees found';
+
+  @override
+  String get dipendenti_nuovo => 'New Employee';
+
+  @override
+  String get dipendenti_modifica => 'Edit Employee';
+
+  @override
+  String get label_nome => 'First Name';
+
+  @override
+  String get label_cognome => 'Last Name';
+
+  @override
+  String get label_ore => 'Planned Hours';
+
+  @override
+  String get label_colore => 'Identifying Color';
+
+  @override
+  String get msg_elimina_conferma => 'Do you want to delete this employee?';
+
+  @override
+  String get btn_annulla => 'Cancel';
+
+  @override
+  String get btn_conferma => 'Confirm';
 }

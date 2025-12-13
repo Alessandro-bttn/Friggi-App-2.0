@@ -68,4 +68,49 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get calendar_sun => 'Dom';
+
+  @override
+  String get menu_titolo => 'Menu';
+
+  @override
+  String get menu_gestioneDipendenti => 'Gestione Dipendenti';
+
+  @override
+  String get menu_statistiche => 'Statistiche';
+
+  @override
+  String get menu_impostazioni => 'Impostazioni';
+
+  @override
+  String get dipendenti_titolo => 'Dipendenti';
+
+  @override
+  String get dipendenti_nessuno => 'Nessun dipendente trovato';
+
+  @override
+  String get dipendenti_nuovo => 'Nuovo Dipendente';
+
+  @override
+  String get dipendenti_modifica => 'Modifica Dipendente';
+
+  @override
+  String get label_nome => 'Nome';
+
+  @override
+  String get label_cognome => 'Cognome';
+
+  @override
+  String get label_ore => 'Ore Previste';
+
+  @override
+  String get label_colore => 'Colore Identificativo';
+
+  @override
+  String get msg_elimina_conferma => 'Vuoi eliminare questo dipendente?';
+
+  @override
+  String get btn_annulla => 'Annulla';
+
+  @override
+  String get btn_conferma => 'Conferma';
 }

@@ -219,6 +219,96 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Dom'**
   String get calendar_sun;
+
+  /// No description provided for @menu_titolo.
+  ///
+  /// In it, this message translates to:
+  /// **'Menu'**
+  String get menu_titolo;
+
+  /// No description provided for @menu_gestioneDipendenti.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestione Dipendenti'**
+  String get menu_gestioneDipendenti;
+
+  /// No description provided for @menu_statistiche.
+  ///
+  /// In it, this message translates to:
+  /// **'Statistiche'**
+  String get menu_statistiche;
+
+  /// No description provided for @menu_impostazioni.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni'**
+  String get menu_impostazioni;
+
+  /// No description provided for @dipendenti_titolo.
+  ///
+  /// In it, this message translates to:
+  /// **'Dipendenti'**
+  String get dipendenti_titolo;
+
+  /// No description provided for @dipendenti_nessuno.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dipendente trovato'**
+  String get dipendenti_nessuno;
+
+  /// No description provided for @dipendenti_nuovo.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo Dipendente'**
+  String get dipendenti_nuovo;
+
+  /// No description provided for @dipendenti_modifica.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Dipendente'**
+  String get dipendenti_modifica;
+
+  /// No description provided for @label_nome.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome'**
+  String get label_nome;
+
+  /// No description provided for @label_cognome.
+  ///
+  /// In it, this message translates to:
+  /// **'Cognome'**
+  String get label_cognome;
+
+  /// No description provided for @label_ore.
+  ///
+  /// In it, this message translates to:
+  /// **'Ore Previste'**
+  String get label_ore;
+
+  /// No description provided for @label_colore.
+  ///
+  /// In it, this message translates to:
+  /// **'Colore Identificativo'**
+  String get label_colore;
+
+  /// No description provided for @msg_elimina_conferma.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi eliminare questo dipendente?'**
+  String get msg_elimina_conferma;
+
+  /// No description provided for @btn_annulla.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get btn_annulla;
+
+  /// No description provided for @btn_conferma.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma'**
+  String get btn_conferma;
 }
 
 class _AppLocalizationsDelegate

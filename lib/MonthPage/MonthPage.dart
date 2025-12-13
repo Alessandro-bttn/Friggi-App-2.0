@@ -1,4 +1,3 @@
-// File: lib/MonthPage/MonthPage.dart
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart'; 
 
@@ -6,12 +5,14 @@ import 'package:intl/date_symbol_data_local.dart';
 import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
 import '../service/preferences_service.dart';
+import '../Dipendenti/DipendentiPage.dart';
 
 // IMPORTA I WIDGET
 import 'TopBar/month_app_bar.dart';
 import 'calander/calendar_grid.dart';
+import 'widgets/app_drawer.dart';
 
-// IMPORTA LA LOGICA APPENA CREATA
+// IMPORTA LA LOGICA
 import 'logic/month_logic.dart'; 
 
 class MonthPage extends StatefulWidget {
@@ -22,9 +23,12 @@ class MonthPage extends StatefulWidget {
 }
 
 class _MonthPageState extends State<MonthPage> {
+  // ... (variabili di stato: localeCorrente, isLoading, dataOggi... RIMANGONO UGUALI)
   ItemModel? localeCorrente;
   bool isLoading = true;
   DateTime dataOggi = DateTime.now();
+  // Aggiungiamo un indice per sapere in che pagina siamo nel menu (0 = Calendario)
+  int _drawerSelectedIndex = 0; 
 
   @override
   void initState() {
@@ -34,24 +38,23 @@ class _MonthPageState extends State<MonthPage> {
     });
   }
 
+  // ... (funzioni _caricaDatiLocale, _vaiMeseSuccessivo... RIMANGONO UGUALI)
   Future<void> _caricaDatiLocale() async {
-    final int? idLocale = PreferencesService().idLocaleCorrente;
-
-    if (idLocale != null) {
-      final locale = await DBHelper().getItemById(idLocale);
-      setState(() {
-        localeCorrente = locale;
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-    }
+      // ... (codice esistente) ...
+      final int? idLocale = PreferencesService().idLocaleCorrente;
+        if (idLocale != null) {
+        final locale = await DBHelper().getItemById(idLocale);
+        setState(() {
+            localeCorrente = locale;
+            isLoading = false;
+        });
+        } else {
+        setState(() {
+            isLoading = false;
+        });
+        }
   }
-
-  // --- FUNZIONI DI CAMBIO MESE ---
-  void _vaiMeseSuccessivo() {
+    void _vaiMeseSuccessivo() {
     setState(() {
       dataOggi = MonthLogic.getNextMonth(dataOggi);
     });
@@ -62,7 +65,42 @@ class _MonthPageState extends State<MonthPage> {
       dataOggi = MonthLogic.getPreviousMonth(dataOggi);
     });
   }
-  // ------------------------------
+
+
+  // --- NUOVA FUNZIONE PER GESTIRE I CLICK NEL MENU ---
+void _onDrawerItemTapped(int index) {
+    // Chiudi il menu grafico se vuoi, ma Navigator.pop nel drawer lo ha già fatto
+    setState(() {
+      _drawerSelectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Siamo già nella Home, non facciamo nulla
+        break;
+        
+      case 1:
+        // NAVIGAZIONE STACK (Supporta Swipe Back)
+        Navigator.push(
+          context,
+          // MaterialPageRoute include già le animazioni native di iOS/Android
+          MaterialPageRoute(builder: (context) => const DipendentiPage()),
+        );
+        break;
+        
+      case 2:
+        // Esempio per Statistiche
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => const StatistichePage()));
+        break;
+        
+      case 3:
+        // Esempio per Impostazioni
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => const ImpostazioniPage()));
+        break;
+    }
+  }
+  // --------------------------------------------------
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,31 +112,28 @@ class _MonthPageState extends State<MonthPage> {
     }
 
     return Scaffold(
+      // 1. APP BAR (Aggiornata senza onMenuPressed)
       appBar: MonthAppBar(
         localeCorrente: localeCorrente,
         dataOggi: dataOggi,
-        onMenuPressed: () {
-          print("Menu cliccato");
-        },
+        // onMenuPressed è stato rimosso
       ),
 
-      // 2. GESTIONE SWIPE (GESTURE DETECTOR)
-      // Avvolgiamo il corpo in un GestureDetector per sentire il dito
+      // 2. AGGIUNGI IL DRAWER QUI
+      drawer: AppDrawer(
+        selectedIndex: _drawerSelectedIndex,
+        onDestinationSelected: _onDrawerItemTapped,
+      ),
+
+      // 3. CORPO GESTURE DETECTOR (Rimane uguale)
       body: GestureDetector(
-        onHorizontalDragEnd: (DragEndDetails details) {
-          // primaryVelocity ci dice la velocità e la direzione dello swipe.
-          // > 0 : Swipe verso destra (Da Sinistra a Destra) -> Vado indietro nel tempo
-          // < 0 : Swipe verso sinistra (Da Destra a Sinistra) -> Vado avanti nel tempo
-          
+         onHorizontalDragEnd: (DragEndDetails details) {
           if (details.primaryVelocity! > 0) {
-            // Swipe Destra -> Mese Precedente
             _vaiMesePrecedente();
           } else if (details.primaryVelocity! < 0) {
-            // Swipe Sinistra -> Mese Successivo
             _vaiMeseSuccessivo();
           }
         },
-        // Il Container trasparente serve a catturare il tocco anche negli spazi vuoti
         child: Container(
           color: Colors.transparent, 
           width: double.infinity,
@@ -106,7 +141,6 @@ class _MonthPageState extends State<MonthPage> {
           child: CalendarGrid(meseCorrente: dataOggi),
         ),
       ),
-      
     );
   }
 }

@@ -22,5 +22,22 @@
     "calendar_thu": "Jue",
     "calendar_fri": "Vie",
     "calendar_sat": "Sáb",
-    "calendar_sun": "Dom"
+    "calendar_sun": "Dom",
+
+    "menu_titolo": "Menú",
+    "menu_gestioneDipendenti": "Gestión de Empleados",
+    "menu_statistiche": "Estadísticas",
+    "menu_impostazioni": "Ajustes",
+
+    "dipendenti_titolo": "Empleados",
+    "dipendenti_nessuno": "No se encontraron empleados",
+    "dipendenti_nuovo": "Nuevo Empleado",
+    "dipendenti_modifica": "Editar Empleado",
+    "label_nome": "Nombre",
+    "label_cognome": "Apellido",
+    "label_ore": "Horas Previstas",
+    "label_colore": "Color Identificativo",
+    "msg_elimina_conferma": "¿Desea eliminar este empleado?",
+    "btn_annulla": "Cancelar",
+    "btn_conferma": "Confirmar"
 }
