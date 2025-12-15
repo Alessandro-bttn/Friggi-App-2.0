@@ -1,78 +1,68 @@
-# 📱 Friggi-App (Gestione Spese) - Dev Log
+# 📱 Friggi-App - Gestione Locali & Turni
 
-Questo documento traccia lo stato di avanzamento dello sviluppo dell'app per la gestione spese/locali.
+![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)
+![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
 
-## ✅ Stato Attuale (Funzionalità Implementate)
+Un'applicazione gestionale completa sviluppata in Flutter per l'amministrazione di più locali commerciali, gestione dipendenti, turni di lavoro e monitoraggio spese. Progettata con un'architettura modulare e un database locale relazionale.
 
-### 1. Architettura e Navigazione 🧭
-* **Root Page System:** Implementato uno "smistatore" iniziale (`RootPage`) che decide quale pagina mostrare all'avvio.
-* **Logica di Avvio:**
-    * Se il DB è vuoto/inesistente → Vai a `NewLocale`.
-    * Se il DB ha dati → Vai a `MonthPage`.
-* **Loading State:** Gestione tramite `FutureBuilder` con indicatore di caricamento durante i controlli iniziali.
+## ✨ Funzionalità Principali
 
-### 2. Database Locale (SQLite) 🗄️
-* **Libreria:** `sqflite` + `path_provider`.
-* **Struttura Tabella `items`:**
-    * `id` (Auto-increment)
-    * `nome` (String)
-    * `pd` (Ruolo: Responsabile/Dipendente)
-    * `imagePath` (Stringa del percorso file)
-* **Funzionalità:**
-    * Creazione automatica DB.
-    * Inserimento dati (`insertItem`).
-    * Conteggio righe per controllo avvio (`hasData`).
-    * Cancellazione sicura per reset e debug (`deleteDB`).
+### 🏢 Gestione Locali
+* **Multi-Store:** Gestione di più punti vendita con database unico centralizzato.
+* **Media Management:** Salvataggio e gestione foto dei locali (Image Picker + File System locale).
+* **Ruoli:** Distinzione tra Responsabili e Dipendenti.
 
-### 3. Gestione Media (Immagini) 📸
-* **Selezione:** Integrazione con `image_picker` per selezionare foto dalla Galleria.
-* **Salvataggio Permanente:** Implementato `ImageHelper` (`utils/image_helper.dart`).
-    * Le foto **non** vengono salvate come BLOB nel DB.
-    * Vengono copiate dalla cache alla cartella sicura dell'app (`ApplicationDocumentsDirectory`).
-    * Nel DB viene salvato solo il percorso (`path`).
+### 👥 Gestione Dipendenti
+* **CRUD Completo:** Aggiunta, modifica ed eliminazione dipendenti.
+* **Ricerca Istantanea:** Filtro in tempo reale per nome/cognome.
+* **Personalizzazione:** Assegnazione colori personalizzati (Color Picker avanzato) per i turni.
+* **Relazionalità:** Ogni dipendente è legato dinamicamente al locale attivo.
 
-### 4. Localizzazione (Multilingua) 🌍
-* **Sistema:** `flutter_localizations` con file `.arb`.
-* **Lingue Supportate:** Italiano (default), Inglese.
-* **Gestione Dinamica:** `LanguageController` per cambiare lingua a runtime senza riavviare.
-* **Widget:** Tutte le stringhe UI sono state migrate per usare `AppLocalizations`.
+### 📅 Calendario Avanzato & Navigazione
+* **Vista Mensile:** Griglia classica con swipe orizzontale.
+* **Vista Settimanale (2x4):** Layout ottimizzato su due righe per la massima leggibilità.
+* **Gesture Navigation:**
+  * **Pinch-to-Zoom:** Transizione fluida da Mese a Settimana (Zoom In) e viceversa (Zoom Out).
+  * **Swipe:** Navigazione temporale intuitiva in tutte le viste.
 
-### 5. Interfaccia Utente (UI/UX) 🎨
-* **Pagina `NewLocale`:**
-    * Form validato per inserimento dati.
-    * Anteprima immagine selezionata con bordi arrotondati (`ClipRRect`).
-* **Componenti Custom:**
-    * `RoleSelector`: Menu a tendina (Dropdown) isolato in un widget dedicato per la selezione del ruolo (Responsabile/Dipendente).
+### ⚙️ Altro
+* **Localizzazione:** Supporto nativo multilingua (IT/EN) tramite file `.arb`.
+* **Dark Mode:** Supporto al tema scuro di sistema.
+* **Persistenza:** `SharedPreferences` per le impostazioni utente e `SQLite` per i dati strutturati.
 
-### 6. Preferenze Globali ⚙️
-* **Service:** Creato `PreferencesService` (Singleton) basato su `shared_preferences`.
-* **Scopo:** Sistema centralizzato per salvare impostazioni persistenti (Tema, Lingua salvata, Username) accessibile da qualsiasi punto dell'app.
+---
+
+## 🛠️ Tech Stack
+
+| Categoria | Tecnologia | Dettagli |
+| :--- | :--- | :--- |
+| **Framework** | Flutter | 3.x (Dart) |
+| **Database** | SQFlite | Relazionale, Tabelle `locali` e `dipendenti` |
+| **State Mngt** | `setState` / Provider | Gestione logica separata (Logic Classes) |
+| **UI Kit** | Material 3 | Design system moderno |
+| **Utils** | `intl`, `path_provider` | Formattazione date e gestione file |
 
 ---
 
 ## 📂 Struttura del Progetto
 
-## 📂 Struttura del Progetto
+Il progetto segue una struttura modulare basata sulle funzionalità ("Feature-first"):
 
 ```text
 lib/
-├── DataBase/
-│   └── Dipendente/
-│   └── Locale/
-│      ├── LocaleDB.dart       # Gestione SQLite (Singleton)     
-│      └── LocaleModel.dart    # Modello dati (ItemModel)         
-├── l10n/
-│   ├── app_it.arb          # Traduzioni Italiano
-│   ├── app_en.arb          # Traduzioni Inglese
-│   └── app_es.arb          # Traduzioni Spagnolo
-├── Lingua/
-│   └── language_controller.dart # Gestore cambio lingua (Provider)
-├── MonthPage/
-│   └── MonthPage.dart      # Dashboard principale
-├── NewLocale/
-│   ├── widgets/
-│   │   ├── image_helper.dart   # Logica salvataggio file fisici
-│   │   └── role_selector.dart  # Dropdown menu custom
-│   └── NewLocale.dart      # Form creazione locale
-├── main.dart               # Configurazione App
-└── rootPage.dart           # Logica di smistamento iniziale
+├── DataBase/               # Layer Dati (SQLite)
+│   ├── Dipendente/         # DB e Model Dipendenti
+│   └── Locale/             # DB e Model Locali
+├── Dipendenti/             # Feature: Gestione Dipendenti
+│   ├── logic/              # Business Logic (Salvataggio, Filtri)
+│   └── widgets/            # Componenti UI (Card, Form, ColorPicker)
+├── MonthPage/              # Feature: Calendario Mensile
+│   ├── logic/              # Logica date
+│   └── widgets/            # Gesture Detector, AppDrawer
+├── WeekPage/               # Feature: Calendario Settimanale
+│   ├── logic/              # Calcolo settimane
+│   └── widgets/            # Griglia 2x4, WeekGestureDetector
+├── l10n/                   # File di traduzione (.arb)
+├── service/                # Servizi globali (Preferences)
+└── main.dart               # Entry point
