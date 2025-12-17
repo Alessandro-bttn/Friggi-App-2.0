@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 // --- IMPORT NECESSARI ---
-// Controlla che questi percorsi siano corretti nel tuo progetto
 import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
 import '../service/preferences_service.dart';
 import '../MonthPage/TopBar/month_app_bar.dart';
 
-// Import della DayPage (Assicurati che il percorso sia giusto!)
+// Import della DayPage
 import '../DayPage/DayPage.dart'; 
 
+// Import della logica e widget della settimana
 import 'logic/week_logic.dart';
 import 'widgets/week_view.dart';
 import 'widgets/week_gesture_detector.dart';
@@ -37,19 +37,21 @@ class _WeekPageState extends State<WeekPage> {
   }
 
   Future<void> _caricaDatiLocale() async {
-    final int? idLocale = PreferencesService().idLocaleCorrente;
-    if (idLocale != null) {
-      final locale = await DBHelper().getItemById(idLocale);
-      if (mounted) {
-        setState(() {
-          localeCorrente = locale;
-          isLoading = false;
-        });
+    try {
+      final int? idLocale = PreferencesService().idLocaleCorrente;
+      if (idLocale != null) {
+        final locale = await DBHelper().getItemById(idLocale);
+        if (mounted) {
+          setState(() {
+            localeCorrente = locale;
+            isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) setState(() => isLoading = false);
       }
-    } else {
-      if (mounted) {
-        setState(() => isLoading = false);
-      }
+    } catch (e) {
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
@@ -67,11 +69,10 @@ class _WeekPageState extends State<WeekPage> {
   }
 
   void _tornaAlMese() {
-    Navigator.pop(context); // Chiude la WeekPage e torna sotto (MonthPage)
+    Navigator.pop(context); // Chiude la WeekPage e torna al Mese
   }
 
-  // --- AZIONE AL CLICK DEL GIORNO ---
-  // Questa funzione deve stare QUI, dentro la classe, non fuori.
+  // --- AZIONE AL CLICK O ZOOM ---
   void _onGiornoSelezionato(DateTime dataSelezionata) {
     Navigator.push(
       context,
@@ -88,22 +89,28 @@ class _WeekPageState extends State<WeekPage> {
     }
 
     return Scaffold(
-      // Riutilizziamo l'AppBar che mostra Mese/Anno e Locale
+      // AppBar
       appBar: MonthAppBar(
         localeCorrente: localeCorrente,
-        // Mostriamo il mese del Lunedì corrente
-        dataOggi: currentWeekStart, 
+        dataOggi: currentWeekStart,
+        // IMPORTANTE: showDay false perché qui mostriamo la settimana (es. "Dicembre 2025")
+        showDay: false, 
       ),
       
+      // Corpo con Gestione Gesture
       body: SafeArea(
         top: false,
         bottom: true,
         child: WeekGestureDetector(
           onSwipeNext: _vaiSettimanaSuccessiva,
           onSwipePrev: _vaiSettimanaPrecedente,
-          onZoomOut: _tornaAlMese, 
+          onZoomOut: _tornaAlMese,
           
-          // La vista grafica della settimana
+          // NUOVO: Zoom In apre il primo giorno della settimana (Lunedì)
+          onZoomIn: () {
+            _onGiornoSelezionato(currentWeekStart);
+          },
+          
           child: WeekView(
             currentStartOfWeek: currentWeekStart,
             onDaySelected: _onGiornoSelezionato, 

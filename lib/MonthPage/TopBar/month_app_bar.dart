@@ -1,67 +1,46 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import '../../DataBase/Locale/LocaleModel.dart';
+import '../../../DataBase/Locale/LocaleModel.dart';
+
+import 'widgets/app_bar_leading.dart';
+import 'widgets/app_bar_title.dart';
+import 'widgets/app_bar_avatar.dart';
 
 class MonthAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ItemModel? localeCorrente;
   final DateTime dataOggi;
+  final bool showDay;
 
   const MonthAppBar({
     super.key,
     required this.localeCorrente,
     required this.dataOggi,
+    this.showDay = false,
   });
 
   @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    final String currentLocale = Localizations.localeOf(context).toString();
-
-    String nomeMese = DateFormat('MMMM', currentLocale).format(dataOggi);
-
-    nomeMese = toBeginningOfSentenceCase(nomeMese) ?? nomeMese;
-    
-    String anno = DateFormat('yyyy').format(dataOggi);
-
-    String titolo = localeCorrente != null 
-        ? "${localeCorrente!.nome} • $nomeMese $anno" 
-        : "Nessun Locale • $nomeMese $anno";
-
     return AppBar(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Colors.white,
       elevation: 0,
       centerTitle: true,
-      
-      title: Text(
-        titolo,
-        style: TextStyle(color: colorScheme.onSurface, fontSize: 18),
+
+      // 1. Bottone: Ora gestisce automaticamente Freccia o Menu (Hamburger)
+      leading: const AppBarLeading(),
+
+      // 2. Titolo: Pulito, solo testo
+      title: AppBarTitle(
+        localeCorrente: localeCorrente,
+        dataOggi: dataOggi,
+        showDay: showDay,
       ),
+
+      // 3. Avatar a destra (rimane uguale)
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.blueGrey, 
-            radius: 18,
-            backgroundImage: (localeCorrente?.imagePath != null && 
-                              File(localeCorrente!.imagePath!).existsSync())
-                ? FileImage(File(localeCorrente!.imagePath!))
-                : null,
-            child: (localeCorrente?.imagePath == null)
-                ? Text(
-                    localeCorrente?.nome.isNotEmpty == true 
-                      ? localeCorrente!.nome[0].toUpperCase() 
-                      : "U",
-                    style: const TextStyle(color: Colors.white),
-                  )
-                : null,
-          ),
-        )
+        AppBarAvatar(localeCorrente: localeCorrente),
       ],
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
