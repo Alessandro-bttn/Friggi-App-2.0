@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../l10n/app_localizations.dart'; 
-import 'day_cell.dart'; 
+import '../../l10n/app_localizations.dart';
+import 'day_cell.dart';
+// 1. IMPORTA LA PAGINA DI DETTAGLIO
+import '../../DayPage/DayPage.dart';
 
 class CalendarGrid extends StatelessWidget {
   final DateTime meseCorrente;
 
-  const CalendarGrid({
-    super.key, 
-    required this.meseCorrente
-  });
+  const CalendarGrid({super.key, required this.meseCorrente});
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +33,8 @@ class CalendarGrid extends StatelessWidget {
     final int totalCells = startingOffset + daysInMonth;
 
     return SafeArea(
-      top: false, 
-      bottom: true, 
+      top: false,
+      bottom: true,
       child: Column(
         children: [
           // HEADER: Giorni della settimana
@@ -47,7 +46,10 @@ class CalendarGrid extends StatelessWidget {
                   .map((giorno) => Text(
                         giorno,
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), 
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -55,46 +57,56 @@ class CalendarGrid extends StatelessWidget {
                   .toList(),
             ),
           ),
-          
+
           // GRIGLIA
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final availableHeight = constraints.maxHeight;
-                
+
                 final int numeroRighe = (totalCells / 7).ceil();
                 const int numeroColonne = 7;
                 const double spacing = 2.0;
 
-                final heightNetta = availableHeight - ((numeroRighe - 1) * spacing);
+                final heightNetta =
+                    availableHeight - ((numeroRighe - 1) * spacing);
                 final cellHeight = heightNetta / numeroRighe;
 
-                final widthNetta = constraints.maxWidth - ((numeroColonne - 1) * spacing);
+                final widthNetta =
+                    constraints.maxWidth - ((numeroColonne - 1) * spacing);
                 final cellWidth = widthNetta / numeroColonne;
 
                 final double dynamicAspectRatio = cellWidth / cellHeight;
 
                 return GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 2), 
-                  physics: const NeverScrollableScrollPhysics(), 
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: numeroColonne,
                     childAspectRatio: dynamicAspectRatio,
                     crossAxisSpacing: spacing,
                     mainAxisSpacing: spacing,
                   ),
-                  itemCount: totalCells, 
+                  itemCount: totalCells,
                   itemBuilder: (context, index) {
                     if (index < startingOffset) {
-                      return const SizedBox(); 
+                      return const SizedBox();
                     }
                     final int giorno = index - startingOffset + 1;
+
+                    // 2. CREIAMO LA DATA DEL GIORNO SELEZIONATO
+                    final DateTime dataSelezionata =
+                        DateTime(year, month, giorno);
 
                     return DayCell(
                       giorno: giorno,
                       onTap: () {
-                        // Per ora stampiamo solo il messaggio
-                        print("Hai cliccato il giorno $giorno / $month / $year");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DayPage(date: dataSelezionata)),
+                        );
                       },
                     );
                   },

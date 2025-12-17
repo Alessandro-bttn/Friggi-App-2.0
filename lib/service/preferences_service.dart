@@ -23,10 +23,14 @@ class PreferencesService {
   // LINGUA (Codice lingua: 'it', 'en', 'es')
   String? get lingua => _prefs.getString('chiave_lingua');
 
-  set lingua(String value) {
-    _prefs.setString('chiave_lingua', value);
+  set lingua(String? value) {
+    if (value != null) {
+      _prefs.setString('chiave_lingua', value);
+    } else {
+      // Se proviamo a salvare null, rimuoviamo la preferenza
+      _prefs.remove('chiave_lingua');
+    }
   }
-
   // TEMA SCURO (True = Scuro, False = Chiaro)
   bool get temaScuro => _prefs.getBool('chiave_tema_scuro') ?? false;
 

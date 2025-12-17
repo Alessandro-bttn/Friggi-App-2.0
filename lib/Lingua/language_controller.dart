@@ -1,42 +1,49 @@
 import 'package:flutter/material.dart';
-import 'dart:ui'; // Necessario per leggere la lingua del sistema (PlatformDispatcher)
+import 'package:intl/date_symbol_data_local.dart'; // FONDAMENTALE per le date
 import '../service/preferences_service.dart';
 
 class LanguageController extends ChangeNotifier {
-  Locale _locale = const Locale('it'); // Default temporaneo
+  Locale _locale = const Locale('it'); 
 
   Locale get locale => _locale;
 
-  void loadSavedLanguage() {
-    // 1. Proviamo a leggere se c'è già una preferenza salvata
+  // Carica lingua salvata E inizializza le date
+  Future<void> loadSavedLanguage() async {
+    // 1. Leggiamo dal tuo PreferencesService
     String? savedCode = PreferencesService().lingua;
 
     if (savedCode != null) {
       _locale = Locale(savedCode);
     } else {
-      // PlatformDispatcher ci dà la lista delle lingue preferite dall'utente
-      final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
-      final systemCode = systemLocale.languageCode;
-
-      // Controlliamo se la lingua del telefono è tra quelle che supportiamo
+      // Logica automatica se non c'è nulla salvato
+      final systemCode = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
       if (['it', 'en', 'es'].contains(systemCode)) {
         _locale = Locale(systemCode);
       } else {
-        // Se il telefono è in Cinese o Tedesco, mettiamo Inglese come fallback
         _locale = const Locale('en'); 
       }
     }
+
+    // 2. QUESTO EVITA IL CRASH: Carichiamo i dati delle date per la lingua scelta
+    await initializeDateFormatting(_locale.languageCode, null);
+
     notifyListeners();
   }
 
-  void toggleLanguage() {
-    // ... (Il resto rimane uguale)
+  // Cambia lingua e aggiorna le date
+  Future<void> toggleLanguage() async {
     if (_locale.languageCode == 'it') {
       _locale = const Locale('en');
     } else {
       _locale = const Locale('it');
     }
+    
+    // 3. Salviamo nel tuo Service
     PreferencesService().lingua = _locale.languageCode;
+    
+    // 4. Aggiorniamo i dati delle date per la nuova lingua
+    await initializeDateFormatting(_locale.languageCode, null);
+
     notifyListeners();
   }
 }

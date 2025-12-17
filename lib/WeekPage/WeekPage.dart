@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+
+// --- IMPORT NECESSARI ---
+// Controlla che questi percorsi siano corretti nel tuo progetto
 import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
 import '../service/preferences_service.dart';
 import '../MonthPage/TopBar/month_app_bar.dart';
 
-// IMPORTA LA LOGICA E I WIDGET NUOVI
+// Import della DayPage (Assicurati che il percorso sia giusto!)
+import '../DayPage/DayPage.dart'; 
+
 import 'logic/week_logic.dart';
 import 'widgets/week_view.dart';
 import 'widgets/week_gesture_detector.dart';
@@ -35,12 +40,16 @@ class _WeekPageState extends State<WeekPage> {
     final int? idLocale = PreferencesService().idLocaleCorrente;
     if (idLocale != null) {
       final locale = await DBHelper().getItemById(idLocale);
-      setState(() {
-        localeCorrente = locale;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          localeCorrente = locale;
+          isLoading = false;
+        });
+      }
     } else {
-      setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
@@ -62,9 +71,14 @@ class _WeekPageState extends State<WeekPage> {
   }
 
   // --- AZIONE AL CLICK DEL GIORNO ---
+  // Questa funzione deve stare QUI, dentro la classe, non fuori.
   void _onGiornoSelezionato(DateTime dataSelezionata) {
-    print("Hai cliccato il giorno: $dataSelezionata");
-    // In futuro qui aprirai il dialog per aggiungere turni o vedere i dettagli
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DayPage(date: dataSelezionata),
+      ),
+    );
   }
   
   @override
@@ -98,4 +112,4 @@ class _WeekPageState extends State<WeekPage> {
       ),
     );
   }
-}  
+}
