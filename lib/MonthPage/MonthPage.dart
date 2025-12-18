@@ -5,18 +5,24 @@ import 'package:intl/date_symbol_data_local.dart';
 import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
 import '../service/preferences_service.dart';
-import '../Dipendenti/DipendentiPage.dart';
 import '../WeekPage/WeekPage.dart'; 
 
 // IMPORTA I WIDGET
 import 'TopBar/month_app_bar.dart';
 import 'calander/calendar_grid.dart';
 import 'widgets/app_drawer.dart';
+
 //  IMPORTA IL NUOVO WIDGET GESTURE
 import 'widgets/month_gesture_detector.dart';
 
 // IMPORTA LA LOGICA
 import 'logic/month_logic.dart'; 
+import '../Dipendenti/DipendentiPage.dart';
+
+// IMPORTA ALTRE PAGINE
+import '../SettingsPage/SettingsPage.dart';
+
+// PAGINA PRINCIPALE DEL MESE
 
 class MonthPage extends StatefulWidget {
   const MonthPage({super.key});
@@ -103,15 +109,19 @@ class _MonthPageState extends State<MonthPage> {
     setState(() { _drawerSelectedIndex = index; });
 
     switch (index) {
-      case 0: break; // Home
+      case 0: 
+         // Sei già nella Home, non fare nulla o ricarica
+         break;
       case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const DipendentiPage()),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const DipendentiPage()));
         break;
-      case 2: break; // Statistiche
-      case 3: break; // Impostazioni
+      case 2:
+        // StatistichePage (da fare)
+        break;
+      case 3:
+        // APRE LA PAGINA IMPOSTAZIONI
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsPage()));
+        break;
     }
   }
 

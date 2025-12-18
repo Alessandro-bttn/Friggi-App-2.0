@@ -39,5 +39,32 @@
     "label_colore": "Color Identificativo",
     "msg_elimina_conferma": "¿Desea eliminar este empleado?",
     "btn_annulla": "Cancelar",
-    "btn_conferma": "Confirmar"
+    "btn_conferma": "Confirmar",
+
+    "settings_titolo": "Ajustes",
+    "settings_sez_aspetto": "Apariencia",
+    "settings_temaScuro": "Tema Oscuro",
+    "settings_temaScuro_sub": "Reduce la fatiga visual",
+    "settings_sez_generale": "General",
+    "settings_notifiche": "Notificaciones Push",
+    "settings_notifiche_sub": "Recibe actualizaciones sobre los turnos",
+    "settings_lingua": "Idioma",
+    "settings_lingua_dialog": "Elige el idioma",
+    "settings_lingua_it": "Italiano",
+    "settings_lingua_en": "Inglés",
+    "settings_lingua_es": "Español",
+    "settings_sez_info": "Información",
+    "settings_versione": "Versión de la App",
+    "settings_privacy": "Política de Privacidad",
+    "settings_logout": "Cerrar sesión",    
+    
+    "settings_turni_label": "Número de Turnos",
+    "settings_turni_sub": "Selecciona el número de turnos por día",
+    "settings_turni_valore_1": "Único (1)",
+    "settings_turni_valore_2": "Dos Turnos (2)",
+    "settings_turni_valore_3": "Tres Turnos (3)",
+
+    "settings_orari_label": "Horarios de Trabajo",
+    "settings_orario_inizio": "Inicio",
+    "settings_orario_fine": "Fin"
 }

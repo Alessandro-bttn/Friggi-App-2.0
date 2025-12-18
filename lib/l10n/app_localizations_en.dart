@@ -112,4 +112,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_conferma => 'Confirm';
+
+  @override
+  String get settings_titolo => 'Settings';
+
+  @override
+  String get settings_sez_aspetto => 'Appearance';
+
+  @override
+  String get settings_temaScuro => 'Dark Theme';
+
+  @override
+  String get settings_temaScuro_sub => 'Reduces eye strain';
+
+  @override
+  String get settings_sez_generale => 'General';
+
+  @override
+  String get settings_notifiche => 'Push Notifications';
+
+  @override
+  String get settings_notifiche_sub => 'Get shift updates';
+
+  @override
+  String get settings_lingua => 'Language';
+
+  @override
+  String get settings_lingua_dialog => 'Choose Language';
+
+  @override
+  String get settings_lingua_it => 'Italian';
+
+  @override
+  String get settings_lingua_en => 'English';
+
+  @override
+  String get settings_lingua_es => 'Spanish';
+
+  @override
+  String get settings_sez_info => 'Information';
+
+  @override
+  String get settings_versione => 'App Version';
+
+  @override
+  String get settings_privacy => 'Privacy Policy';
+
+  @override
+  String get settings_logout => 'Log Out';
+
+  @override
+  String get settings_turni_label => 'Number of Shifts';
+
+  @override
+  String get settings_turni_sub => 'Select the number of shifts per day';
+
+  @override
+  String get settings_turni_valore_1 => 'Single Shift (1)';
+
+  @override
+  String get settings_turni_valore_2 => 'Two Shifts (2)';
+
+  @override
+  String get settings_turni_valore_3 => 'Three Shifts (3)';
+
+  @override
+  String get settings_orari_label => 'Working Hours';
+
+  @override
+  String get settings_orario_inizio => 'Start';
+
+  @override
+  String get settings_orario_fine => 'End';
 }

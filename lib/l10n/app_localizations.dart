@@ -309,6 +309,150 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Conferma'**
   String get btn_conferma;
+
+  /// No description provided for @settings_titolo.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni'**
+  String get settings_titolo;
+
+  /// No description provided for @settings_sez_aspetto.
+  ///
+  /// In it, this message translates to:
+  /// **'Aspetto'**
+  String get settings_sez_aspetto;
+
+  /// No description provided for @settings_temaScuro.
+  ///
+  /// In it, this message translates to:
+  /// **'Tema Scuro'**
+  String get settings_temaScuro;
+
+  /// No description provided for @settings_temaScuro_sub.
+  ///
+  /// In it, this message translates to:
+  /// **'Riduci l\'affaticamento degli occhi'**
+  String get settings_temaScuro_sub;
+
+  /// No description provided for @settings_sez_generale.
+  ///
+  /// In it, this message translates to:
+  /// **'Generale'**
+  String get settings_sez_generale;
+
+  /// No description provided for @settings_notifiche.
+  ///
+  /// In it, this message translates to:
+  /// **'Notifiche Push'**
+  String get settings_notifiche;
+
+  /// No description provided for @settings_notifiche_sub.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricevi aggiornamenti sui turni'**
+  String get settings_notifiche_sub;
+
+  /// No description provided for @settings_lingua.
+  ///
+  /// In it, this message translates to:
+  /// **'Lingua'**
+  String get settings_lingua;
+
+  /// No description provided for @settings_lingua_dialog.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli la lingua'**
+  String get settings_lingua_dialog;
+
+  /// No description provided for @settings_lingua_it.
+  ///
+  /// In it, this message translates to:
+  /// **'Italiano'**
+  String get settings_lingua_it;
+
+  /// No description provided for @settings_lingua_en.
+  ///
+  /// In it, this message translates to:
+  /// **'Inglese'**
+  String get settings_lingua_en;
+
+  /// No description provided for @settings_lingua_es.
+  ///
+  /// In it, this message translates to:
+  /// **'Spagnolo'**
+  String get settings_lingua_es;
+
+  /// No description provided for @settings_sez_info.
+  ///
+  /// In it, this message translates to:
+  /// **'Informazioni'**
+  String get settings_sez_info;
+
+  /// No description provided for @settings_versione.
+  ///
+  /// In it, this message translates to:
+  /// **'Versione App'**
+  String get settings_versione;
+
+  /// No description provided for @settings_privacy.
+  ///
+  /// In it, this message translates to:
+  /// **'Privacy Policy'**
+  String get settings_privacy;
+
+  /// No description provided for @settings_logout.
+  ///
+  /// In it, this message translates to:
+  /// **'Esci dall\'account'**
+  String get settings_logout;
+
+  /// No description provided for @settings_turni_label.
+  ///
+  /// In it, this message translates to:
+  /// **'Suddivisione Giornata'**
+  String get settings_turni_label;
+
+  /// No description provided for @settings_turni_sub.
+  ///
+  /// In it, this message translates to:
+  /// **'Numero di turni giornalieri'**
+  String get settings_turni_sub;
+
+  /// No description provided for @settings_turni_valore_1.
+  ///
+  /// In it, this message translates to:
+  /// **'Unico (1)'**
+  String get settings_turni_valore_1;
+
+  /// No description provided for @settings_turni_valore_2.
+  ///
+  /// In it, this message translates to:
+  /// **'Due Turni (2)'**
+  String get settings_turni_valore_2;
+
+  /// No description provided for @settings_turni_valore_3.
+  ///
+  /// In it, this message translates to:
+  /// **'Tre Turni (3)'**
+  String get settings_turni_valore_3;
+
+  /// No description provided for @settings_orari_label.
+  ///
+  /// In it, this message translates to:
+  /// **'Orari di Lavoro'**
+  String get settings_orari_label;
+
+  /// No description provided for @settings_orario_inizio.
+  ///
+  /// In it, this message translates to:
+  /// **'Inizio'**
+  String get settings_orario_inizio;
+
+  /// No description provided for @settings_orario_fine.
+  ///
+  /// In it, this message translates to:
+  /// **'Fine'**
+  String get settings_orario_fine;
 }
 
 class _AppLocalizationsDelegate

@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+// IMPORT STANDARD PER L10N GENERATO (Se usi file .arb)
 import 'l10n/app_localizations.dart';
 
 import 'rootPage.dart';
 import 'Lingua/language_controller.dart'; 
 import 'service/preferences_service.dart'; 
 
-// Creiamo l'istanza globale del controller
+// 1. Controller Globale Lingua
 final languageController = LanguageController();
 
-// --- MODIFICA 1: CHIAVE GLOBALE PER LE NOTIFICHE ---
-// Questa chiave permette al NotificationService di trovare lo schermo
-// anche senza avere il "context" della pagina specifica.
+// 2. Controller Globale Tema (Aggiunto per aggiornamento real-time)
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
+
+// 3. Chiave Globale Navigazione
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Inizializza Preferenze
   await PreferencesService().init();
 
+  // Carica Lingua salvata
   languageController.loadSavedLanguage();
+
+  // Carica Tema salvato
+  bool isDarkSaved = PreferencesService().temaScuro;
+  themeNotifier.value = isDarkSaved ? ThemeMode.dark : ThemeMode.light;
 
   runApp(const MyApp());
 }
@@ -29,17 +37,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ListenableBuilder ora ascolta SIA la lingua CHE il tema
     return ListenableBuilder(
-      listenable: languageController,
+      listenable: Listenable.merge([languageController, themeNotifier]),
       builder: (context, child) {
         
-        final bool isDark = PreferencesService().temaScuro;
-
         return MaterialApp(
           navigatorKey: navigatorKey, 
-
           title: 'Gestione Spese',
-          
+          debugShowCheckedModeBanner: false,
+
           // --- LOCALIZZAZIONE ---
           locale: languageController.locale, 
           localizationsDelegates: const [
@@ -55,7 +62,8 @@ class MyApp extends StatelessWidget {
           ],
           
           // --- GESTIONE TEMI ---
-          themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+          // Qui usiamo il valore del notifier, non direttamente le preferenze statiche
+          themeMode: themeNotifier.value, 
 
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(

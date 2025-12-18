@@ -112,4 +112,77 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get btn_conferma => 'Confirmar';
+
+  @override
+  String get settings_titolo => 'Ajustes';
+
+  @override
+  String get settings_sez_aspetto => 'Apariencia';
+
+  @override
+  String get settings_temaScuro => 'Tema Oscuro';
+
+  @override
+  String get settings_temaScuro_sub => 'Reduce la fatiga visual';
+
+  @override
+  String get settings_sez_generale => 'General';
+
+  @override
+  String get settings_notifiche => 'Notificaciones Push';
+
+  @override
+  String get settings_notifiche_sub =>
+      'Recibe actualizaciones sobre los turnos';
+
+  @override
+  String get settings_lingua => 'Idioma';
+
+  @override
+  String get settings_lingua_dialog => 'Elige el idioma';
+
+  @override
+  String get settings_lingua_it => 'Italiano';
+
+  @override
+  String get settings_lingua_en => 'Inglés';
+
+  @override
+  String get settings_lingua_es => 'Español';
+
+  @override
+  String get settings_sez_info => 'Información';
+
+  @override
+  String get settings_versione => 'Versión de la App';
+
+  @override
+  String get settings_privacy => 'Política de Privacidad';
+
+  @override
+  String get settings_logout => 'Cerrar sesión';
+
+  @override
+  String get settings_turni_label => 'Número de Turnos';
+
+  @override
+  String get settings_turni_sub => 'Selecciona el número de turnos por día';
+
+  @override
+  String get settings_turni_valore_1 => 'Único (1)';
+
+  @override
+  String get settings_turni_valore_2 => 'Dos Turnos (2)';
+
+  @override
+  String get settings_turni_valore_3 => 'Tres Turnos (3)';
+
+  @override
+  String get settings_orari_label => 'Horarios de Trabajo';
+
+  @override
+  String get settings_orario_inizio => 'Inicio';
+
+  @override
+  String get settings_orario_fine => 'Fin';
 }

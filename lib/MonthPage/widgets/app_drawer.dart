@@ -2,49 +2,59 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 
 class AppDrawer extends StatelessWidget {
-  // Potresti passare l'indice della pagina corrente per evidenziarla
+  // L'indice della pagina attualmente selezionata (0=Home, 1=Dipendenti, etc.)
   final int selectedIndex;
+  // Funzione callback che comunica al genitore (MonthPage) quale voce è stata cliccata
   final Function(int) onDestinationSelected;
 
   const AppDrawer({
     super.key,
-    this.selectedIndex = 0, // Default sulla prima voce (es. Home/Calendario)
+    this.selectedIndex = 0, 
     required this.onDestinationSelected,
   });
 
   @override
   Widget build(BuildContext context) {
-    final testo = AppLocalizations.of(context)!;
+    // Recuperiamo le traduzioni
+    final testo = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
-    // Utilizziamo NavigationDrawer per Material Design 3
+    // Se le traduzioni non sono ancora caricate, mostriamo un loader o un drawer vuoto per evitare crash
+    if (testo == null) return const SizedBox();
+
     return NavigationDrawer(
       selectedIndex: selectedIndex,
       onDestinationSelected: (index) {
-        // Chiude il drawer prima di navigare
+        // 1. Chiudiamo il drawer (comportamento standard)
         Navigator.of(context).pop(); 
-        // Chiama la funzione passata dal genitore per gestire la navigazione
+        
+        // 2. Notifichiamo la pagina principale del cambio
         onDestinationSelected(index);
       },
       children: [
-        // HEADER DEL DRAWER (Opzionale: logo, nome app, ecc.)
+        // --- HEADER DEL DRAWER ---
         Padding(
-          padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
+          padding: const EdgeInsets.fromLTRB(28, 24, 16, 16), // Spaziatura standard M3
           child: Text(
-            testo.menu_titolo,
-            style: theme.textTheme.titleMedium,
+            testo.menu_titolo, // Es: "Gestione Turni"
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
           ),
         ),
         
-        const Divider(indent: 28, endIndent: 28), // Separatore MD3
+        const Divider(indent: 28, endIndent: 28), 
 
         // --- VOCI DEL MENU ---
 
-        // VOCE 0: Home/Calendario (La pagina attuale)
+        // VOCE 0: Home / Calendario
         NavigationDrawerDestination(
           icon: const Icon(Icons.calendar_month_outlined),
           selectedIcon: const Icon(Icons.calendar_month),
-          label: Text(testo.newLocale_titolo), // Usiamo "Nuovo Locale" come placeholder per "Home"
+          // NOTA: Qui ho messo 'Calendario' come fallback se la chiave non è corretta.
+          // Cambia 'testo.newLocale_titolo' con una chiave tipo 'testo.menu_home' se preferisci.
+          label: Text("Calendario"), 
         ),
         
         // VOCE 1: Gestione Dipendenti
@@ -61,7 +71,10 @@ class AppDrawer extends StatelessWidget {
           label: Text(testo.menu_statistiche),
         ),
 
-        const Divider(indent: 28, endIndent: 28), // Separatore per le impostazioni
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 8),
+          child: Divider(),
+        ),
 
         // VOCE 3: Impostazioni
         NavigationDrawerDestination(

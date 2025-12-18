@@ -24,26 +24,25 @@ class LanguageController extends ChangeNotifier {
       }
     }
 
-    // 2. QUESTO EVITA IL CRASH: Carichiamo i dati delle date per la lingua scelta
+    // 2. Inizializziamo i formati data per evitare crash
     await initializeDateFormatting(_locale.languageCode, null);
 
     notifyListeners();
   }
 
-  // Cambia lingua e aggiorna le date
-  Future<void> toggleLanguage() async {
-    if (_locale.languageCode == 'it') {
-      _locale = const Locale('en');
-    } else {
-      _locale = const Locale('it');
-    }
-    
-    // 3. Salviamo nel tuo Service
-    PreferencesService().lingua = _locale.languageCode;
-    
-    // 4. Aggiorniamo i dati delle date per la nuova lingua
-    await initializeDateFormatting(_locale.languageCode, null);
+  // --- METODO AGGIUNTO PER RISOLVERE L'ERRORE ---
+  // Imposta una lingua specifica (usato dalle Impostazioni)
+  Future<void> changeLanguage(Locale newLocale) async {
+    // 1. Aggiorna la variabile locale
+    _locale = newLocale;
 
+    // 2. Salva nel Service
+    PreferencesService().lingua = newLocale.languageCode;
+
+    // 3. Aggiorna i dati delle date per la nuova lingua (Importante!)
+    await initializeDateFormatting(newLocale.languageCode, null);
+
+    // 4. Aggiorna la UI
     notifyListeners();
   }
 }

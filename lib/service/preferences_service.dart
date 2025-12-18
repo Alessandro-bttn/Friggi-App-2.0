@@ -1,14 +1,15 @@
 // File: lib/Services/preferences_service.dart
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 
 class PreferencesService {
   // 1. SINGLETON (Pattern standard)
   static final PreferencesService _instance = PreferencesService._internal();
-  
+
   factory PreferencesService() {
     return _instance;
   }
-  
+
   PreferencesService._internal();
 
   late SharedPreferences _prefs;
@@ -31,6 +32,7 @@ class PreferencesService {
       _prefs.remove('chiave_lingua');
     }
   }
+
   // TEMA SCURO (True = Scuro, False = Chiaro)
   bool get temaScuro => _prefs.getBool('chiave_tema_scuro') ?? false;
 
@@ -54,5 +56,34 @@ class PreferencesService {
   // Funzione per cancellare tutto (Reset totale app)
   Future<void> clear() async {
     await _prefs.clear();
+  }
+
+  int get divisioneTurni => _prefs.getInt('chiave_div_turni') ?? 0;
+  set divisioneTurni(int value) => _prefs.setInt('chiave_div_turni', value);
+
+  // 2. ORARIO INIZIO (Salvataggio "HH:mm", Default 09:00)
+  TimeOfDay get orarioInizio {
+    final s = _prefs.getString('chiave_ora_inizio');
+    if (s == null) return const TimeOfDay(hour: 9, minute: 0);
+    final parts = s.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
+  set orarioInizio(TimeOfDay time) {
+    final s = '${time.hour}:${time.minute}';
+    _prefs.setString('chiave_ora_inizio', s);
+  }
+
+  // 3. ORARIO FINE (Salvataggio "HH:mm", Default 18:00)
+  TimeOfDay get orarioFine {
+    final s = _prefs.getString('chiave_ora_fine');
+    if (s == null) return const TimeOfDay(hour: 18, minute: 0);
+    final parts = s.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
+  set orarioFine(TimeOfDay time) {
+    final s = '${time.hour}:${time.minute}';
+    _prefs.setString('chiave_ora_fine', s);
   }
 }

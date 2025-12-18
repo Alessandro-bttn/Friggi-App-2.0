@@ -42,5 +42,32 @@
     "msg_elimina_conferma": "Do you want to delete this employee?",
 
     "btn_annulla": "Cancel",
-    "btn_conferma": "Confirm"
+    "btn_conferma": "Confirm",
+
+    "settings_titolo": "Settings",
+    "settings_sez_aspetto": "Appearance",
+    "settings_temaScuro": "Dark Theme",
+    "settings_temaScuro_sub": "Reduces eye strain",
+    "settings_sez_generale": "General",
+    "settings_notifiche": "Push Notifications",
+    "settings_notifiche_sub": "Get shift updates",
+    "settings_lingua": "Language",
+    "settings_lingua_dialog": "Choose Language",
+    "settings_lingua_it": "Italian",
+    "settings_lingua_en": "English",
+    "settings_lingua_es": "Spanish",
+    "settings_sez_info": "Information",
+    "settings_versione": "App Version",
+    "settings_privacy": "Privacy Policy",
+    "settings_logout": "Log Out",
+
+    "settings_turni_label": "Number of Shifts",
+    "settings_turni_sub": "Select the number of shifts per day",
+    "settings_turni_valore_1": "Single Shift (1)",
+    "settings_turni_valore_2": "Two Shifts (2)",
+    "settings_turni_valore_3": "Three Shifts (3)",
+
+    "settings_orari_label": "Working Hours",
+    "settings_orario_inizio": "Start",
+    "settings_orario_fine": "End"   
 }

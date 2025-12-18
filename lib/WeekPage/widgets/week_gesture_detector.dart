@@ -46,7 +46,7 @@ class _WeekGestureDetectorState extends State<WeekGestureDetector> {
         // ZOOM IN (Spread - Espansione): Vai al Giorno
         else if (details.scale > 1.3) { 
           _zoomActionTriggered = true;
-          widget.onZoomIn(); // <--- Chiamata al nuovo parametro
+          widget.onZoomIn(); 
         }
       },
 

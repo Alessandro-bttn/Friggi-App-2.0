@@ -113,4 +113,76 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get btn_conferma => 'Conferma';
+
+  @override
+  String get settings_titolo => 'Impostazioni';
+
+  @override
+  String get settings_sez_aspetto => 'Aspetto';
+
+  @override
+  String get settings_temaScuro => 'Tema Scuro';
+
+  @override
+  String get settings_temaScuro_sub => 'Riduci l\'affaticamento degli occhi';
+
+  @override
+  String get settings_sez_generale => 'Generale';
+
+  @override
+  String get settings_notifiche => 'Notifiche Push';
+
+  @override
+  String get settings_notifiche_sub => 'Ricevi aggiornamenti sui turni';
+
+  @override
+  String get settings_lingua => 'Lingua';
+
+  @override
+  String get settings_lingua_dialog => 'Scegli la lingua';
+
+  @override
+  String get settings_lingua_it => 'Italiano';
+
+  @override
+  String get settings_lingua_en => 'Inglese';
+
+  @override
+  String get settings_lingua_es => 'Spagnolo';
+
+  @override
+  String get settings_sez_info => 'Informazioni';
+
+  @override
+  String get settings_versione => 'Versione App';
+
+  @override
+  String get settings_privacy => 'Privacy Policy';
+
+  @override
+  String get settings_logout => 'Esci dall\'account';
+
+  @override
+  String get settings_turni_label => 'Suddivisione Giornata';
+
+  @override
+  String get settings_turni_sub => 'Numero di turni giornalieri';
+
+  @override
+  String get settings_turni_valore_1 => 'Unico (1)';
+
+  @override
+  String get settings_turni_valore_2 => 'Due Turni (2)';
+
+  @override
+  String get settings_turni_valore_3 => 'Tre Turni (3)';
+
+  @override
+  String get settings_orari_label => 'Orari di Lavoro';
+
+  @override
+  String get settings_orario_inizio => 'Inizio';
+
+  @override
+  String get settings_orario_fine => 'Fine';
 }
