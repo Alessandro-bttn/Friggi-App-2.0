@@ -25,14 +25,25 @@ class WeekPage extends StatefulWidget {
 
 class _WeekPageState extends State<WeekPage> {
   ItemModel? localeCorrente;
-  late DateTime currentWeekStart; // Data di riferimento (Lunedì corrente)
+  late DateTime currentWeekStart;
   bool isLoading = true;
+
+  // --- VARIABILI PER I SETTAGGI ---
+  late int _divisions;
+  late TimeOfDay _startTime;
+  late TimeOfDay _endTime;
 
   @override
   void initState() {
     super.initState();
-    // Impostiamo la data iniziale all'inizio della settimana cliccata
     currentWeekStart = WeekLogic.getStartOfWeek(widget.dataIniziale);
+    
+    // 1. CARICAMENTO DATI PREFERENZE (Sincrono per semplicità di UI)
+    final prefs = PreferencesService();
+    _divisions = prefs.divisioneTurni;
+    _startTime = prefs.orarioInizio;
+    _endTime = prefs.orarioFine;
+
     _caricaDatiLocale();
   }
 
@@ -69,15 +80,14 @@ class _WeekPageState extends State<WeekPage> {
   }
 
   void _tornaAlMese() {
-    Navigator.pop(context); // Chiude la WeekPage e torna al Mese
+    Navigator.pop(context); 
   }
 
-  // --- AZIONE AL CLICK O ZOOM ---
   void _onGiornoSelezionato(DateTime dataSelezionata) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DayPage(date: dataSelezionata),
+        builder: (context) => DayPage(selectedDate: dataSelezionata),
       ),
     );
   }
@@ -89,15 +99,12 @@ class _WeekPageState extends State<WeekPage> {
     }
 
     return Scaffold(
-      // AppBar
       appBar: MonthAppBar(
         localeCorrente: localeCorrente,
         dataOggi: currentWeekStart,
-        // IMPORTANTE: showDay false perché qui mostriamo la settimana (es. "Dicembre 2025")
         showDay: false, 
       ),
       
-      // Corpo con Gestione Gesture
       body: SafeArea(
         top: false,
         bottom: true,
@@ -105,15 +112,17 @@ class _WeekPageState extends State<WeekPage> {
           onSwipeNext: _vaiSettimanaSuccessiva,
           onSwipePrev: _vaiSettimanaPrecedente,
           onZoomOut: _tornaAlMese,
-          
-          // NUOVO: Zoom In apre il primo giorno della settimana (Lunedì)
           onZoomIn: () {
             _onGiornoSelezionato(currentWeekStart);
           },
           
+          // 2. PASSIAMO I DATI AL WEEKVIEW
           child: WeekView(
             currentStartOfWeek: currentWeekStart,
-            onDaySelected: _onGiornoSelezionato, 
+            onDaySelected: _onGiornoSelezionato,
+            divisions: _divisions, // Passiamo divisioni
+            startTime: _startTime, // Passiamo inizio
+            endTime: _endTime,     // Passiamo fine
           ),
         ),
       ),

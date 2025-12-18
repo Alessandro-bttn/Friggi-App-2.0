@@ -8,12 +8,12 @@ import '../MonthPage/TopBar/month_app_bar.dart';
 
 // Import dei widget separati
 import 'widgets/day_view.dart';            // La grafica (Timeline + FAB)
-import 'widgets/day_gesture_detector.dart'; //  Il nuovo file dei gesti
+import 'widgets/day_gesture_detector.dart'; // Il file dei gesti
 
 class DayPage extends StatefulWidget {
-  final DateTime date; // Data iniziale passata dal calendario
+  final DateTime selectedDate; 
 
-  const DayPage({super.key, required this.date});
+  const DayPage({super.key, required this.selectedDate});
 
   @override
   State<DayPage> createState() => _DayPageState();
@@ -22,18 +22,27 @@ class DayPage extends StatefulWidget {
 class _DayPageState extends State<DayPage> {
   ItemModel? localeCorrente;
   bool isLoading = true;
-  
-  // Questa variabile terrà traccia del giorno visualizzato
   late DateTime currentDate;
+
+  // --- NUOVE VARIABILI PER GLI ORARI ---
+  late TimeOfDay _startTime;
+  late TimeOfDay _endTime;
 
   @override
   void initState() {
     super.initState();
-    currentDate = widget.date; // Inizializziamo con la data ricevuta
+    currentDate = widget.selectedDate;
+    
+    // 1. CARICAMENTO ORARI DALLE PREFERENZE
+    final prefs = PreferencesService();
+    _startTime = prefs.orarioInizio;
+    _endTime = prefs.orarioFine;
+
     _caricaDatiLocale();
   }
 
   Future<void> _caricaDatiLocale() async {
+    // ... (Logica caricamento locale invariata) ...
     try {
       final int? idLocale = PreferencesService().idLocaleCorrente;
       if (idLocale != null) {
@@ -52,8 +61,7 @@ class _DayPageState extends State<DayPage> {
     }
   }
 
-  // --- LOGICA GESTI ---
-
+  // --- LOGICA GESTI (Invariata) ---
   void _giornoSuccessivo() {
     setState(() {
       currentDate = currentDate.add(const Duration(days: 1));
@@ -67,13 +75,10 @@ class _DayPageState extends State<DayPage> {
   }
 
   void _tornaAllaSettimana() {
-    // Chiude la pagina corrente (DayPage) tornando a quella sotto (WeekPage)
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
   }
-
-  // ... imports invariati ...
 
   @override
   Widget build(BuildContext context) {
@@ -88,12 +93,17 @@ class _DayPageState extends State<DayPage> {
         showDay: true, 
       ),
 
-      // ... resto del body (DayGestureDetector, Timeline, FAB) invariato ...
       body: DayGestureDetector(
         onSwipeNext: _giornoSuccessivo,
         onSwipePrev: _giornoPrecedente,
         onZoomOut: _tornaAllaSettimana,
-        child: const DayTimeline(), 
+        
+        // 2. PASSIAMO DATA E ORARI ALLA TIMELINE
+        child: DayTimeline(
+          currentDate: currentDate,
+          startTime: _startTime, // Passiamo l'inizio (es. 09:00)
+          endTime: _endTime,     // Passiamo la fine (es. 18:00)
+        ), 
       ),
 
       floatingActionButton: DayPageFab(date: currentDate),
