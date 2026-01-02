@@ -6,9 +6,10 @@ import '../DataBase/Locale/LocaleModel.dart';
 import '../service/preferences_service.dart';
 import '../MonthPage/TopBar/month_app_bar.dart';
 
-// Import dei widget separati
-import 'widgets/day_view.dart';            // La grafica (Timeline + FAB)
-import 'widgets/day_gesture_detector.dart'; // Il file dei gesti
+// --- IMPORT CORRETTI ---
+import 'widgets/day_view.dart';            // Contiene SOLO DayTimeline
+import 'widgets/day_gesture_detector.dart'; 
+import 'widgets/day_fab.dart';        
 
 class DayPage extends StatefulWidget {
   final DateTime selectedDate; 
@@ -42,7 +43,6 @@ class _DayPageState extends State<DayPage> {
   }
 
   Future<void> _caricaDatiLocale() async {
-    // ... (Logica caricamento locale invariata) ...
     try {
       final int? idLocale = PreferencesService().idLocaleCorrente;
       if (idLocale != null) {
@@ -61,7 +61,7 @@ class _DayPageState extends State<DayPage> {
     }
   }
 
-  // --- LOGICA GESTI (Invariata) ---
+  // --- LOGICA GESTI ---
   void _giornoSuccessivo() {
     setState(() {
       currentDate = currentDate.add(const Duration(days: 1));
@@ -98,14 +98,15 @@ class _DayPageState extends State<DayPage> {
         onSwipePrev: _giornoPrecedente,
         onZoomOut: _tornaAllaSettimana,
         
-        // 2. PASSIAMO DATA E ORARI ALLA TIMELINE
+        // TIMELINE
         child: DayTimeline(
           currentDate: currentDate,
-          startTime: _startTime, // Passiamo l'inizio (es. 09:00)
-          endTime: _endTime,     // Passiamo la fine (es. 18:00)
+          startTime: _startTime,
+          endTime: _endTime,
         ), 
       ),
 
+      // IL FAB ORA VIENE DAL NUOVO FILE IMPORTATO
       floatingActionButton: DayPageFab(date: currentDate),
     );
   }
