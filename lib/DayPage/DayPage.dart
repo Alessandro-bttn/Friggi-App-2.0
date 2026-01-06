@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
-// Import vari
+// Import DB e Modelli
 import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
+import '../DataBase/Turni/TurniDB.dart';    
+import '../DataBase/Turni/TurnoModel.dart'; 
+// AGGIUNTO: Import per caricare i dipendenti
+import '../DataBase/Dipendente/DipendenteDB.dart'; 
+import '../DataBase/Dipendente/DipendenteModel.dart';
+
 import '../service/preferences_service.dart';
 import '../MonthPage/TopBar/month_app_bar.dart';
 
-// --- IMPORT CORRETTI ---
-import 'widgets/day_view.dart';            // Contiene SOLO DayTimeline
-import 'widgets/day_gesture_detector.dart'; 
-import 'widgets/day_fab.dart';        
+// AGGIUNTO: Import corretto verso la nuova cartella timeline
+import 'widgets/timeline/day_timeline.dart'; 
+import 'widgets/day_gesture_detector.dart';
+import 'widgets/day_fab.dart';
 
 class DayPage extends StatefulWidget {
   final DateTime selectedDate; 
@@ -24,8 +30,11 @@ class _DayPageState extends State<DayPage> {
   ItemModel? localeCorrente;
   bool isLoading = true;
   late DateTime currentDate;
+  
+  // Liste dati
+  List<TurnoModel> _turniDelGiorno = []; 
+  List<DipendenteModel> _dipendenti = []; // <--- NUOVO: Lista dipendenti per i nomi
 
-  // --- NUOVE VARIABILI PER GLI ORARI ---
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
 
@@ -34,50 +43,66 @@ class _DayPageState extends State<DayPage> {
     super.initState();
     currentDate = widget.selectedDate;
     
-    // 1. CARICAMENTO ORARI DALLE PREFERENZE
     final prefs = PreferencesService();
     _startTime = prefs.orarioInizio;
     _endTime = prefs.orarioFine;
 
-    _caricaDatiLocale();
+    _caricaDati(); 
   }
 
-  Future<void> _caricaDatiLocale() async {
+  Future<void> _caricaDati() async {
+    setState(() => isLoading = true);
+    
+    final int? idLocale = PreferencesService().idLocaleCorrente;
+
+    // 1. Carica Locale
     try {
-      final int? idLocale = PreferencesService().idLocaleCorrente;
       if (idLocale != null) {
-        final locale = await DBHelper().getItemById(idLocale);
-        if (mounted) {
-          setState(() {
-            localeCorrente = locale;
-            isLoading = false;
-          });
-        }
-      } else {
-        if (mounted) setState(() => isLoading = false);
+        localeCorrente = await DBHelper().getItemById(idLocale);
       }
-    } catch (e) {
-      if (mounted) setState(() => isLoading = false);
+    } catch (e) { print(e); }
+
+    // 2. Carica Dipendenti (Serve per mostrare i nomi nelle barre)
+    try {
+      if (idLocale != null) {
+        // Assicurati di avere questo metodo in DipendenteDB (come visto nei passaggi precedenti)
+        _dipendenti = await DipendenteDB().getDipendentiByLocale(idLocale);
+      }
+    } catch (e) { print("Errore dipendenti: $e"); }
+
+    // 3. Carica Turni del giorno corrente
+    await _aggiornaTurni();
+
+    if (mounted) setState(() => isLoading = false);
+  }
+
+  // Funzione specifica per ricaricare solo i turni (usata dopo il salvataggio)
+  Future<void> _aggiornaTurni() async {
+    final turni = await TurniDB().getTurniDelGiorno(currentDate);
+    if (mounted) {
+      setState(() {
+        _turniDelGiorno = turni;
+      });
     }
   }
 
-  // --- LOGICA GESTI ---
+  // LOGICA GESTI
   void _giornoSuccessivo() {
     setState(() {
       currentDate = currentDate.add(const Duration(days: 1));
+      _aggiornaTurni(); 
     });
   }
 
   void _giornoPrecedente() {
     setState(() {
       currentDate = currentDate.subtract(const Duration(days: 1));
+      _aggiornaTurni(); 
     });
   }
 
   void _tornaAllaSettimana() {
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
+    if (Navigator.canPop(context)) Navigator.pop(context);
   }
 
   @override
@@ -98,16 +123,19 @@ class _DayPageState extends State<DayPage> {
         onSwipePrev: _giornoPrecedente,
         onZoomOut: _tornaAllaSettimana,
         
-        // TIMELINE
         child: DayTimeline(
           currentDate: currentDate,
           startTime: _startTime,
           endTime: _endTime,
+          turni: _turniDelGiorno,
+          dipendenti: _dipendenti, // <--- ORA PASSIAMO ANCHE I DIPENDENTI
         ), 
       ),
 
-      // IL FAB ORA VIENE DAL NUOVO FILE IMPORTATO
-      floatingActionButton: DayPageFab(date: currentDate),
+      floatingActionButton: DayPageFab(
+        date: currentDate,
+        onTurnoAdded: _aggiornaTurni, 
+      ),
     );
   }
 }
