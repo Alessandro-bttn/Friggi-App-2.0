@@ -59,7 +59,7 @@ class TurniDB {
   Future<List<TurnoModel>> getTurniDelGiorno(DateTime data) async {
     final dbClient = await db;
     final dataStr = data.toIso8601String().split('T')[0];
-    
+
     final List<Map<String, dynamic>> maps = await dbClient.query(
       'turni',
       where: 'data = ?',
@@ -74,5 +74,17 @@ class TurniDB {
   Future<void> deleteTurno(int id) async {
     final dbClient = await db;
     await dbClient.delete('turni', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<List<TurnoModel>> getTurni() async {
+    // CORREZIONE 1: Usa 'db' (il getter che hai definito sopra), non 'database'
+    final dbClient = await db; 
+    
+    // CORREZIONE 2: Usa 'turni' (minuscolo) come nel resto del file, non 'Turni'
+    final List<Map<String, dynamic>> maps = await dbClient.query('turni');
+
+    return List.generate(maps.length, (i) {
+      return TurnoModel.fromMap(maps[i]);
+    });
   }
 }

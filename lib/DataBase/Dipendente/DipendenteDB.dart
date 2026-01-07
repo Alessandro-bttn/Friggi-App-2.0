@@ -90,12 +90,23 @@ class DipendenteDB {
   // 5. UPDATE (Modifica Dipendente)
   Future<int> updateDipendente(DipendenteModel dipendente) async {
     final db = await database;
-    
+
     return await db.update(
-      'dipendenti',         // Nome Tabella
-      dipendente.toMap(),   // Nuovi dati (incluso idLocale, nome, colore, ecc.)
-      where: 'id = ?',      // Condizione
-      whereArgs: [dipendente.id], 
+      'dipendenti', // Nome Tabella
+      dipendente.toMap(), // Nuovi dati (incluso idLocale, nome, colore, ecc.)
+      where: 'id = ?', // Condizione
+      whereArgs: [dipendente.id],
     );
+  }
+
+  Future<List<DipendenteModel>> getAllDipendenti() async {
+    // Assicurati che 'database' sia il getter del tuo DB e 'Dipendenti' il nome della tabella corretto
+    final db = await database;
+    final List<Map<String, dynamic>> maps =
+        await db.query('Dipendenti'); // O il nome della tua tabella
+
+    return List.generate(maps.length, (i) {
+      return DipendenteModel.fromMap(maps[i]);
+    });
   }
 }
