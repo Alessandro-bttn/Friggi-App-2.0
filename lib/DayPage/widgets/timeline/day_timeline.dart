@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../DataBase/Turni/TurnoModel.dart';
-import '../../../DataBase/Dipendente/DipendenteModel.dart'; // <--- IMPORT MODELLO
+import '../../../DataBase/Dipendente/DipendenteModel.dart'; 
+
+// Import dei widget della timeline
 
 import 'timeline_background.dart';
 import 'timeline_shifts_stack.dart';
@@ -10,7 +12,7 @@ class DayTimeline extends StatelessWidget {
   final TimeOfDay startTime;
   final TimeOfDay endTime;
   final List<TurnoModel> turni;
-  final List<DipendenteModel> dipendenti; // <--- 1. NUOVO CAMPO
+  final List<DipendenteModel> dipendenti; 
 
   const DayTimeline({
     super.key,
@@ -18,7 +20,7 @@ class DayTimeline extends StatelessWidget {
     required this.startTime,
     required this.endTime,
     required this.turni,
-    required this.dipendenti, // <--- 2. AGGIUNTO AL COSTRUTTORE
+    required this.dipendenti,
   });
 
   @override

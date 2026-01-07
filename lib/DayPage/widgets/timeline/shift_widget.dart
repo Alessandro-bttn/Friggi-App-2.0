@@ -1,42 +1,34 @@
 import 'package:flutter/material.dart';
 import '../../../DataBase/Turni/TurnoModel.dart';
-import '../../../DataBase/Dipendente/DipendenteModel.dart'; // <--- IMPORT FONDAMENTALE
+import '../../../DataBase/Dipendente/DipendenteModel.dart';
 
 class ShiftWidget extends StatelessWidget {
   final TurnoModel turno;
-  final DipendenteModel? dipendente; // <--- 1. CAMPO AGGIUNTO
+  final DipendenteModel? dipendente;
 
   const ShiftWidget({
     super.key,
     required this.turno,
-    this.dipendente, // <--- 2. PARAMETRO AGGIUNTO AL COSTRUTTORE
+    this.dipendente,
   });
-
-  // Funzione per ottenere le prime 3 lettere
-  String _getShortName(String? fullName) {
-    if (fullName == null || fullName.isEmpty) return "???";
-    if (fullName.length <= 3) return fullName.toUpperCase();
-    return fullName.substring(0, 3).toUpperCase();
-  }
 
   @override
   Widget build(BuildContext context) {
-    // Se abbiamo trovato il dipendente usiamo il suo nome, altrimenti fallback sull'ID
+    // 1. Setup dati dipendente
     final String nomeDaMostrare = dipendente != null 
         ? dipendente!.nome 
         : "ID ${turno.idDipendente}";
 
-    // Logica 3 lettere (es. "MAR")
-    final String etichetta = _getShortName(nomeDaMostrare);
-
-    // Se abbiamo il dipendente usiamo il suo colore, altrimenti grigio
     final Color baseColor = dipendente != null 
         ? Color(dipendente!.colore) 
         : Colors.grey;
 
-    // Stile sottile: sfondo molto chiaro, bordo e testo scuri
+    // 2. Definizione colori UI
     final Color bgColor = baseColor.withValues(alpha: 0.25);
     final Color borderColor = baseColor.withValues(alpha: 0.8);
+
+    // 3. Calcolo contrasto dinamico: Nero su sfondi chiari, Bianco su scuri
+    final Color textColor = bgColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
     return Container(
       decoration: BoxDecoration(
@@ -44,38 +36,44 @@ class ShiftWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: borderColor, width: 1),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 1. LE 3 LETTERE (es. MAR)
-          Text(
-            etichetta, 
-            style: TextStyle(
-              fontWeight: FontWeight.w900, // Molto grassetto
-              fontSize: 11,
-              color: borderColor, // Testo dello stesso colore del bordo
-              letterSpacing: 1.0,
-            ),
-          ),
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+      
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 4. Logica responsiva: lunghezza testo basata sulla larghezza disponibile
+          final double width = constraints.maxWidth;
+          int lunghezza = 1;
           
-          // 2. ORARIO (con fit per non uscire fuori)
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.topLeft,
-              child: Text(
-                "${turno.inizio.format(context)} - ${turno.fine.format(context)}",
-                style: TextStyle(
-                  fontSize: 10, 
-                  color: Colors.black.withValues(alpha: 0.6)
-                ),
+          if (width > 24) {
+            lunghezza = 3;
+          } else if (width > 16) {
+            lunghezza = 2;
+          }
+
+          return Align(
+            alignment: Alignment.center, // Centra il widget Text nel Container
+            child: Text(
+              _getDynamicShortName(nomeDaMostrare, lunghezza),
+              textAlign: TextAlign.center, // Centra il testo stesso
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 11,
+                color: textColor, // Colore calcolato al punto 3
+                letterSpacing: 0.5,
               ),
+              overflow: TextOverflow.clip,
+              softWrap: false,
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
+  }
+
+  // Helper per troncare il nome
+  String _getDynamicShortName(String? fullName, int length) {
+    if (fullName == null || fullName.isEmpty) return "?";
+    int actualLength = (fullName.length < length) ? fullName.length : length;
+    return fullName.substring(0, actualLength).toUpperCase();
   }
 }

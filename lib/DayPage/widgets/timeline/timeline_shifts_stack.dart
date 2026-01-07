@@ -3,6 +3,8 @@ import '../../../DataBase/Turni/TurnoModel.dart';
 import '../../../DataBase/Dipendente/DipendenteModel.dart';
 import 'shift_widget.dart';
 
+// Widget che organizza e mostra i turni nella timeline
+
 class TimelineShiftsStack extends StatelessWidget {
   final List<TurnoModel> turni;
   final List<DipendenteModel> dipendenti;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// Widget che disegna lo sfondo della timeline con orari e linee
+
 class TimelineBackground extends StatelessWidget {
   final int startHour;
   final int endHour;
