@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
-// IMPORTA IL SERVIZIO PREFERENZE
 import '../../service/preferences_service.dart';
 import 'day_cell.dart';
 import '../../DayPage/DayPage.dart';
+// IMPORTA I MODELLI
+import '../../DataBase/Turni/TurnoModel.dart';
+import '../../DataBase/Dipendente/DipendenteModel.dart';
 
 class CalendarGrid extends StatelessWidget {
   final DateTime meseCorrente;
+  // AGGIUNTI PARAMETRI PER I DATI
+  final List<TurnoModel> turniDelMese;
+  final List<DipendenteModel> dipendenti;
 
-  const CalendarGrid({super.key, required this.meseCorrente});
+  const CalendarGrid({
+    super.key, 
+    required this.meseCorrente,
+    // Richiediamo i dati nel costruttore
+    required this.turniDelMese, 
+    required this.dipendenti,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +27,8 @@ class CalendarGrid extends StatelessWidget {
     
     // 1. RECUPERIAMO I SETTAGGI DALLE PREFERENZE
     final prefs = PreferencesService();
-    final int divisioni = prefs.divisioneTurni;
+    // Fallback di sicurezza se divisioneTurni è 0
+    final int divisioni = (prefs.divisioneTurni > 0) ? prefs.divisioneTurni : 2;
     final TimeOfDay start = prefs.orarioInizio;
     final TimeOfDay end = prefs.orarioFine;
 
@@ -36,7 +48,6 @@ class CalendarGrid extends StatelessWidget {
     final int month = meseCorrente.month;
     final int daysInMonth = DateTime(year, month + 1, 0).day;
     final int firstDayWeekday = DateTime(year, month, 1).weekday;
-    // firstDayWeekday: 1=Lun, 7=Dom. Se vogliamo lunedì come primo giorno: offset = weekday - 1
     final int startingOffset = firstDayWeekday - 1;
     final int totalCells = startingOffset + daysInMonth;
 
@@ -77,13 +88,11 @@ class CalendarGrid extends StatelessWidget {
                 const double spacing = 2.0;
 
                 final heightNetta = availableHeight - ((numeroRighe - 1) * spacing);
-                // Evitiamo divisione per zero se non ci sono righe (caso limite)
                 final cellHeight = numeroRighe > 0 ? heightNetta / numeroRighe : 0.0;
 
                 final widthNetta = constraints.maxWidth - ((numeroColonne - 1) * spacing);
                 final cellWidth = widthNetta / numeroColonne;
 
-                // Calcolo aspect ratio dinamico per riempire lo spazio
                 final double dynamicAspectRatio = (cellHeight > 0) ? cellWidth / cellHeight : 1.0;
 
                 return GridView.builder(
@@ -104,22 +113,30 @@ class CalendarGrid extends StatelessWidget {
 
                     // CALCOLO GIORNO REALE
                     final int giorno = index - startingOffset + 1;
-
-                    // CREIAMO LA DATA DEL GIORNO SELEZIONATO
                     final DateTime dataSelezionata = DateTime(year, month, giorno);
+
+                    // FILTRO I TURNI PER QUESTO GIORNO SPECIFICO
+                    final turniDelGiorno = turniDelMese.where((t) {
+                        return t.data.year == year && 
+                               t.data.month == month && 
+                               t.data.day == giorno;
+                    }).toList();
 
                     // 3. RITORNIAMO LA DAYCELL CONFIGURATA
                     return DayCell(
-                      giorno: giorno, // Passiamo il giorno corretto, non l'index
-                      startTime: start, // Orario dalle preferenze
-                      endTime: end,     // Orario dalle preferenze
-                      divisions: divisioni, // Settaggio dalle preferenze
+                      giorno: giorno,
+                      startTime: start,
+                      endTime: end,
+                      divisions: divisioni,
+                      // --- NUOVI PARAMETRI AGGIUNTI ---
+                      shifts: turniDelGiorno, 
+                      allDipendenti: dipendenti,
+                      // -------------------------------
                       onTap: () {
-                        // 4. NAVIGAZIONE ALLA PAGINA DI DETTAGLIO
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => DayPage(
-                              selectedDate: dataSelezionata, // Assicurati che DayPage accetti questo parametro
+                              selectedDate: dataSelezionata,
                             ),
                           ),
                         );
