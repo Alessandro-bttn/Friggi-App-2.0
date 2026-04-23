@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 // IMPORTA I DATI
 import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
+
 // IMPORTA I MODELLI E DB MANCANTI
 import '../DataBase/Turni/TurnoModel.dart';
 import '../DataBase/Turni/TurniDB.dart';
@@ -28,6 +29,9 @@ import '../Dipendenti/DipendentiPage.dart';
 // IMPORTA ALTRE PAGINE
 import '../SettingsPage/SettingsPage.dart';
 
+// IMPORTA IL SERVIZIO DI NAVIGAZIONE
+import '../CalanderNavigator/calendar_navigation.dart';
+
 // PAGINA PRINCIPALE DEL MESE
 
 class MonthPage extends StatefulWidget {
@@ -44,6 +48,7 @@ class _MonthPageState extends State<MonthPage> {
   DateTime dataOggi = DateTime.now(); // Questo funge da "_currentMonth"
   int _drawerSelectedIndex = 0;
   bool _isNavigating = false;
+  String _currentView = 'Mese';
 
   // --- DATI PER IL CALENDARIO ---
   List<TurnoModel> _turni = [];
@@ -75,7 +80,6 @@ class _MonthPageState extends State<MonthPage> {
       // 3. Carica Turni (Tutti, o ottimizza caricando solo quelli del mese se preferisci)
       // Per ora carichiamo tutto per semplicità, come nella WeekPage
       _turni = await TurniDB().getTurni();
-
     } catch (e) {
       debugPrint("Errore caricamento dati mese: $e");
     } finally {
@@ -170,6 +174,9 @@ class _MonthPageState extends State<MonthPage> {
       appBar: MonthAppBar(
         localeCorrente: localeCorrente,
         dataOggi: dataOggi,
+        currentView: _currentView,
+        // Colleghiamo la logica esternata
+        onViewChanged: _handleViewChange,
       ),
 
       // Menu Laterale
@@ -183,14 +190,27 @@ class _MonthPageState extends State<MonthPage> {
         onSwipePrev: _vaiMesePrecedente,
         onSwipeNext: _vaiMeseSuccessivo,
         onZoomIn: _apriWeekPage,
-        
+
         // Passiamo i dati caricati alla griglia
         child: CalendarGrid(
-          meseCorrente: dataOggi, 
-          turniDelMese: _turni, 
-          dipendenti: _dipendenti, 
+          meseCorrente: dataOggi,
+          turniDelMese: _turni,
+          dipendenti: _dipendenti,
         ),
       ),
+    );
+  }
+
+  void _handleViewChange(String newView) {
+    CalendarNavigationService.switchToView(
+      context: context,
+      targetView: newView,
+      currentView: 'Mese', // Io sono il Mese
+      referenceDate: dataOggi,
+      onReturn: () {
+        setState(() => _currentView = 'Mese');
+        _caricaDatiCompleti();
+      },
     );
   }
 }

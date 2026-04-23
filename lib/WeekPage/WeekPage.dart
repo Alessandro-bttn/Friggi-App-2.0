@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
 import '../DataBase/Turni/TurnoModel.dart'; 
-import '../DataBase/Turni/TurniDB.dart';     
+import '../DataBase/Turni/TurniDB.dart';      
 import '../DataBase/Dipendente/DipendenteModel.dart'; 
 import '../DataBase/Dipendente/DipendenteDB.dart';     
 
@@ -16,6 +16,9 @@ import 'logic/week_logic.dart';
 import 'widgets/week_view.dart';
 import 'widgets/week_gesture_detector.dart';
 
+// IMPORTA IL SERVIZIO DI NAVIGAZIONE
+import '../CalanderNavigator/calendar_navigation.dart'; 
+
 class WeekPage extends StatefulWidget {
   final DateTime dataIniziale;
 
@@ -26,15 +29,17 @@ class WeekPage extends StatefulWidget {
 }
 
 class _WeekPageState extends State<WeekPage> {
+  // --- STATO ---
   ItemModel? localeCorrente;
   late DateTime currentWeekStart;
   bool isLoading = true;
+  String _currentView = 'Settimana';
 
-  // --- DATI DA PASSARE ALLA VISTA ---
+  // --- DATI ---
   List<TurnoModel> _turniSettimana = [];
   List<DipendenteModel> _dipendenti = [];
 
-  // --- VARIABILI PER I SETTAGGI ---
+  // --- IMPOSTAZIONI ---
   late int _divisions;
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
@@ -42,13 +47,12 @@ class _WeekPageState extends State<WeekPage> {
   @override
   void initState() {
     super.initState();
+    // Inizializza la data all'inizio della settimana (es. Lunedì)
     currentWeekStart = WeekLogic.getStartOfWeek(widget.dataIniziale);
     
     final prefs = PreferencesService();
     
-    // --- CORREZIONE IMPORTANTE ---
-    // Se prefs.divisioneTurni è 0 (default o errore), la griglia non viene disegnata.
-    // Qui mettiamo un fallback: se è <= 0, usa 2 come default.
+    // Fallback per le divisioni (minimo 1 per evitare crash)
     int savedDivisions = prefs.divisioneTurni;
     _divisions = (savedDivisions > 0) ? savedDivisions : 2;
 
@@ -58,6 +62,7 @@ class _WeekPageState extends State<WeekPage> {
     _caricaDatiCompleti(); 
   }
 
+  // --- CARICAMENTO DATI ---
   Future<void> _caricaDatiCompleti() async {
     try {
       setState(() => isLoading = true);
@@ -71,21 +76,14 @@ class _WeekPageState extends State<WeekPage> {
       // 2. Carica Dipendenti
       _dipendenti = await DipendenteDB().getAllDipendenti(); 
 
-      // 3. Carica Turni
+      // 3. Carica e Filtra Turni
       List<TurnoModel> tuttiITurni = await TurniDB().getTurni(); 
-      print("DEBUG: Turni totali trovati nel DB: ${tuttiITurni.length}");
-      
       DateTime weekEnd = currentWeekStart.add(const Duration(days: 7));
 
-      // Filtra i turni della settimana corrente
       _turniSettimana = tuttiITurni.where((t) {
-         // Logica: dataTurno >= inizioSettimana E dataTurno < fineSettimana
-         // Usiamo subtract(1 day) per assicurarci di includere il lunedì anche se gli orari non coincidono perfettamente
-         return t.data.isAfter(currentWeekStart.subtract(const Duration(days: 1))) && 
-                t.data.isBefore(weekEnd);
+        return t.data.isAfter(currentWeekStart.subtract(const Duration(seconds: 1))) && 
+               t.data.isBefore(weekEnd);
       }).toList();
-
-      print("DEBUG: Turni filtrati per questa settimana: ${_turniSettimana.length}");
 
     } catch (e) {
       debugPrint("Errore caricamento dati settimana: $e");
@@ -96,6 +94,7 @@ class _WeekPageState extends State<WeekPage> {
     }
   }
 
+  // --- NAVIGAZIONE INTERNA (SWIPE) ---
   void _vaiSettimanaSuccessiva() {
     setState(() {
       currentWeekStart = WeekLogic.getNextWeek(currentWeekStart);
@@ -110,32 +109,57 @@ class _WeekPageState extends State<WeekPage> {
     });
   }
 
-  void _tornaAlMese() {
-    Navigator.pop(context); 
+  // --- LOGICA DI CAMBIO VISTA (BOTTONI TOP BAR) ---
+  void _handleViewChange(String newView) {
+    setState(() => _currentView = newView);
+
+    CalendarNavigationService.switchToView(
+      context: context,
+      targetView: newView,
+      currentView: 'Settimana',
+      referenceDate: currentWeekStart,
+      onReturn: () {
+        if (mounted) {
+          setState(() => _currentView = 'Settimana');
+          _caricaDatiCompleti();
+        }
+      },
+    );
   }
 
-  void _onGiornoSelezionato(DateTime dataSelezionata) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DayPage(selectedDate: dataSelezionata),
-      ),
+  void _onGiornoSelezionato(DateTime dataSelezionata) {
+    // Navighiamo al giorno specifico usando il servizio direttamente
+    CalendarNavigationService.switchToView(
+      context: context,
+      targetView: 'Giorno',
+      currentView: 'Settimana',
+      referenceDate: dataSelezionata, // <--- Usiamo la data cliccata, non l'inizio settimana
+      onReturn: () {
+        if (mounted) {
+          setState(() => _currentView = 'Settimana');
+          _caricaDatiCompleti();
+        }
+      },
     );
-    // Al ritorno dalla pagina giorno, ricarichiamo i dati (magari hai aggiunto un turno)
-    _caricaDatiCompleti(); 
   }
   
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: MonthAppBar(
         localeCorrente: localeCorrente,
         dataOggi: currentWeekStart,
         showDay: false, 
+        currentView: _currentView,
+        onViewChanged: _handleViewChange,
       ),
       
       body: SafeArea(
@@ -144,12 +168,23 @@ class _WeekPageState extends State<WeekPage> {
         child: WeekGestureDetector(
           onSwipeNext: _vaiSettimanaSuccessiva,
           onSwipePrev: _vaiSettimanaPrecedente,
-          onZoomOut: _tornaAlMese,
-          onZoomIn: () => _onGiornoSelezionato(currentWeekStart),
+          onZoomOut: () => _handleViewChange('Mese'), 
+          onZoomIn: () => _handleViewChange('Giorno'), 
           
           child: WeekView(
             currentStartOfWeek: currentWeekStart,
-            onDaySelected: _onGiornoSelezionato,
+            onDaySelected: (date) {
+              // Quando selezioni un giorno specifico, navighiamo lì
+              CalendarNavigationService.switchToView(
+                context: context,
+                targetView: 'Giorno',
+                currentView: 'Settimana',
+                referenceDate: date, // Passiamo la data esatta cliccata
+                onReturn: () {
+                  if (mounted) _caricaDatiCompleti();
+                },
+              );
+            },
             divisions: _divisions,
             startTime: _startTime,
             endTime: _endTime,

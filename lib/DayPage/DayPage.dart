@@ -5,17 +5,19 @@ import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
 import '../DataBase/Turni/TurniDB.dart';    
 import '../DataBase/Turni/TurnoModel.dart'; 
-// AGGIUNTO: Import per caricare i dipendenti
 import '../DataBase/Dipendente/DipendenteDB.dart'; 
 import '../DataBase/Dipendente/DipendenteModel.dart';
 
 import '../service/preferences_service.dart';
 import '../MonthPage/TopBar/month_app_bar.dart';
 
-// AGGIUNTO: Import corretto verso la nuova cartella timeline
+// Widget della pagina
 import 'widgets/timeline/day_timeline.dart'; 
 import 'widgets/day_gesture_detector.dart';
 import 'widgets/day_fab.dart';
+
+// IMPORTA IL SERVIZIO DI NAVIGAZIONE
+import '../CalanderNavigator/calendar_navigation.dart';
 
 class DayPage extends StatefulWidget {
   final DateTime selectedDate; 
@@ -27,13 +29,15 @@ class DayPage extends StatefulWidget {
 }
 
 class _DayPageState extends State<DayPage> {
+  // --- STATO ---
   ItemModel? localeCorrente;
   bool isLoading = true;
   late DateTime currentDate;
+  String _currentView = 'Giorno'; 
   
   // Liste dati
   List<TurnoModel> _turniDelGiorno = []; 
-  List<DipendenteModel> _dipendenti = []; // <--- NUOVO: Lista dipendenti per i nomi
+  List<DipendenteModel> _dipendenti = []; 
 
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
@@ -50,33 +54,26 @@ class _DayPageState extends State<DayPage> {
     _caricaDati(); 
   }
 
+  // --- CARICAMENTO DATI ---
   Future<void> _caricaDati() async {
     setState(() => isLoading = true);
     
     final int? idLocale = PreferencesService().idLocaleCorrente;
 
-    // 1. Carica Locale
     try {
       if (idLocale != null) {
         localeCorrente = await DBHelper().getItemById(idLocale);
-      }
-    } catch (e) { print(e); }
-
-    // 2. Carica Dipendenti (Serve per mostrare i nomi nelle barre)
-    try {
-      if (idLocale != null) {
-        // Assicurati di avere questo metodo in DipendenteDB (come visto nei passaggi precedenti)
         _dipendenti = await DipendenteDB().getDipendentiByLocale(idLocale);
       }
-    } catch (e) { print("Errore dipendenti: $e"); }
+    } catch (e) { 
+      debugPrint("Errore caricamento dati DayPage: $e"); 
+    }
 
-    // 3. Carica Turni del giorno corrente
     await _aggiornaTurni();
 
     if (mounted) setState(() => isLoading = false);
   }
 
-  // Funzione specifica per ricaricare solo i turni (usata dopo il salvataggio)
   Future<void> _aggiornaTurni() async {
     final turni = await TurniDB().getTurniDelGiorno(currentDate);
     if (mounted) {
@@ -86,7 +83,7 @@ class _DayPageState extends State<DayPage> {
     }
   }
 
-  // LOGICA GESTI
+  // --- LOGICA NAVIGAZIONE INTERNA (SWIPE) ---
   void _giornoSuccessivo() {
     setState(() {
       currentDate = currentDate.add(const Duration(days: 1));
@@ -101,34 +98,55 @@ class _DayPageState extends State<DayPage> {
     });
   }
 
-  void _tornaAllaSettimana() {
-    if (Navigator.canPop(context)) Navigator.pop(context);
+  // --- LOGICA DI CAMBIO VISTA (SERVIZIO CENTRALIZZATO) ---
+  void _handleViewChange(String newView) {
+    setState(() => _currentView = newView);
+
+    CalendarNavigationService.switchToView(
+      context: context,
+      targetView: newView,
+      currentView: 'Giorno', // Io sono il Giorno
+      referenceDate: currentDate,
+      onReturn: () {
+        if (mounted) {
+          setState(() => _currentView = 'Giorno'); // Reset al ritorno
+          _caricaDati(); // Ricarica tutto per sicurezza
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: MonthAppBar(
         localeCorrente: localeCorrente,
         dataOggi: currentDate, 
         showDay: true, 
+        currentView: _currentView,
+        onViewChanged: _handleViewChange, // Collegato al servizio
       ),
 
       body: DayGestureDetector(
         onSwipeNext: _giornoSuccessivo,
         onSwipePrev: _giornoPrecedente,
-        onZoomOut: _tornaAllaSettimana,
+        // Usiamo la logica centralizzata per tornare indietro (Settimana o Mese)
+        onZoomOut: () => _handleViewChange('Settimana'),
         
         child: DayTimeline(
           currentDate: currentDate,
           startTime: _startTime,
           endTime: _endTime,
           turni: _turniDelGiorno,
-          dipendenti: _dipendenti, // <--- ORA PASSIAMO ANCHE I DIPENDENTI
+          dipendenti: _dipendenti,
         ), 
       ),
 
