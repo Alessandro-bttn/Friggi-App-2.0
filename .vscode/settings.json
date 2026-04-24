@@ -1,3 +1,4 @@
 {
-    "vscode-corda.isCordaProject": false
+    "vscode-corda.isCordaProject": false,
+    "cmake.sourceDirectory": "C:/Users/aless/OneDrive/Desktop/Notarum4.0/Friggi-App-2.0/linux"
 }

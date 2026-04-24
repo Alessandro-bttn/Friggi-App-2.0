@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-
-// Import Database e Modelli
 import '../../../DataBase/Turni/TurnoModel.dart';
 import '../../../DataBase/Turni/TurniDB.dart';
 import '../../../DataBase/Dipendente/DipendenteModel.dart';
-import '../../../DataBase/Dipendente/DipendenteDB.dart';
-import '../../../service/preferences_service.dart';
-import 'shift_form_fields.dart';
-
 import '../../../l10n/app_localizations.dart';
 
-// --- 1. CLASSE MANCANTE AGGIUNTA QUI ---
+import 'shift_form_fields.dart';
+import 'employee_selector_field.dart'; // Importa il nuovo file
+
 class AddTurnoDialog extends StatefulWidget {
   final DateTime date;
   final VoidCallback onSaved;
@@ -25,39 +21,10 @@ class AddTurnoDialog extends StatefulWidget {
   State<AddTurnoDialog> createState() => _AddTurnoDialogState();
 }
 
-// --- 2. LO STATO (Quello che avevi già, con una piccola correzione) ---
 class _AddTurnoDialogState extends State<AddTurnoDialog> {
-  List<DipendenteModel> _dipendenti = [];
   DipendenteModel? _selectedDipendente;
-  bool _isLoading = true;
-
   TimeOfDay _inizio = const TimeOfDay(hour: 9, minute: 0);
   TimeOfDay _fine = const TimeOfDay(hour: 17, minute: 0);
-
-  @override
-  void initState() {
-    super.initState();
-    _initData();
-  }
-
-  Future<void> _initData() async {
-    final int? idLocale = PreferencesService().idLocaleCorrente;
-    if (idLocale == null) {
-      if (mounted) setState(() => _isLoading = false);
-      return;
-    }
-    try {
-      final lista = await DipendenteDB().getDipendentiByLocale(idLocale);
-      if (mounted) {
-        setState(() {
-          _dipendenti = lista;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
 
   Future<void> _handlePickTime(bool isStart) async {
     final TimeOfDay? picked = await showTimePicker(
@@ -80,8 +47,7 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
 
     final nuovoTurno = TurnoModel(
       idDipendente: _selectedDipendente!.id!,
-      data: widget
-          .date, // widget.date ora è accessibile perché abbiamo definito il StatefulWidget
+      data: widget.date,
       inizio: _inizio,
       fine: _fine,
     );
@@ -97,40 +63,36 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
 
     return AlertDialog(
       title: _DialogHeader(date: widget.date),
-      content: _isLoading
-          ? const SizedBox(
-              height: 100, child: Center(child: CircularProgressIndicator()))
-          : SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    EmployeeDropdown(
-                      dipendenti: _dipendenti,
-                      selectedDipendente: _selectedDipendente,
-                      onChanged: (val) =>
-                          setState(() => _selectedDipendente = val),
-                    ),
-                    const SizedBox(height: 20),
-                    TimeRangeSelector(
-                      inizio: _inizio,
-                      fine: _fine,
-                      onPickTime: (isStart) => _handlePickTime(isStart),
-                    ),
-                  ],
-                ),
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Utilizziamo il nuovo widget dedicato
+              EmployeeSelectorField(
+                selectedDipendente: _selectedDipendente,
+                onSelected: (val) => setState(() => _selectedDipendente = val),
               ),
-            ),
+              const SizedBox(height: 20),
+              TimeRangeSelector(
+                inizio: _inizio,
+                fine: _fine,
+                onPickTime: (isStart) => _handlePickTime(isStart),
+              ),
+            ],
+          ),
+        ),
+      ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(l10n.btn_annulla.toUpperCase()), // L10N
+          child: Text(l10n.btn_annulla.toUpperCase()),
         ),
         ElevatedButton(
           onPressed: (_selectedDipendente != null) ? _submitForm : null,
           style: ElevatedButton.styleFrom(elevation: 0),
-          child: Text(l10n.btn_salva_turno.toUpperCase()), // L10N
+          child: Text(l10n.btn_salva_turno.toUpperCase()),
         ),
       ],
     );
@@ -144,7 +106,6 @@ class _DialogHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
     return Row(
       children: [
         const Icon(Icons.add_alarm, color: Colors.blue),
@@ -152,13 +113,8 @@ class _DialogHeader extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.turni_nuovo_titolo,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text(
-              "${date.day}/${date.month}/${date.year}",
-              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-            ),
+            Text(l10n.turni_nuovo_titolo, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("${date.day}/${date.month}/${date.year}", style: TextStyle(fontSize: 13, color: Colors.grey[600])),
           ],
         ),
       ],
