@@ -24,6 +24,10 @@
     "calendar_sat": "Sáb",
     "calendar_sun": "Dom",
 
+    "calendar_day": "Día",
+    "calendar_week": "Semana",
+    "calendar_month": "Mes",
+
     "menu_titolo": "Menú",
     "menu_gestioneDipendenti": "Gestión de Empleados",
     "menu_statistiche": "Estadísticas",
@@ -64,7 +68,16 @@
     "settings_turni_valore_2": "Dos Turnos (2)",
     "settings_turni_valore_3": "Tres Turnos (3)",
 
-    "settings_orari_label": "Horarios de Trabajo",
+    "settings_orari_label": "Horario de Trabajo",
     "settings_orario_inizio": "Inicio",
-    "settings_orario_fine": "Fin"
+    "settings_orario_fine": "Fin",
+
+    "turni_nuovo_titolo": "Nuevo Turno",
+    "turni_label_dipendente": "Empleado",
+    "turni_label_inizio": "INICIO",
+    "turni_label_fine": "FIN",
+    "turni_orario_titolo": "HORARIO DEL TURNO",
+    "btn_salva_turno": "GUARDAR TURNO"  
+
+
 }

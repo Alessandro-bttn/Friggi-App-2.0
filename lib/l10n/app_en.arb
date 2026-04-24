@@ -67,7 +67,18 @@
     "settings_turni_valore_2": "Two Shifts (2)",
     "settings_turni_valore_3": "Three Shifts (3)",
 
-    "settings_orari_label": "Working Hours",
+    "settings_orari_label": "Work Hours",
     "settings_orario_inizio": "Start",
-    "settings_orario_fine": "End"   
+    "settings_orario_fine": "End",
+
+    "calendar_day": "Day",
+    "calendar_week": "Week",
+    "calendar_month": "Month",
+
+    "turni_nuovo_titolo": "New Shift",
+    "turni_label_dipendente": "Employee",
+    "turni_label_inizio": "START",
+    "turni_label_fine": "END",
+    "turni_orario_titolo": "SHIFT HOURS",
+    "btn_salva_turno": "SAVE SHIFT"     
 }

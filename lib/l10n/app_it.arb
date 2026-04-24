@@ -24,6 +24,10 @@
     "calendar_sat": "Sab",
     "calendar_sun": "Dom",
 
+    "calendar_day": "Giorno",
+    "calendar_week": "Settimana",
+    "calendar_month": "Mese",
+
     "menu_titolo": "Menu",
     "menu_gestioneDipendenti": "Gestione Dipendenti",
     "menu_statistiche": "Statistiche",
@@ -66,5 +70,12 @@
     
     "settings_orari_label": "Orari di Lavoro",
     "settings_orario_inizio": "Inizio",
-    "settings_orario_fine": "Fine"
+    "settings_orario_fine": "Fine",
+
+    "turni_nuovo_titolo": "Nuovo Turno",
+    "turni_label_dipendente": "Dipendente",
+    "turni_label_inizio": "INIZIO",
+    "turni_label_fine": "FINE",
+    "turni_orario_titolo": "ORARIO DEL TURNO",
+    "btn_salva_turno": "SALVA TURNO"
 }

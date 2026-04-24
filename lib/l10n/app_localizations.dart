@@ -220,6 +220,24 @@ abstract class AppLocalizations {
   /// **'Dom'**
   String get calendar_sun;
 
+  /// No description provided for @calendar_day.
+  ///
+  /// In it, this message translates to:
+  /// **'Giorno'**
+  String get calendar_day;
+
+  /// No description provided for @calendar_week.
+  ///
+  /// In it, this message translates to:
+  /// **'Settimana'**
+  String get calendar_week;
+
+  /// No description provided for @calendar_month.
+  ///
+  /// In it, this message translates to:
+  /// **'Mese'**
+  String get calendar_month;
+
   /// No description provided for @menu_titolo.
   ///
   /// In it, this message translates to:
@@ -453,6 +471,42 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Fine'**
   String get settings_orario_fine;
+
+  /// No description provided for @turni_nuovo_titolo.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo Turno'**
+  String get turni_nuovo_titolo;
+
+  /// No description provided for @turni_label_dipendente.
+  ///
+  /// In it, this message translates to:
+  /// **'Dipendente'**
+  String get turni_label_dipendente;
+
+  /// No description provided for @turni_label_inizio.
+  ///
+  /// In it, this message translates to:
+  /// **'INIZIO'**
+  String get turni_label_inizio;
+
+  /// No description provided for @turni_label_fine.
+  ///
+  /// In it, this message translates to:
+  /// **'FINE'**
+  String get turni_label_fine;
+
+  /// No description provided for @turni_orario_titolo.
+  ///
+  /// In it, this message translates to:
+  /// **'ORARIO DEL TURNO'**
+  String get turni_orario_titolo;
+
+  /// No description provided for @btn_salva_turno.
+  ///
+  /// In it, this message translates to:
+  /// **'SALVA TURNO'**
+  String get btn_salva_turno;
 }
 
 class _AppLocalizationsDelegate

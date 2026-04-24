@@ -11,7 +11,6 @@ import '../DataBase/Dipendente/DipendenteDB.dart';
 import '../service/preferences_service.dart';
 import '../MonthPage/TopBar/month_app_bar.dart';
 
-import '../DayPage/DayPage.dart'; 
 import 'logic/week_logic.dart';
 import 'widgets/week_view.dart';
 import 'widgets/week_gesture_detector.dart';
@@ -127,22 +126,6 @@ class _WeekPageState extends State<WeekPage> {
     );
   }
 
-  void _onGiornoSelezionato(DateTime dataSelezionata) {
-    // Navighiamo al giorno specifico usando il servizio direttamente
-    CalendarNavigationService.switchToView(
-      context: context,
-      targetView: 'Giorno',
-      currentView: 'Settimana',
-      referenceDate: dataSelezionata, // <--- Usiamo la data cliccata, non l'inizio settimana
-      onReturn: () {
-        if (mounted) {
-          setState(() => _currentView = 'Settimana');
-          _caricaDatiCompleti();
-        }
-      },
-    );
-  }
-  
   @override
   Widget build(BuildContext context) {
     if (isLoading) {

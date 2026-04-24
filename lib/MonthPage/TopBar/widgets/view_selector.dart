@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart'; 
 
 class ViewSelector extends StatelessWidget {
   final String currentView;
   final Function(String) onViewChanged;
-
+  
   const ViewSelector({
     super.key,
     required this.currentView,
@@ -12,16 +13,19 @@ class ViewSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Inizializza l10n qui dentro, dove context è disponibile
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0, top: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildButton("Giorno"),
+          _buildButton(l10n.calendar_day),
           const SizedBox(width: 24),
-          _buildButton("Settimana"),
+          _buildButton(l10n.calendar_week),
           const SizedBox(width: 24),
-          _buildButton("Mese"),
+          _buildButton(l10n.calendar_month),
         ],
       ),
     );
@@ -44,7 +48,6 @@ class ViewSelector extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          // Indicatore sotto il testo
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             height: 2,

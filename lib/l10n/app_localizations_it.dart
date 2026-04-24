@@ -70,6 +70,15 @@ class AppLocalizationsIt extends AppLocalizations {
   String get calendar_sun => 'Dom';
 
   @override
+  String get calendar_day => 'Giorno';
+
+  @override
+  String get calendar_week => 'Settimana';
+
+  @override
+  String get calendar_month => 'Mese';
+
+  @override
   String get menu_titolo => 'Menu';
 
   @override
@@ -185,4 +194,22 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get settings_orario_fine => 'Fine';
+
+  @override
+  String get turni_nuovo_titolo => 'Nuovo Turno';
+
+  @override
+  String get turni_label_dipendente => 'Dipendente';
+
+  @override
+  String get turni_label_inizio => 'INIZIO';
+
+  @override
+  String get turni_label_fine => 'FINE';
+
+  @override
+  String get turni_orario_titolo => 'ORARIO DEL TURNO';
+
+  @override
+  String get btn_salva_turno => 'SALVA TURNO';
 }

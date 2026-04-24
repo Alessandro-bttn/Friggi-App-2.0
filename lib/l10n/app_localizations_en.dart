@@ -69,6 +69,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendar_sun => 'Sun';
 
   @override
+  String get calendar_day => 'Day';
+
+  @override
+  String get calendar_week => 'Week';
+
+  @override
+  String get calendar_month => 'Month';
+
+  @override
   String get menu_titolo => 'Menu';
 
   @override
@@ -177,11 +186,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_turni_valore_3 => 'Three Shifts (3)';
 
   @override
-  String get settings_orari_label => 'Working Hours';
+  String get settings_orari_label => 'Work Hours';
 
   @override
   String get settings_orario_inizio => 'Start';
 
   @override
   String get settings_orario_fine => 'End';
+
+  @override
+  String get turni_nuovo_titolo => 'New Shift';
+
+  @override
+  String get turni_label_dipendente => 'Employee';
+
+  @override
+  String get turni_label_inizio => 'START';
+
+  @override
+  String get turni_label_fine => 'END';
+
+  @override
+  String get turni_orario_titolo => 'SHIFT HOURS';
+
+  @override
+  String get btn_salva_turno => 'SAVE SHIFT';
 }
