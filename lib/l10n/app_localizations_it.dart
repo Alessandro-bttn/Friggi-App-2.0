@@ -124,6 +124,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get btn_conferma => 'Conferma';
 
   @override
+  String get dipendenti_seleziona => 'Seleziona Dipendente';
+
+  @override
   String get settings_titolo => 'Impostazioni';
 
   @override

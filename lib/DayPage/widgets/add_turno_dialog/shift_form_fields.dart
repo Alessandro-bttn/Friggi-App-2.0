@@ -38,7 +38,7 @@ class EmployeeDropdown extends StatelessWidget {
         );
       }).toList(),
       onChanged: onChanged,
-      hint: Text(dipendenti.isEmpty ? l10n.dipendenti_nessuno : l10n.lingua_seleziona), // L10N
+      hint: Text(dipendenti.isEmpty ? l10n.dipendenti_nessuno : l10n.dipendenti_seleziona), // L10N
     );
   }
 }

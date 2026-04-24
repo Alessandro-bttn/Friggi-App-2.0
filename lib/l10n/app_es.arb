@@ -44,6 +44,7 @@
     "msg_elimina_conferma": "¿Desea eliminar este empleado?",
     "btn_annulla": "Cancelar",
     "btn_conferma": "Confirmar",
+    "dipendenti_seleziona": "Seleccionar Empleado",
 
     "settings_titolo": "Ajustes",
     "settings_sez_aspetto": "Apariencia",

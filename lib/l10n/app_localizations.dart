@@ -328,6 +328,12 @@ abstract class AppLocalizations {
   /// **'Conferma'**
   String get btn_conferma;
 
+  /// No description provided for @dipendenti_seleziona.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Dipendente'**
+  String get dipendenti_seleziona;
+
   /// No description provided for @settings_titolo.
   ///
   /// In it, this message translates to:

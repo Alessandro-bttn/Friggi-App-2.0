@@ -60,6 +60,7 @@
     "settings_versione": "App Version",
     "settings_privacy": "Privacy Policy",
     "settings_logout": "Log Out",
+    "dipendenti_seleziona": "Select Employee",
 
     "settings_turni_label": "Number of Shifts",
     "settings_turni_sub": "Select the number of shifts per day",
