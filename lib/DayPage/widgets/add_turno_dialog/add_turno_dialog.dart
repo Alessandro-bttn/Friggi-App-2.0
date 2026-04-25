@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import '../../../DataBase/Turni/TurnoModel.dart';
 import '../../../DataBase/Turni/TurniDB.dart';
@@ -25,13 +26,21 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
   DipendenteModel? _selectedDipendente;
   TimeOfDay _inizio = const TimeOfDay(hour: 9, minute: 0);
   TimeOfDay _fine = const TimeOfDay(hour: 17, minute: 0);
+  late AppLocalizations l10n;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    l10n = AppLocalizations.of(context)!;
+  }
 
   Future<void> _handlePickTime(bool isStart) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: isStart ? _inizio : _fine,
       initialEntryMode: TimePickerEntryMode.input,
-      helpText: isStart ? "ORARIO INIZIO" : "ORARIO FINE",
+      helpText:
+          isStart ? l10n.settings_orario_inizio : l10n.settings_orario_fine,
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
         child: child!,
@@ -113,8 +122,11 @@ class _DialogHeader extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.turni_nuovo_titolo, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text("${date.day}/${date.month}/${date.year}", style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+            Text(l10n.turni_nuovo_titolo,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("${date.day}/${date.month}/${date.year}",
+                style: TextStyle(fontSize: 13, color: Colors.grey[600])),
           ],
         ),
       ],
