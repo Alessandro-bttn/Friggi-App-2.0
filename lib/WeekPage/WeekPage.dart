@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart'; // Assicurati che il percorso sia corretto
 
 // --- IMPORT NECESSARI ---
 import '../DataBase/Locale/LocaleDB.dart';
@@ -32,7 +33,9 @@ class _WeekPageState extends State<WeekPage> {
   ItemModel? localeCorrente;
   late DateTime currentWeekStart;
   bool isLoading = true;
-  String _currentView = 'Settimana';
+  
+  // Inizializzato come null, verrà impostato correttamente con l10n
+  String? _currentView;
 
   // --- DATI ---
   List<TurnoModel> _turniSettimana = [];
@@ -46,12 +49,10 @@ class _WeekPageState extends State<WeekPage> {
   @override
   void initState() {
     super.initState();
-    // Inizializza la data all'inizio della settimana (es. Lunedì)
     currentWeekStart = WeekLogic.getStartOfWeek(widget.dataIniziale);
     
     final prefs = PreferencesService();
     
-    // Fallback per le divisioni (minimo 1 per evitare crash)
     int savedDivisions = prefs.divisioneTurni;
     _divisions = (savedDivisions > 0) ? savedDivisions : 2;
 
@@ -61,21 +62,25 @@ class _WeekPageState extends State<WeekPage> {
     _caricaDatiCompleti(); 
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Impostiamo la vista corrente usando la localizzazione (Settimana)
+    _currentView ??= AppLocalizations.of(context)!.calendar_week;
+  }
+
   // --- CARICAMENTO DATI ---
   Future<void> _caricaDatiCompleti() async {
     try {
-      setState(() => isLoading = true);
+      if (mounted) setState(() => isLoading = true);
 
-      // 1. Carica Locale
       final int? idLocale = PreferencesService().idLocaleCorrente;
       if (idLocale != null) {
         localeCorrente = await DBHelper().getItemById(idLocale);
       }
 
-      // 2. Carica Dipendenti
       _dipendenti = await DipendenteDB().getAllDipendenti(); 
 
-      // 3. Carica e Filtra Turni
       List<TurnoModel> tuttiITurni = await TurniDB().getTurni(); 
       DateTime weekEnd = currentWeekStart.add(const Duration(days: 7));
 
@@ -109,17 +114,20 @@ class _WeekPageState extends State<WeekPage> {
   }
 
   // --- LOGICA DI CAMBIO VISTA (BOTTONI TOP BAR) ---
-  void _handleViewChange(String newView) {
-    setState(() => _currentView = newView);
+  void _handleViewChange(String targetViewLabel) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Aggiornamento visivo immediato per l'animazione della barra
+    setState(() => _currentView = targetViewLabel);
 
     CalendarNavigationService.switchToView(
       context: context,
-      targetView: newView,
-      currentView: 'Settimana',
+      targetView: targetViewLabel,
+      currentView: l10n.calendar_week, // Passiamo la traduzione corretta
       referenceDate: currentWeekStart,
       onReturn: () {
         if (mounted) {
-          setState(() => _currentView = 'Settimana');
+          setState(() => _currentView = l10n.calendar_week);
           _caricaDatiCompleti();
         }
       },
@@ -128,6 +136,8 @@ class _WeekPageState extends State<WeekPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (isLoading) {
       return const Scaffold(
         backgroundColor: Colors.white,
@@ -141,7 +151,7 @@ class _WeekPageState extends State<WeekPage> {
         localeCorrente: localeCorrente,
         dataOggi: currentWeekStart,
         showDay: false, 
-        currentView: _currentView,
+        currentView: _currentView ?? l10n.calendar_week,
         onViewChanged: _handleViewChange,
       ),
       
@@ -151,18 +161,19 @@ class _WeekPageState extends State<WeekPage> {
         child: WeekGestureDetector(
           onSwipeNext: _vaiSettimanaSuccessiva,
           onSwipePrev: _vaiSettimanaPrecedente,
-          onZoomOut: () => _handleViewChange('Mese'), 
-          onZoomIn: () => _handleViewChange('Giorno'), 
+          // Allineamento con l10n per le gesture di zoom
+          onZoomOut: () => _handleViewChange(l10n.calendar_month), 
+          onZoomIn: () => _handleViewChange(l10n.calendar_day), 
           
           child: WeekView(
             currentStartOfWeek: currentWeekStart,
             onDaySelected: (date) {
-              // Quando selezioni un giorno specifico, navighiamo lì
+              // Navigazione al giorno specifico
               CalendarNavigationService.switchToView(
                 context: context,
-                targetView: 'Giorno',
-                currentView: 'Settimana',
-                referenceDate: date, // Passiamo la data esatta cliccata
+                targetView: l10n.calendar_day, // Tradotto
+                currentView: l10n.calendar_week, // Tradotto
+                referenceDate: date, 
                 onReturn: () {
                   if (mounted) _caricaDatiCompleti();
                 },

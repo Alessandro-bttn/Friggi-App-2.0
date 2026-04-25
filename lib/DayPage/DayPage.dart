@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart'; // Assicurati che il percorso sia corretto
 
 // Import DB e Modelli
 import '../DataBase/Locale/LocaleDB.dart';
@@ -29,13 +30,13 @@ class DayPage extends StatefulWidget {
 }
 
 class _DayPageState extends State<DayPage> {
-  // --- STATO ---
   ItemModel? localeCorrente;
   bool isLoading = true;
   late DateTime currentDate;
-  String _currentView = 'Giorno'; 
   
-  // Liste dati
+  // Rimosso l'inizializzazione fissa di _currentView qui
+  String? _currentView; 
+  
   List<TurnoModel> _turniDelGiorno = []; 
   List<DipendenteModel> _dipendenti = []; 
 
@@ -54,10 +55,15 @@ class _DayPageState extends State<DayPage> {
     _caricaDati(); 
   }
 
-  // --- CARICAMENTO DATI ---
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Inizializziamo la vista corrente con la traduzione corretta
+    _currentView ??= AppLocalizations.of(context)!.calendar_day;
+  }
+
   Future<void> _caricaDati() async {
     setState(() => isLoading = true);
-    
     final int? idLocale = PreferencesService().idLocaleCorrente;
 
     try {
@@ -70,20 +76,16 @@ class _DayPageState extends State<DayPage> {
     }
 
     await _aggiornaTurni();
-
     if (mounted) setState(() => isLoading = false);
   }
 
   Future<void> _aggiornaTurni() async {
     final turni = await TurniDB().getTurniDelGiorno(currentDate);
     if (mounted) {
-      setState(() {
-        _turniDelGiorno = turni;
-      });
+      setState(() => _turniDelGiorno = turni);
     }
   }
 
-  // --- LOGICA NAVIGAZIONE INTERNA (SWIPE) ---
   void _giornoSuccessivo() {
     setState(() {
       currentDate = currentDate.add(const Duration(days: 1));
@@ -98,19 +100,21 @@ class _DayPageState extends State<DayPage> {
     });
   }
 
-  // --- LOGICA DI CAMBIO VISTA (SERVIZIO CENTRALIZZATO) ---
-  void _handleViewChange(String newView) {
-    setState(() => _currentView = newView);
+  void _handleViewChange(String targetViewLabel) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Aggiorniamo lo stato interno per far partire l'animazione nel ViewSelector
+    setState(() => _currentView = targetViewLabel);
 
     CalendarNavigationService.switchToView(
       context: context,
-      targetView: newView,
-      currentView: 'Giorno', // Io sono il Giorno
+      targetView: targetViewLabel,
+      currentView: l10n.calendar_day, // Usiamo la traduzione per il confronto
       referenceDate: currentDate,
       onReturn: () {
         if (mounted) {
-          setState(() => _currentView = 'Giorno'); // Reset al ritorno
-          _caricaDati(); // Ricarica tutto per sicurezza
+          setState(() => _currentView = l10n.calendar_day); 
+          _caricaDati(); 
         }
       },
     );
@@ -118,6 +122,8 @@ class _DayPageState extends State<DayPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (isLoading) {
       return const Scaffold(
         backgroundColor: Colors.white,
@@ -131,15 +137,15 @@ class _DayPageState extends State<DayPage> {
         localeCorrente: localeCorrente,
         dataOggi: currentDate, 
         showDay: true, 
-        currentView: _currentView,
-        onViewChanged: _handleViewChange, // Collegato al servizio
+        currentView: _currentView ?? l10n.calendar_day,
+        onViewChanged: _handleViewChange,
       ),
 
       body: DayGestureDetector(
         onSwipeNext: _giornoSuccessivo,
         onSwipePrev: _giornoPrecedente,
-        // Usiamo la logica centralizzata per tornare indietro (Settimana o Mese)
-        onZoomOut: () => _handleViewChange('Settimana'),
+        // Traduzione anche qui per lo zoom out
+        onZoomOut: () => _handleViewChange(l10n.calendar_week),
         
         child: DayTimeline(
           currentDate: currentDate,

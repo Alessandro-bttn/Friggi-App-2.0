@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import '../WeekPage/WeekPage.dart';
 import '../DayPage/DayPage.dart';
-// File: lib/CalanderNavigator/calendar_navigation.dart
+import '../l10n/app_localizations.dart'; // Importa le traduzioni
 
 class CalendarNavigationService {
-  // Nel file calendar_navigation.dart
-
   static void switchToView({
     required BuildContext context,
     required String targetView,
@@ -13,19 +11,25 @@ class CalendarNavigationService {
     required DateTime referenceDate,
     required VoidCallback onReturn,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+
+    // --- LOGICA DI CONFRONTO SICURA ---
+    // Verifichiamo se la stringa premuta corrisponde alla traduzione di Giorno, Settimana o Mese
+    bool isGiorno = targetView == l10n.calendar_day;
+    bool isSettimana = targetView == l10n.calendar_week;
+    bool isMese = targetView == l10n.calendar_month;
+
+    // Se premo la vista in cui sono già, esci
     if (targetView == currentView) return;
 
-    // --- SOLUZIONE AL TUO ERRORE ---
-    if (targetView == 'Mese') {
-      // Invece di un semplice pop, torniamo alla prima rotta (il Mese)
-      // Questo rimuove Settimana, Giorno e qualsiasi altra cosa sopra il Mese
+    // 1. Torna al MESE
+    if (isMese) {
       Navigator.of(context).popUntil((route) => route.isFirst);
       return;
     }
 
-    // Se vuoi passare da Giorno a Settimana in modo pulito:
-    if (targetView == 'Settimana' && currentView == 'Giorno') {
-      // Sostituiamo il Giorno con la Settimana invece di sovrapporli
+    // 2. Da GIORNO a SETTIMANA (Sostituzione)
+    if (isSettimana && currentView == l10n.calendar_day) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -34,22 +38,28 @@ class CalendarNavigationService {
       return;
     }
 
-    // Navigazione standard per gli altri casi
+    // 3. Navigazione standard (PUSH)
     Widget? nextPage;
-    switch (targetView) {
-      case 'Settimana':
-        nextPage = WeekPage(dataIniziale: referenceDate);
-        break;
-      case 'Giorno':
-        nextPage = DayPage(selectedDate: referenceDate);
-        break;
+    if (isSettimana) {
+      nextPage = WeekPage(dataIniziale: referenceDate);
+    } else if (isGiorno) {
+      nextPage = DayPage(selectedDate: referenceDate);
     }
 
+    // 1. Controllo che nextPage non sia nullo
     if (nextPage != null) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => nextPage!),
+        MaterialPageRoute(
+          // 2. Usiamo l'operatore '!' (bang operator) per dire a Dart:
+          // "Tranquillo, ho appena controllato che non è nullo"
+          builder: (context) => nextPage!,
+        ),
       ).then((_) => onReturn());
+    } else {
+      // Opzionale: un log per capire se qualcosa è andato storto nello switch
+      debugPrint(
+          "Navigazione annullata: nextPage è nullo per target: $targetView");
     }
   }
 }
