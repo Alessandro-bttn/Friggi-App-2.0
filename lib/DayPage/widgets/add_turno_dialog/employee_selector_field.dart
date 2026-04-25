@@ -55,7 +55,7 @@ class _EmployeeSelectorFieldState extends State<EmployeeSelectorField> {
     return SearchAnchor(
       searchController: _searchController,
       // Configurazione dell'aspetto della vista di ricerca espansa
-      viewHintText: l10n.lingua_seleziona + "...",
+      viewHintText: l10n.dipendenti_seleziona + "...",
       viewLeading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () => _searchController.closeView(null),
@@ -94,7 +94,7 @@ class _EmployeeSelectorFieldState extends State<EmployeeSelectorField> {
                   ),
                 ] else
                   Text(
-                    _isLoading ? "..." : l10n.lingua_seleziona,
+                    _isLoading ? "..." : l10n.dipendenti_seleziona,
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                 const Spacer(),
