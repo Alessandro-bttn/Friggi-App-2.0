@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../DataBase/Turni/TurnoModel.dart';
 import '../../../DataBase/Dipendente/DipendenteModel.dart';
 import 'shift_widget.dart';
+import 'logic/shift_actions.dart';
 
 // Widget che organizza e mostra i turni nella timeline
 
@@ -26,22 +27,26 @@ class TimelineShiftsStack extends StatelessWidget {
     return Positioned(
       top: 0,
       bottom: 0,
-      left: 61, 
+      left: 61,
       right: 0,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final double availableWidth = constraints.maxWidth;
-          
+
           // Generiamo i widget calcolati con la logica delle colonne
+          // Nel metodo build
           return Stack(
-            children: _buildOrganizedShifts(availableWidth),
+            children: _buildOrganizedShifts(
+                context, availableWidth), // Aggiunto context
           );
         },
       ),
     );
   }
 
-  List<Widget> _buildOrganizedShifts(double availableWidth) {
+  List<Widget> _buildOrganizedShifts(
+      BuildContext context, double availableWidth) {
+    // Aggiunto context qui
     if (turni.isEmpty) return [];
 
     // 1. Ordiniamo i turni per orario di inizio
@@ -53,7 +58,6 @@ class TimelineShiftsStack extends StatelessWidget {
       });
 
     // 2. Algoritmo "First Fit" per assegnare le colonne
-    // columnsEndTime tiene traccia di quando finisce l'ultimo turno in ogni colonna
     List<int> columnsEndTime = [];
     List<Map<String, dynamic>> positionedShifts = [];
 
@@ -63,16 +67,14 @@ class TimelineShiftsStack extends StatelessWidget {
 
       int placedColumn = -1;
 
-      // Cerchiamo la prima colonna libera (dove il turno precedente finisce prima che questo inizi)
       for (int i = 0; i < columnsEndTime.length; i++) {
         if (columnsEndTime[i] <= startMin) {
           placedColumn = i;
-          columnsEndTime[i] = endMin; // Aggiorniamo la fine della colonna
+          columnsEndTime[i] = endMin;
           break;
         }
       }
 
-      // Se non abbiamo trovato posto, creiamo una nuova colonna
       if (placedColumn == -1) {
         placedColumn = columnsEndTime.length;
         columnsEndTime.add(endMin);
@@ -85,19 +87,16 @@ class TimelineShiftsStack extends StatelessWidget {
     }
 
     // 3. Calcoliamo la larghezza di ogni colonna
-    // Se vuoi che siano sempre "molto piccole", puoi forzare un numero minimo di colonne
-    // Esempio: math.max(columnsEndTime.length, 3);
-    // Per ora usiamo il numero reale di colonne necessarie (così si adattano).
     int totalColumns = columnsEndTime.length;
     double columnWidth = availableWidth / totalColumns;
 
     // 4. Creiamo i Widget posizionati
     return positionedShifts.map((data) {
-      final TurnoModel turno = data['turno'];
+      final TurnoModel turno = data['turno']; // <--- Nome corretto: turno
       final int colIndex = data['colIndex'];
 
-      // Calcoli Verticali (Top e Height)
-      final int startMinutesFromBase = 
+      // Calcoli Verticali
+      final int startMinutesFromBase =
           ((turno.inizio.hour - startHour) * 60) + turno.inizio.minute;
       final double topPosition = startMinutesFromBase * pixelsPerMinute;
 
@@ -105,25 +104,31 @@ class TimelineShiftsStack extends StatelessWidget {
       final int endInMinutes = (turno.fine.hour * 60) + turno.fine.minute;
       final int durationMinutes = endInMinutes - startInMinutes;
       final double height = durationMinutes * pixelsPerMinute;
-      
+
       final double visualOffset = 9.0;
 
       // Trova dipendente
-      DipendenteModel? dipendenteTrovato;
+      DipendenteModel?
+          dipendenteTrovato; // <--- Nome corretto: dipendenteTrovato
       try {
-        dipendenteTrovato = dipendenti.firstWhere((d) => d.id == turno.idDipendente);
-      } catch (e) { /* null */ }
+        dipendenteTrovato =
+            dipendenti.firstWhere((d) => d.id == turno.idDipendente);
+      } catch (e) {/* null */}
 
-      // Calcoli Orizzontali (Left e Width)
-      // Li mettiamo uno accanto all'altro
+      // Calcoli Orizzontali
       final double leftPosition = colIndex * columnWidth;
 
       return Positioned(
         top: topPosition + visualOffset,
-        left: leftPosition + 2, // +2 di margine per staccarli leggermente
-        width: columnWidth - 4, // -4 per compensare i margini dx/sx
+        left: leftPosition + 2,
+        width: columnWidth - 4,
         height: height,
-        child: ShiftWidget(turno: turno, dipendente: dipendenteTrovato),
+        child: ShiftWidget(
+          turno: turno, // Passato correttamente
+          dipendente: dipendenteTrovato, // Passato correttamente
+          onTap: () =>
+              ShiftActions.handleShiftTap(context, turno, dipendenteTrovato),
+        ),
       );
     }).toList();
   }

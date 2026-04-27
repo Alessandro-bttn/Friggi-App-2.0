@@ -5,6 +5,8 @@ import '../../../DataBase/Dipendente/DipendenteModel.dart';
 import 'timeline_background.dart';
 import 'timeline_shifts_stack.dart';
 
+// Questo widget rappresenta la timeline giornaliera, con una griglia oraria e i turni sovrapposti.
+
 class DayTimeline extends StatelessWidget {
   final DateTime currentDate;
   final TimeOfDay startTime;
