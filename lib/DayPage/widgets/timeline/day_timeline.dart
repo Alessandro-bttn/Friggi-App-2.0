@@ -68,7 +68,6 @@ class DayTimeline extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 100),
           ],
         ),
       ),
