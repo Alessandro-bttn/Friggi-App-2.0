@@ -215,4 +215,22 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get btn_salva_turno => 'SALVA TURNO';
+
+  @override
+  String get turno_salvato_con_successo => 'Turno salvato con successo!';
+
+  @override
+  String get turno_salvato_errore => 'Errore durante il salvataggio';
+
+  @override
+  String get errore_orario_sequenza =>
+      'L\'orario di fine deve essere dopo l\'orario di inizio';
+
+  @override
+  String get errore_orario_apertura =>
+      'L\'orario di inizio non può essere prima dell\'orario di apertura';
+
+  @override
+  String get errore_orario_chiusura =>
+      'L\'orario di fine non può essere dopo l\'orario di chiusura';
 }

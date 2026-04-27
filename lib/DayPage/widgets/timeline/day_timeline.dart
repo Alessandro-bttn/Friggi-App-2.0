@@ -37,8 +37,6 @@ class DayTimeline extends StatelessWidget {
     final double pixelsPerMinute = hourHeight / 60;
     final double contentHeight = totalDayMinutes * pixelsPerMinute;
 
-    // Calcoliamo il numero di righe basandoci sull'ora di fine effettiva arrotondata per eccesso
-    // Se finisco alle 22:30, endHour è 22, ma rowCount deve coprire fino alla riga delle 23 per sicurezza visiva
     final int rowCount = ((totalDayMinutes - extraBuffer) / 60).ceil() + 1;
 
     return SafeArea(

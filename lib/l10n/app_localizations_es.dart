@@ -215,4 +215,22 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get btn_salva_turno => 'GUARDAR TURNO';
+
+  @override
+  String get turno_salvato_con_successo => '¡Turno guardado con éxito!';
+
+  @override
+  String get turno_salvato_errore => 'Error durante el guardado';
+
+  @override
+  String get errore_orario_sequenza =>
+      'El horario de finalización debe ser después del horario de inicio';
+
+  @override
+  String get errore_orario_apertura =>
+      'El horario de inicio no puede ser antes del horario de apertura';
+
+  @override
+  String get errore_orario_chiusura =>
+      'El horario de finalización no puede ser después del horario de cierre';
 }

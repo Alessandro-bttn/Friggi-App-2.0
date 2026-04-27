@@ -513,6 +513,36 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'SALVA TURNO'**
   String get btn_salva_turno;
+
+  /// No description provided for @turno_salvato_con_successo.
+  ///
+  /// In it, this message translates to:
+  /// **'Turno salvato con successo!'**
+  String get turno_salvato_con_successo;
+
+  /// No description provided for @turno_salvato_errore.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore durante il salvataggio'**
+  String get turno_salvato_errore;
+
+  /// No description provided for @errore_orario_sequenza.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'orario di fine deve essere dopo l\'orario di inizio'**
+  String get errore_orario_sequenza;
+
+  /// No description provided for @errore_orario_apertura.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'orario di inizio non può essere prima dell\'orario di apertura'**
+  String get errore_orario_apertura;
+
+  /// No description provided for @errore_orario_chiusura.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'orario di fine non può essere dopo l\'orario di chiusura'**
+  String get errore_orario_chiusura;
 }
 
 class _AppLocalizationsDelegate

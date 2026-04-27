@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../DataBase/Dipendente/DipendenteModel.dart';
-import '../../../l10n/app_localizations.dart'; // Assicurati che l'import sia corretto
+import '../../../l10n/app_localizations.dart';
 
 class EmployeeDropdown extends StatelessWidget {
   final List<DipendenteModel> dipendenti;

@@ -78,5 +78,12 @@
     "turni_label_inizio": "INIZIO",
     "turni_label_fine": "FINE",
     "turni_orario_titolo": "ORARIO DEL TURNO",
-    "btn_salva_turno": "SALVA TURNO"
+    "btn_salva_turno": "SALVA TURNO",
+
+    "turno_salvato_con_successo": "Turno salvato con successo!",
+    "turno_salvato_errore": "Errore durante il salvataggio",
+
+    "errore_orario_sequenza": "L'orario di fine deve essere dopo l'orario di inizio",
+    "errore_orario_apertura": "L'orario di inizio non può essere prima dell'orario di apertura",
+    "errore_orario_chiusura": "L'orario di fine non può essere dopo l'orario di chiusura"
 }

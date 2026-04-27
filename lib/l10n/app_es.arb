@@ -78,7 +78,13 @@
     "turni_label_inizio": "INICIO",
     "turni_label_fine": "FIN",
     "turni_orario_titolo": "HORARIO DEL TURNO",
-    "btn_salva_turno": "GUARDAR TURNO"  
+    "btn_salva_turno": "GUARDAR TURNO",
 
+    "turno_salvato_con_successo": "¡Turno guardado con éxito!",
+    "turno_salvato_errore": "Error durante el guardado",
 
+    
+    "errore_orario_sequenza": "El horario de finalización debe ser después del horario de inicio",
+    "errore_orario_apertura": "El horario de inicio no puede ser antes del horario de apertura",
+    "errore_orario_chiusura": "El horario de finalización no puede ser después del horario de cierre"
 }

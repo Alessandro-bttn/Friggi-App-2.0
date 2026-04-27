@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../../DataBase/Turni/TurnoModel.dart';
 import '../../../DataBase/Turni/TurniDB.dart';
@@ -6,7 +5,10 @@ import '../../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../../l10n/app_localizations.dart';
 
 import 'shift_form_fields.dart';
-import 'employee_selector_field.dart'; // Importa il nuovo file
+import 'employee_selector_field.dart';
+import 'logic/turni_validator.dart';
+
+import '../../../../notifications/notification_service.dart';
 
 class AddTurnoDialog extends StatefulWidget {
   final DateTime date;
@@ -54,6 +56,21 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
   void _submitForm() async {
     if (_selectedDipendente?.id == null) return;
 
+    // 1. Chiamiamo la validazione
+    final String? errore = TurniValidator.validaTurno(
+      context: context,
+      inizio: _inizio,
+      fine: _fine,
+    );
+
+    // 2. Se c'è un errore, usiamo il NotificationService
+    if (errore != null) {
+      // Genera la notifica rossa dall'alto
+      NotificationService().showError(errore);
+      return; // Interrompe il salvataggio
+    }
+
+    // 3. Se tutto è OK, procediamo al salvataggio
     final nuovoTurno = TurnoModel(
       idDipendente: _selectedDipendente!.id!,
       data: widget.date,
@@ -62,6 +79,10 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
     );
 
     await TurniDB().insertTurno(nuovoTurno);
+
+    // Notifica di successo (opzionale ma consigliata)
+    NotificationService().showSuccess(l10n.turno_salvato_con_successo);
+
     widget.onSaved();
     if (mounted) Navigator.pop(context);
   }

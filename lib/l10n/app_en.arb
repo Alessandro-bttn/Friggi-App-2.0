@@ -81,5 +81,12 @@
     "turni_label_inizio": "START",
     "turni_label_fine": "END",
     "turni_orario_titolo": "SHIFT HOURS",
-    "btn_salva_turno": "SAVE SHIFT"     
+    "btn_salva_turno": "SAVE SHIFT",
+
+    "turno_salvato_con_successo": "Shift saved successfully!",
+    "turno_salvato_errore": "Error saving the shift",
+
+    "errore_orario_sequenza": "The end time must be after the start time",
+    "errore_orario_apertura": "The start time cannot be before the opening time",
+    "errore_orario_chiusura": "The end time cannot be after the closing time"
 }

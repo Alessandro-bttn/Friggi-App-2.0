@@ -214,4 +214,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get btn_salva_turno => 'SAVE SHIFT';
+
+  @override
+  String get turno_salvato_con_successo => 'Shift saved successfully!';
+
+  @override
+  String get turno_salvato_errore => 'Error saving the shift';
+
+  @override
+  String get errore_orario_sequenza =>
+      'The end time must be after the start time';
+
+  @override
+  String get errore_orario_apertura =>
+      'The start time cannot be before the opening time';
+
+  @override
+  String get errore_orario_chiusura =>
+      'The end time cannot be after the closing time';
 }
