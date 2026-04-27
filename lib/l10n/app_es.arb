@@ -86,5 +86,6 @@
     
     "errore_orario_sequenza": "El horario de finalización debe ser después del horario de inicio",
     "errore_orario_apertura": "El horario de inicio no puede ser antes del horario de apertura",
-    "errore_orario_chiusura": "El horario de finalización no puede ser después del horario de cierre"
+    "errore_orario_chiusura": "El horario de finalización no puede ser después del horario de cierre",
+    "errore_turno_sovrapposto": "El turno se superpone con otro turno existente" 
 }

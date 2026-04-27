@@ -48,6 +48,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get error_erroreSalvataggio => 'Error al guardar el lugar';
 
   @override
+  String get errore_orario_sequenza =>
+      'El horario de finalización debe ser después del horario de inicio';
+
+  @override
+  String get errore_orario_apertura =>
+      'El horario de inicio no puede ser antes del horario de apertura';
+
+  @override
+  String get errore_orario_chiusura =>
+      'El horario de finalización no puede ser después del horario de cierre';
+
+  @override
+  String get errore_turno_sovrapposto =>
+      'El turno se superpone con otro turno existente';
+
+  @override
   String get calendar_mon => 'Lun';
 
   @override
@@ -221,16 +237,4 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get turno_salvato_errore => 'Error durante el guardado';
-
-  @override
-  String get errore_orario_sequenza =>
-      'El horario de finalización debe ser después del horario de inicio';
-
-  @override
-  String get errore_orario_apertura =>
-      'El horario de inicio no puede ser antes del horario de apertura';
-
-  @override
-  String get errore_orario_chiusura =>
-      'El horario de finalización no puede ser después del horario de cierre';
 }

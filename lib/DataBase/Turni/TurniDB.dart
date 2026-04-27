@@ -87,4 +87,21 @@ class TurniDB {
       return TurnoModel.fromMap(maps[i]);
     });
   }
+
+  Future<List<TurnoModel>> getTurniByDipendenteEData(int idDipendente, DateTime data) async {
+    final dbClient = await db;
+    
+    // Formattiamo la data per il confronto nel DB (YYYY-MM-DD)
+    final dataStr = data.toIso8601String().split('T')[0];
+
+    final List<Map<String, dynamic>> maps = await dbClient.query(
+      'turni',
+      where: 'idDipendente = ? AND data = ?',
+      whereArgs: [idDipendente, dataStr],
+    );
+
+    return List.generate(maps.length, (i) {
+      return TurnoModel.fromMap(maps[i]);
+    });
+  }
 }

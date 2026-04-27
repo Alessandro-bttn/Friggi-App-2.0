@@ -48,6 +48,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error_erroreSalvataggio => 'Error saving the place';
 
   @override
+  String get errore_orario_sequenza =>
+      'The end time must be after the start time';
+
+  @override
+  String get errore_orario_apertura =>
+      'The start time cannot be before the opening time';
+
+  @override
+  String get errore_orario_chiusura =>
+      'The end time cannot be after the closing time';
+
+  @override
+  String get errore_turno_sovrapposto =>
+      'The shift overlaps with an existing shift';
+
+  @override
   String get calendar_mon => 'Mon';
 
   @override
@@ -220,16 +236,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get turno_salvato_errore => 'Error saving the shift';
-
-  @override
-  String get errore_orario_sequenza =>
-      'The end time must be after the start time';
-
-  @override
-  String get errore_orario_apertura =>
-      'The start time cannot be before the opening time';
-
-  @override
-  String get errore_orario_chiusura =>
-      'The end time cannot be after the closing time';
 }

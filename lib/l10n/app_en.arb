@@ -88,5 +88,6 @@
 
     "errore_orario_sequenza": "The end time must be after the start time",
     "errore_orario_apertura": "The start time cannot be before the opening time",
-    "errore_orario_chiusura": "The end time cannot be after the closing time"
+    "errore_orario_chiusura": "The end time cannot be after the closing time",
+    "errore_turno_sovrapposto": "The shift overlaps with an existing shift"
 }

@@ -56,21 +56,17 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
   void _submitForm() async {
     if (_selectedDipendente?.id == null) return;
 
-    // 1. Chiamiamo la validazione
-    final String? errore = TurniValidator.validaTurno(
+    final bool valido = await TurniValidator.isTurnoValido(
       context: context,
+      idDipendente: _selectedDipendente!.id!,
+      data: widget.date,
       inizio: _inizio,
       fine: _fine,
     );
 
-    // 2. Se c'è un errore, usiamo il NotificationService
-    if (errore != null) {
-      // Genera la notifica rossa dall'alto
-      NotificationService().showError(errore);
-      return; // Interrompe il salvataggio
-    }
+    if (!valido) return;
 
-    // 3. Se tutto è OK, procediamo al salvataggio
+
     final nuovoTurno = TurnoModel(
       idDipendente: _selectedDipendente!.id!,
       data: widget.date,
@@ -80,7 +76,6 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
 
     await TurniDB().insertTurno(nuovoTurno);
 
-    // Notifica di successo (opzionale ma consigliata)
     NotificationService().showSuccess(l10n.turno_salvato_con_successo);
 
     widget.onSaved();

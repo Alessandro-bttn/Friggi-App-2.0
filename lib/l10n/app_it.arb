@@ -15,6 +15,10 @@
 
     "error_campiMancanti": "Inserisci Nome se Responsabile/Dipendente",
     "error_erroreSalvataggio": "Errore durante il salvataggio del locale",
+    "errore_orario_sequenza": "L'orario di fine deve essere dopo l'orario di inizio",
+    "errore_orario_apertura": "L'orario di inizio non può essere prima dell'orario di apertura",
+    "errore_orario_chiusura": "L'orario di fine non può essere dopo l'orario di chiusura",
+    "errore_turno_sovrapposto": "Il turno si sovrappone con un altro turno esistente", 
 
     "calendar_mon": "Lun",
     "calendar_tue": "Mar",
@@ -81,9 +85,5 @@
     "btn_salva_turno": "SALVA TURNO",
 
     "turno_salvato_con_successo": "Turno salvato con successo!",
-    "turno_salvato_errore": "Errore durante il salvataggio",
-
-    "errore_orario_sequenza": "L'orario di fine deve essere dopo l'orario di inizio",
-    "errore_orario_apertura": "L'orario di inizio non può essere prima dell'orario di apertura",
-    "errore_orario_chiusura": "L'orario di fine non può essere dopo l'orario di chiusura"
+    "turno_salvato_errore": "Errore durante il salvataggio"
 }
