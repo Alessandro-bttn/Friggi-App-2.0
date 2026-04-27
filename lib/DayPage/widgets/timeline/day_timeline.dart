@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../DataBase/Turni/TurnoModel.dart';
-import '../../../DataBase/Dipendente/DipendenteModel.dart'; 
-
-// Import dei widget della timeline
+import '../../../DataBase/Dipendente/DipendenteModel.dart';
 
 import 'timeline_background.dart';
 import 'timeline_shifts_stack.dart';
@@ -12,7 +10,7 @@ class DayTimeline extends StatelessWidget {
   final TimeOfDay startTime;
   final TimeOfDay endTime;
   final List<TurnoModel> turni;
-  final List<DipendenteModel> dipendenti; 
+  final List<DipendenteModel> dipendenti;
 
   const DayTimeline({
     super.key,
@@ -28,38 +26,53 @@ class DayTimeline extends StatelessWidget {
     // 1. CALCOLI TEMPORALI
     final int startHour = startTime.hour;
     final int endHour = endTime.hour;
-    
-    final int totalDayMinutes = ((endHour - startHour) * 60) + endTime.minute;
-    final int rowCount = (totalDayMinutes / 60).ceil() + 1;
+
+    // IMPORTANTE: Aggiungiamo 15 min di buffer.
+    final int extraBuffer = 15;
+    final int totalDayMinutes =
+        ((endHour - startHour) * 60) + endTime.minute + extraBuffer;
+
+    // 2. CONFIGURAZIONE LAYOUT
+    const double hourHeight = 80.0;
+    final double pixelsPerMinute = hourHeight / 60;
+    final double contentHeight = totalDayMinutes * pixelsPerMinute;
+
+    // Calcoliamo il numero di righe basandoci sull'ora di fine effettiva arrotondata per eccesso
+    // Se finisco alle 22:30, endHour è 22, ma rowCount deve coprire fino alla riga delle 23 per sicurezza visiva
+    final int rowCount = ((totalDayMinutes - extraBuffer) / 60).ceil() + 1;
 
     return SafeArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final double totalHeight = constraints.maxHeight;
-          final double pixelsPerMinute = totalHeight / totalDayMinutes;
-          final double hourHeight = pixelsPerMinute * 60;
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            SizedBox(
+              height: contentHeight,
+              child: Stack(
+                children: [
+                  // LIVELLO 1: Griglia
+                  TimelineBackground(
+                    startHour: startHour,
+                    // Passiamo endHour + 1 se ci sono minuti, per garantire che il ciclo generi l'ultima mezz'ora
+                    endHour: endTime.minute > 0 ? endHour + 1 : endHour,
+                    endMinute: endTime.minute,
+                    rowCount: rowCount,
+                    hourHeight: hourHeight,
+                  ),
 
-          return Stack(
-            children: [
-              // LIVELLO 1: Griglia
-              TimelineBackground(
-                startHour: startHour,
-                endHour: endHour,
-                endMinute: endTime.minute,
-                rowCount: rowCount,
-                hourHeight: hourHeight,
+                  // LIVELLO 2: Turni
+                  TimelineShiftsStack(
+                    turni: turni,
+                    dipendenti: dipendenti,
+                    startHour: startHour,
+                    pixelsPerMinute: pixelsPerMinute,
+                  ),
+                ],
               ),
-
-              // LIVELLO 2: Turni
-              TimelineShiftsStack(
-                turni: turni,
-                dipendenti: dipendenti, // <--- 3. PASSIAMO LA LISTA GIÙ
-                startHour: startHour,
-                pixelsPerMinute: pixelsPerMinute,
-              ),
-            ],
-          );
-        },
+            ),
+            const SizedBox(height: 100),
+          ],
+        ),
       ),
     );
   }
