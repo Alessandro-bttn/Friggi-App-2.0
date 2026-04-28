@@ -32,13 +32,13 @@ class ShiftWidget extends StatelessWidget {
     // 3. Contrasto dinamico
     final Color textColor = bgColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
-    // USARE INKWELL PER IL FEEDBACK VISIVO
+    
     return Material(
-      color: Colors.transparent, // Necessario per non coprire il decoro sotto
+      color: Colors.transparent, 
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(6), // Deve matchare il BorderRadius del Container
-        splashColor: borderColor.withValues(alpha: 0.3), // Colore del "ripple"
+        borderRadius: BorderRadius.circular(6), 
+        splashColor: borderColor.withValues(alpha: 0.3), 
         highlightColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
