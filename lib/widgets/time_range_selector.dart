@@ -31,40 +31,43 @@ class TimeRangeSelector extends StatelessWidget {
 
     final String effectiveLabelInizio = labelInizio ?? l10n.turni_label_inizio;
     final String effectiveLabelFine = labelFine ?? l10n.turni_label_fine;
-    final String effectiveTitolo = titolo ?? l10n.turni_orario_titolo;
 
     final Color backgroundColor = isReadOnly
         ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
         : colorScheme.surfaceContainerHighest.withValues(alpha: 0.7);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      // Aumentiamo il padding verticale per riempire meglio lo spazio (da 16 a 24)
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24), 
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20), // Angoli leggermente più curvi per M3
         border: Border.all(
           color: isReadOnly ? Colors.transparent : colorScheme.outlineVariant,
         ),
       ),
       child: Column(
         children: [
-          Text(
-            effectiveTitolo.toUpperCase(),
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
+          if (titolo != null && titolo!.isNotEmpty) ...[
+            Text(
+              titolo!.toUpperCase(),
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
+          ],
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuiamo meglio i campi
             children: [
               _buildTimeField(context, effectiveLabelInizio, inizio, true, l10n),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Icon(
                   Icons.arrow_forward,
-                  size: 18,
+                  size: 24, // Icona freccia leggermente più grande
                   color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                 ),
               ),
@@ -80,49 +83,47 @@ class TimeRangeSelector extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    // --- LOGICA FORMATTAZIONE 24H ---
     String displayTime;
     if (use24hFormat) {
-      final String hour = time.hour.toString().padLeft(2, '0');
-      final String minute = time.minute.toString().padLeft(2, '0');
-      displayTime = "$hour:$minute";
+      displayTime = "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
     } else {
-      displayTime = time.format(context); // Formato AM/PM basato sul sistema
+      displayTime = time.format(context);
     }
 
     return Expanded(
       child: InkWell(
         onTap: isReadOnly ? null : () => onPickTime(isStart),
         borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Compattiamo la colonna
+          children: [
+            Text(
+              label,
+              style: theme.textTheme.titleMedium?.copyWith( // Testo label più grande (da labelMedium a titleMedium)
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
               ),
-              const SizedBox(height: 4),
-              Text(
-                displayTime, // Visualizza l'orario formattato
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isReadOnly ? colorScheme.onSurface : colorScheme.primary,
-                ),
+            ),
+            const SizedBox(height: 8), // Più spazio tra label e orario
+            Text(
+              displayTime,
+              style: theme.textTheme.headlineMedium?.copyWith( // Orario molto più grande (da headlineSmall a headlineMedium)
+                fontWeight: FontWeight.bold,
+                color: isReadOnly ? colorScheme.onSurface : colorScheme.primary,
+                letterSpacing: -0.5,
               ),
-              if (!isReadOnly)
-                Text(
+            ),
+            if (!isReadOnly)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
                   l10n.tocca_per_cambiare, 
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    fontSize: 9,
+                  style: theme.textTheme.bodySmall?.copyWith( // Testo aiuto leggermente più leggibile
                     color: colorScheme.primary.withValues(alpha: 0.7),
                   ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );

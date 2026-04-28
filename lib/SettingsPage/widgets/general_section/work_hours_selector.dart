@@ -68,6 +68,7 @@ class WorkHoursSelector extends StatelessWidget {
             // Personalizziamo le label per il contesto "Impostazioni Locale"
             labelInizio: l10n.settings_orario_inizio,
             labelFine: l10n.settings_orario_fine,
+            titolo: "",
             isReadOnly: false,
           ),
         ],
