@@ -502,6 +502,12 @@ abstract class AppLocalizations {
   /// **'Fine'**
   String get settings_orario_fine;
 
+  /// No description provided for @tocca_per_cambiare.
+  ///
+  /// In it, this message translates to:
+  /// **'Tocca per cambiare'**
+  String get tocca_per_cambiare;
+
   /// No description provided for @turni_nuovo_titolo.
   ///
   /// In it, this message translates to:

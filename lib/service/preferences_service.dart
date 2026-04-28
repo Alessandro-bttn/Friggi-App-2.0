@@ -86,4 +86,7 @@ class PreferencesService {
     final s = '${time.hour}:${time.minute}';
     _prefs.setString('chiave_ora_fine', s);
   }
+
+  bool get use24hFormat => _prefs.getBool('use24hFormat') ?? true;
+  set use24hFormat(bool value) => _prefs.setBool('use24hFormat', value);
 }

@@ -26,7 +26,7 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
     super.initState();
     _inizio = widget.turno.inizio;
     _fine = widget.turno.fine;
-  }
+  } 
 
   void _onTimeChanged(TimeOfDay newInizio, TimeOfDay newFine) {
     setState(() {
@@ -59,7 +59,8 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
             inizio: _inizio,
             fine: _fine,
             isEditing: _isEditing,
-            onChanged: _onTimeChanged,
+            // questo parametro può essere dinamico se vuoi supportare sia 12h che 24h, lo devo gestire diversamente in base alla localizzazione e in modo centralizzato, ma per ora lo lascio sempre true  
+            use24hFormat: true,    onChanged: _onTimeChanged,
           ),
           const SizedBox(height: 32),
           ShiftSheetActions(

@@ -8,7 +8,7 @@ import '../../main.dart'; // Fondamentale per accedere a languageController e th
 
 // WIDGETS
 import 'widgets/appearance_section.dart';
-import 'widgets/general_section.dart';
+import 'widgets/general_section/general_section.dart';
 import 'widgets/info_section.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -29,6 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
 
+  bool _use24hFormat = true;
   @override
   void initState() {
     super.initState();
@@ -43,6 +44,7 @@ class _SettingsPageState extends State<SettingsPage> {
     _shiftDivisions = prefs.divisioneTurni;
     _startTime = prefs.orarioInizio;
     _endTime = prefs.orarioFine;
+    _use24hFormat = prefs.use24hFormat;
   }
 
   @override
@@ -94,6 +96,8 @@ class _SettingsPageState extends State<SettingsPage> {
             shiftDivisions: _shiftDivisions,
             startTime: _startTime,
             endTime: _endTime,
+
+            use24hFormat: _use24hFormat,
 
             // Callback Notifiche
             onNotificationChanged: (val) {

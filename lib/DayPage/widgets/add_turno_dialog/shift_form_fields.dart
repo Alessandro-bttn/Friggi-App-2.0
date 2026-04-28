@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/time_range_selector.dart'; 
 
+/// Widget per il dropdown di selezione dipendente
 class EmployeeDropdown extends StatelessWidget {
   final List<DipendenteModel> dipendenti;
   final DipendenteModel? selectedDipendente;
@@ -17,39 +19,51 @@ class EmployeeDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return DropdownButtonFormField<DipendenteModel>(
       decoration: InputDecoration(
-        labelText: l10n.turni_label_dipendente, // L10N
+        labelText: l10n.turni_label_dipendente,
         prefixIcon: const Icon(Icons.person_outline),
-        border: const OutlineInputBorder(),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: theme.colorScheme.surface,
       ),
+      isExpanded: true,
       value: selectedDipendente,
       items: dipendenti.map((dip) {
         return DropdownMenuItem(
           value: dip,
           child: Row(
             children: [
-              CircleAvatar(radius: 6, backgroundColor: Color(dip.colore)),
-              const SizedBox(width: 8),
+              CircleAvatar(radius: 8, backgroundColor: Color(dip.colore)),
+              const SizedBox(width: 12),
               Text("${dip.nome} ${dip.cognome ?? ''}"),
             ],
           ),
         );
       }).toList(),
       onChanged: onChanged,
-      hint: Text(dipendenti.isEmpty ? l10n.dipendenti_nessuno : l10n.dipendenti_seleziona), // L10N
+      hint: Text(dipendenti.isEmpty ? l10n.dipendenti_nessuno : l10n.dipendenti_seleziona),
     );
   }
 }
 
-class TimeRangeSelector extends StatelessWidget {
+/// Questo file non riscrive più il selettore, ma lo esporta o lo usa.
+/// Se nel tuo AddTurnoDialog stavi chiamando un widget locale, ora chiama questo:
+class ShiftFormFields extends StatelessWidget {
+  final List<DipendenteModel> dipendenti;
+  final DipendenteModel? selectedDipendente;
+  final ValueChanged<DipendenteModel?> onEmployeeChanged;
   final TimeOfDay inizio;
   final TimeOfDay fine;
   final Function(bool isStart) onPickTime;
 
-  const TimeRangeSelector({
+  const ShiftFormFields({
     super.key,
+    required this.dipendenti,
+    required this.selectedDipendente,
+    required this.onEmployeeChanged,
     required this.inizio,
     required this.fine,
     required this.onPickTime,
@@ -59,61 +73,26 @@ class TimeRangeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        children: [
-          Text(
-            l10n.turni_orario_titolo, // L10N
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey[600], letterSpacing: 1.1),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _buildTimeField(context, l10n.turni_label_inizio, inizio, () => onPickTime(true)),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Icon(Icons.arrow_forward, color: Colors.grey),
-              ),
-              _buildTimeField(context, l10n.turni_label_fine, fine, () => onPickTime(false)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimeField(BuildContext context, String label, TimeOfDay time, VoidCallback onTap) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey[400]!),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(
-                  time.format(context),
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
+    return Column(
+      children: [
+        EmployeeDropdown(
+          dipendenti: dipendenti,
+          selectedDipendente: selectedDipendente,
+          onChanged: onEmployeeChanged,
         ),
-      ),
+        const SizedBox(height: 20),
+        // USIAMO IL COMPONENTE RIUTILIZZABILE
+        TimeRangeSelector(
+          inizio: inizio,
+          fine: fine,
+          onPickTime: onPickTime,
+          // Passiamo i titoli tradotti così il widget rimane "puro"
+          titolo: l10n.turni_orario_titolo,
+          labelInizio: l10n.turni_label_inizio,
+          labelFine: l10n.turni_label_fine,
+          isReadOnly: false, 
+        ),
+      ],
     );
   }
 }

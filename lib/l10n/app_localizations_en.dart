@@ -214,6 +214,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_orario_fine => 'End';
 
   @override
+  String get tocca_per_cambiare => 'Tap to change';
+
+  @override
   String get turni_nuovo_titolo => 'New Shift';
 
   @override

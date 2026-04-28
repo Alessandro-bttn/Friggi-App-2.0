@@ -215,6 +215,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settings_orario_fine => 'Fine';
 
   @override
+  String get tocca_per_cambiare => 'Tocca per cambiare';
+
+  @override
   String get turni_nuovo_titolo => 'Nuovo Turno';
 
   @override

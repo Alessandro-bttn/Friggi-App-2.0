@@ -3,8 +3,8 @@ import '../../../DataBase/Turni/TurnoModel.dart';
 import '../../../DataBase/Turni/TurniDB.dart';
 import '../../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/time_range_selector.dart';
 
-import 'shift_form_fields.dart';
 import 'employee_selector_field.dart';
 import 'logic/turni_validator.dart';
 
@@ -29,6 +29,9 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
   TimeOfDay _inizio = const TimeOfDay(hour: 9, minute: 0);
   TimeOfDay _fine = const TimeOfDay(hour: 17, minute: 0);
   late AppLocalizations l10n;
+  
+  // TODO: Recupera questo valore dalle impostazioni dell'utente (PreferencesService)
+  final bool _use24h = true; // Per ora forziamo il formato 24h, ma dovrebbe essere dinamico in base alla localizzazione o preferenza utente
 
   @override
   void didChangeDependencies() {
@@ -41,10 +44,12 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
       context: context,
       initialTime: isStart ? _inizio : _fine,
       initialEntryMode: TimePickerEntryMode.input,
-      helpText:
-          isStart ? l10n.settings_orario_inizio : l10n.settings_orario_fine,
+      helpText: isStart ? l10n.settings_orario_inizio : l10n.settings_orario_fine,
       builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+        data: MediaQuery.of(context).copyWith(
+          // Forza il formato basandosi sulla preferenza dell'utente
+          alwaysUse24HourFormat: _use24h, 
+        ),
         child: child!,
       ),
     );
@@ -66,7 +71,6 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
 
     if (!valido) return;
 
-
     final nuovoTurno = TurnoModel(
       idDipendente: _selectedDipendente!.id!,
       data: widget.date,
@@ -84,8 +88,6 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return AlertDialog(
       title: _DialogHeader(date: widget.date),
       content: SizedBox(
@@ -94,16 +96,21 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Utilizziamo il nuovo widget dedicato
               EmployeeSelectorField(
                 selectedDipendente: _selectedDipendente,
                 onSelected: (val) => setState(() => _selectedDipendente = val),
               ),
               const SizedBox(height: 20),
+              // Passaggio corretto dei parametri al widget universale
               TimeRangeSelector(
                 inizio: _inizio,
                 fine: _fine,
                 onPickTime: (isStart) => _handlePickTime(isStart),
+                titolo: l10n.turni_orario_titolo,
+                labelInizio: l10n.turni_label_inizio,
+                labelFine: l10n.turni_label_fine,
+                use24hFormat: _use24h, // Coerenza con il picker
+                isReadOnly: false,
               ),
             ],
           ),
@@ -139,8 +146,7 @@ class _DialogHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(l10n.turni_nuovo_titolo,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Text("${date.day}/${date.month}/${date.year}",
                 style: TextStyle(fontSize: 13, color: Colors.grey[600])),
           ],
