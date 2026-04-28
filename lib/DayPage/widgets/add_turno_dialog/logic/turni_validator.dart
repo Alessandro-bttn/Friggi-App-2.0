@@ -14,6 +14,7 @@ class TurniValidator {
     required DateTime data,
     required TimeOfDay inizio,
     required TimeOfDay fine,
+    int? idTurnoCorrente, // <--- AGGIUNTO: ID del turno che stiamo modificando
   }) async {
     final l10n = AppLocalizations.of(context)!;
     final prefs = PreferencesService();
@@ -42,17 +43,21 @@ class TurniValidator {
       return false;
     }
 
-    // --- NUOVO: CONTROLLO SOVRAPPOSIZIONE TURNI ---
+    // --- CONTROLLO SOVRAPPOSIZIONE TURNI ---
     try {
-      // Recupera tutti i turni già esistenti per quel dipendente in quel giorno
       final turniEsistenti = await TurniDB().getTurniByDipendenteEData(idDipendente, data);
 
       for (var turno in turniEsistenti) {
+        // ESCLUSIONE AUTO-CONFLITTO:
+        // Se il turno nel DB ha lo stesso ID di quello che sto modificando, lo ignoro
+        if (idTurnoCorrente != null && turno.id == idTurnoCorrente) {
+          continue; 
+        }
+
         final int tInizio = _toMinutes(turno.inizio);
         final int tFine = _toMinutes(turno.fine);
 
-        // Logica di sovrapposizione: 
-        // Un turno si sovrappone se (Inizio1 < Fine2) E (Fine1 > Inizio2)
+        // Logica di sovrapposizione
         if (inizioMin < tFine && fineMin > tInizio) {
           notifications.showError(l10n.errore_turno_sovrapposto);
           return false;

@@ -78,8 +78,8 @@ class TurniDB {
 
   Future<List<TurnoModel>> getTurni() async {
     // CORREZIONE 1: Usa 'db' (il getter che hai definito sopra), non 'database'
-    final dbClient = await db; 
-    
+    final dbClient = await db;
+
     // CORREZIONE 2: Usa 'turni' (minuscolo) come nel resto del file, non 'Turni'
     final List<Map<String, dynamic>> maps = await dbClient.query('turni');
 
@@ -88,9 +88,10 @@ class TurniDB {
     });
   }
 
-  Future<List<TurnoModel>> getTurniByDipendenteEData(int idDipendente, DateTime data) async {
+  Future<List<TurnoModel>> getTurniByDipendenteEData(
+      int idDipendente, DateTime data) async {
     final dbClient = await db;
-    
+
     // Formattiamo la data per il confronto nel DB (YYYY-MM-DD)
     final dataStr = data.toIso8601String().split('T')[0];
 
@@ -103,5 +104,15 @@ class TurniDB {
     return List.generate(maps.length, (i) {
       return TurnoModel.fromMap(maps[i]);
     });
+  }
+
+  Future<int> updateTurno(TurnoModel turno) async {
+    final dbClient = await db;
+    return await dbClient.update(
+      'turni',
+      turno.toMap(),
+      where: 'id = ?',
+      whereArgs: [turno.id],
+    );
   }
 }

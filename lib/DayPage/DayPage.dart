@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart'; // Assicurati che il percorso sia corretto
-
+import 'package:flutter/services.dart';
+import '../DayPage/widgets/timeline/logic/shift_detail_sheet.dart'; // Controlla il percorso reale
 // Import DB e Modelli
 import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
-import '../DataBase/Turni/TurniDB.dart';    
-import '../DataBase/Turni/TurnoModel.dart'; 
-import '../DataBase/Dipendente/DipendenteDB.dart'; 
+import '../DataBase/Turni/TurniDB.dart';
+import '../DataBase/Turni/TurnoModel.dart';
+import '../DataBase/Dipendente/DipendenteDB.dart';
 import '../DataBase/Dipendente/DipendenteModel.dart';
 
 import '../service/preferences_service.dart';
 import '../MonthPage/TopBar/month_app_bar.dart';
 
 // Widget della pagina
-import 'widgets/timeline/day_timeline.dart'; 
+import 'widgets/timeline/day_timeline.dart';
 import 'widgets/day_gesture_detector.dart';
 import 'widgets/day_fab.dart';
 
@@ -21,7 +22,7 @@ import 'widgets/day_fab.dart';
 import '../CalanderNavigator/calendar_navigation.dart';
 
 class DayPage extends StatefulWidget {
-  final DateTime selectedDate; 
+  final DateTime selectedDate;
 
   const DayPage({super.key, required this.selectedDate});
 
@@ -33,12 +34,12 @@ class _DayPageState extends State<DayPage> {
   ItemModel? localeCorrente;
   bool isLoading = true;
   late DateTime currentDate;
-  
+
   // Rimosso l'inizializzazione fissa di _currentView qui
-  String? _currentView; 
-  
-  List<TurnoModel> _turniDelGiorno = []; 
-  List<DipendenteModel> _dipendenti = []; 
+  String? _currentView;
+
+  List<TurnoModel> _turniDelGiorno = [];
+  List<DipendenteModel> _dipendenti = [];
 
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
@@ -47,12 +48,12 @@ class _DayPageState extends State<DayPage> {
   void initState() {
     super.initState();
     currentDate = widget.selectedDate;
-    
+
     final prefs = PreferencesService();
     _startTime = prefs.orarioInizio;
     _endTime = prefs.orarioFine;
 
-    _caricaDati(); 
+    _caricaDati();
   }
 
   @override
@@ -71,8 +72,8 @@ class _DayPageState extends State<DayPage> {
         localeCorrente = await DBHelper().getItemById(idLocale);
         _dipendenti = await DipendenteDB().getDipendentiByLocale(idLocale);
       }
-    } catch (e) { 
-      debugPrint("Errore caricamento dati DayPage: $e"); 
+    } catch (e) {
+      debugPrint("Errore caricamento dati DayPage: $e");
     }
 
     await _aggiornaTurni();
@@ -89,20 +90,20 @@ class _DayPageState extends State<DayPage> {
   void _giornoSuccessivo() {
     setState(() {
       currentDate = currentDate.add(const Duration(days: 1));
-      _aggiornaTurni(); 
+      _aggiornaTurni();
     });
   }
 
   void _giornoPrecedente() {
     setState(() {
       currentDate = currentDate.subtract(const Duration(days: 1));
-      _aggiornaTurni(); 
+      _aggiornaTurni();
     });
   }
 
   void _handleViewChange(String targetViewLabel) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Aggiorniamo lo stato interno per far partire l'animazione nel ViewSelector
     setState(() => _currentView = targetViewLabel);
 
@@ -113,8 +114,8 @@ class _DayPageState extends State<DayPage> {
       referenceDate: currentDate,
       onReturn: () {
         if (mounted) {
-          setState(() => _currentView = l10n.calendar_day); 
-          _caricaDati(); 
+          setState(() => _currentView = l10n.calendar_day);
+          _caricaDati();
         }
       },
     );
@@ -135,31 +136,48 @@ class _DayPageState extends State<DayPage> {
       backgroundColor: Colors.white,
       appBar: MonthAppBar(
         localeCorrente: localeCorrente,
-        dataOggi: currentDate, 
-        showDay: true, 
+        dataOggi: currentDate,
+        showDay: true,
         currentView: _currentView ?? l10n.calendar_day,
         onViewChanged: _handleViewChange,
       ),
-
       body: DayGestureDetector(
         onSwipeNext: _giornoSuccessivo,
         onSwipePrev: _giornoPrecedente,
-        // Traduzione anche qui per lo zoom out
         onZoomOut: () => _handleViewChange(l10n.calendar_week),
-        
         child: DayTimeline(
           currentDate: currentDate,
           startTime: _startTime,
           endTime: _endTime,
           turni: _turniDelGiorno,
           dipendenti: _dipendenti,
-        ), 
+          // COLLEGA LA FUNZIONE QUI
+          onTurnoTap: showShiftDetails,
+        ),
       ),
-
       floatingActionButton: DayPageFab(
         date: currentDate,
-        onTurnoAdded: _aggiornaTurni, 
+        onTurnoAdded: _aggiornaTurni,
       ),
     );
+  }
+
+  Future<void> showShiftDetails(
+      TurnoModel turno, DipendenteModel? dipendente) async {
+    HapticFeedback.selectionClick();
+
+    final bool? refreshNeeded = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ShiftDetailSheet(
+        turno: turno,
+        dipendente: dipendente, // Passalo finalmente al pannello!
+      ),
+    );
+
+    if (refreshNeeded == true && mounted) {
+      await _aggiornaTurni();
+    }
   }
 }

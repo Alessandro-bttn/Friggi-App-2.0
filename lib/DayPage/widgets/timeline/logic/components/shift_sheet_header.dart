@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../DataBase/Dipendente/DipendenteModel.dart';
 
+// Questo widget è il header del ShiftDetailSheet, mostra il nome e il colore del dipendente associato al turno, e un titolo che cambia se stiamo modificando o solo visualizzando.
+
 class ShiftSheetHeader extends StatelessWidget {
   final DipendenteModel? dipendente;
   final bool isEditing;
