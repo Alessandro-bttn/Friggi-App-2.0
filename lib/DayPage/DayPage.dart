@@ -15,7 +15,7 @@ import '../MonthPage/TopBar/month_app_bar.dart';
 
 // Widget della pagina
 import 'widgets/timeline/day_timeline.dart';
-import 'widgets/day_gesture_detector.dart';
+import '../widgets/calendar_gesture_detector.dart';
 import 'widgets/day_fab.dart';
 
 // IMPORTA IL SERVIZIO DI NAVIGAZIONE
@@ -141,7 +141,7 @@ class _DayPageState extends State<DayPage> {
         currentView: _currentView ?? l10n.calendar_day,
         onViewChanged: _handleViewChange,
       ),
-      body: DayGestureDetector(
+      body: CalendarGestureDetector(
         onSwipeNext: _giornoSuccessivo,
         onSwipePrev: _giornoPrecedente,
         onZoomOut: () => _handleViewChange(l10n.calendar_week),

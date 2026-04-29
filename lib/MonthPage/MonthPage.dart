@@ -16,7 +16,7 @@ import '../service/preferences_service.dart';
 import 'TopBar/month_app_bar.dart';
 import 'calander/calendar_grid.dart';
 import 'widgets/app_drawer.dart';
-import 'widgets/month_gesture_detector.dart';
+import '../widgets/calendar_gesture_detector.dart';
 
 // IMPORTA LA LOGICA E ALTRE PAGINE
 import 'logic/month_logic.dart';
@@ -162,10 +162,10 @@ class _MonthPageState extends State<MonthPage> {
         onDestinationSelected: _onDrawerItemTapped,
       ),
 
-      body: MonthGestureDetector(
+      body: CalendarGestureDetector( 
         onSwipePrev: _vaiMesePrecedente,
         onSwipeNext: _vaiMeseSuccessivo,
-        onZoomIn: _apriWeekPage,
+        onZoomIn: _apriWeekPage, // Mese -> Settimana
 
         child: CalendarGrid(
           meseCorrente: dataOggi,

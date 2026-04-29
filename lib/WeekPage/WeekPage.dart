@@ -14,7 +14,7 @@ import '../MonthPage/TopBar/month_app_bar.dart';
 
 import 'logic/week_logic.dart';
 import 'widgets/week_view.dart';
-import 'widgets/week_gesture_detector.dart';
+import '../widgets/calendar_gesture_detector.dart';
 
 // IMPORTA IL SERVIZIO DI NAVIGAZIONE
 import '../CalanderNavigator/calendar_navigation.dart'; 
@@ -158,7 +158,7 @@ class _WeekPageState extends State<WeekPage> {
       body: SafeArea(
         top: false,
         bottom: true,
-        child: WeekGestureDetector(
+        child: CalendarGestureDetector(
           onSwipeNext: _vaiSettimanaSuccessiva,
           onSwipePrev: _vaiSettimanaPrecedente,
           // Allineamento con l10n per le gesture di zoom
