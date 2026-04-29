@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../DataBase/Turni/TurnoModel.dart';
 import '../../../../DataBase/Dipendente/DipendenteModel.dart';
-import '../../../../service/preferences_service.dart'; // Importa le preferenze
+import '../../../../service/preferences_service.dart';
 import 'components/shift_sheet_header.dart';
 import 'components/shift_time_editor.dart';
 import 'components/shift_sheet_actions.dart';
@@ -20,6 +20,10 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
   bool _isEditing = false;
   late TimeOfDay _inizio;
   late TimeOfDay _fine;
+  
+  // DICHIARAZIONE MANCANTE
+  DipendenteModel? _currentDipendente;
+  
   bool _hasChanges = false;
   late bool _use24hFormat;
 
@@ -28,18 +32,26 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
     super.initState();
     _inizio = widget.turno.inizio;
     _fine = widget.turno.fine;
-    // Recupera il formato orario centralizzato
+    _currentDipendente = widget.dipendente;
     _use24hFormat = PreferencesService().use24hFormat;
   }
 
-  void _onTimeChanged(TimeOfDay newInizio, TimeOfDay newFine) {
+  // Funzione centralizzata per controllare se ci sono modifiche
+  void _checkChanges() {
     setState(() {
-      _inizio = newInizio;
-      _fine = newFine;
-      // Logica migliorata per il confronto
-      _hasChanges = _toMinutes(_inizio) != _toMinutes(widget.turno.inizio) || 
-                    _toMinutes(_fine) != _toMinutes(widget.turno.fine);
+      final bool timeChanged = _toMinutes(_inizio) != _toMinutes(widget.turno.inizio) ||
+                               _toMinutes(_fine) != _toMinutes(widget.turno.fine);
+      
+      final bool dipendenteChanged = _currentDipendente?.id != widget.dipendente?.id;
+
+      _hasChanges = timeChanged || dipendenteChanged;
     });
+  }
+
+  void _onTimeChanged(TimeOfDay newInizio, TimeOfDay newFine) {
+    _inizio = newInizio;
+    _fine = newFine;
+    _checkChanges();
   }
 
   int _toMinutes(TimeOfDay time) => time.hour * 60 + time.minute;
@@ -49,20 +61,20 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    // USIAMO UN CONTAINER PER DARE SOLIDITÀ AL PANNELLO
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surface, // Sfondo solido (copre la timeline)
+        color: colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: SafeArea(
-        top: false, // La parte alta è gestita dalla maniglia
+        top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 12, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+          padding: EdgeInsets.fromLTRB(
+              24, 12, 24, MediaQuery.of(context).viewInsets.bottom + 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Maniglia di trascinamento
+              // Maniglia
               Container(
                 width: 32,
                 height: 4,
@@ -73,15 +85,19 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
               ),
               const SizedBox(height: 24),
 
-              // Header con foto e nome dipendente
+              // Header (Nome e Cambio Dipendente)
               ShiftSheetHeader(
-                dipendente: widget.dipendente, 
-                isEditing: _isEditing
+                dipendente: _currentDipendente,
+                isEditing: _isEditing,
+                onDipendenteChanged: (nuovoDipendente) {
+                  _currentDipendente = nuovoDipendente;
+                  _checkChanges();
+                },
               ),
-              
+
               const Divider(height: 32),
 
-              // Editor orari (TimeRangeSelector)
+              // Editor orari
               ShiftTimeEditor(
                 inizio: _inizio,
                 fine: _fine,
@@ -92,17 +108,20 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
 
               const SizedBox(height: 32),
 
-              // Azioni (Salva, Modifica, Elimina)
+              // Azioni (Passiamo anche il dipendente corrente per il salvataggio)
               ShiftSheetActions(
                 turno: widget.turno,
                 inizio: _inizio,
                 fine: _fine,
+                // AGGIUNTA IMPORTANTE: dobbiamo passare il dipendente aggiornato alle azioni
+                currentDipendente: _currentDipendente, 
                 isEditing: _isEditing,
                 hasChanges: _hasChanges,
                 onEditToggle: (val) => setState(() => _isEditing = val),
                 onReset: () => setState(() {
                   _inizio = widget.turno.inizio;
                   _fine = widget.turno.fine;
+                  _currentDipendente = widget.dipendente;
                   _hasChanges = false;
                 }),
               ),

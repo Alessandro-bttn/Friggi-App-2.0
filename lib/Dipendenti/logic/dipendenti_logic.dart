@@ -3,6 +3,10 @@ import '../../DataBase/Dipendente/DipendenteDB.dart';
 import '../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../service/preferences_service.dart'; 
 
+// Questa classe contiene tutta la logica legata ai dipendenti: recupero, salvataggio, eliminazione e filtraggio. 
+// In questo modo, se in futuro dovessi cambiare il modo in cui gestisco i dipendenti (ad esempio, passando a un'API), 
+// dovrò modificare solo questa classe senza toccare l'interfaccia utente o altre parti dell'app.
+
 class DipendentiLogic {
   
   // 1. Recupera i dipendenti SOLO del locale selezionato
@@ -52,7 +56,7 @@ class DipendentiLogic {
     }
   }
 
-  // 4.
+  // 4. Filtra i dipendenti
   // Prende la lista completa e la stringa cercata, restituisce la lista filtrata
   static List<DipendenteModel> filtraDipendenti(List<DipendenteModel> listaOriginale, String query) {
     // Se la ricerca è vuota, restituisci tutto

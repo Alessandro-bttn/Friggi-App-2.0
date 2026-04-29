@@ -157,6 +157,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dipendenti_seleziona => 'Seleccionar Empleado';
 
   @override
+  String get dipendente_sconosciuto => 'Empleado Desconocido';
+
+  @override
   String get settings_titolo => 'Ajustes';
 
   @override

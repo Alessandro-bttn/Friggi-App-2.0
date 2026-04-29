@@ -1,6 +1,8 @@
 // File: lib/Dipendenti/widgets/dipendente_search_app_bar.dart
 import 'package:flutter/material.dart';
 
+// Questo widget è una AppBar personalizzata che mostra un TextField quando isSearching è true, altrimenti mostra il titolo normale.
+
 class DipendenteSearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String titolo;
   final bool isSearching;

@@ -388,6 +388,12 @@ abstract class AppLocalizations {
   /// **'Seleziona Dipendente'**
   String get dipendenti_seleziona;
 
+  /// No description provided for @dipendente_sconosciuto.
+  ///
+  /// In it, this message translates to:
+  /// **'Dipendente Sconosciuto'**
+  String get dipendente_sconosciuto;
+
   /// No description provided for @settings_titolo.
   ///
   /// In it, this message translates to:

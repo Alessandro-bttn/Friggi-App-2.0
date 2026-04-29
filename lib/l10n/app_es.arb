@@ -95,5 +95,6 @@
     "btnElimina": "ELIMINAR",
     "btnModifica": "MODIFICAR",
     "btnAggiungi": "AGREGAR",
-    "btnConferma": "CONFIRMAR"
+    "btnConferma": "CONFIRMAR",
+    "dipendente_sconosciuto": "Empleado Desconocido"
 }

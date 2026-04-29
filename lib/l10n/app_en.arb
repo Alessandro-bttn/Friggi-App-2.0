@@ -97,5 +97,6 @@
     "btnElimina": "DELETE",
     "btnModifica": "EDIT",
     "btnAggiungi": "ADD",
-    "btnConferma": "CONFIRM"
+    "btnConferma": "CONFIRM",
+    "dipendente_sconosciuto": "Unknown Employee"
 }

@@ -19,7 +19,7 @@ import '../DayPage/widgets/timeline/logic/shift_detail_sheet.dart';
 
 // NAVIGAZIONE E PROVIDER
 import '../CalanderNavigator/calendar_navigation.dart';
-import '../../main.dart'; // Per accedere a turniController globale
+import '../../main.dart'; 
 
 class DayPage extends StatefulWidget {
   final DateTime selectedDate;

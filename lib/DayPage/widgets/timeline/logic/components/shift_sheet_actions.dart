@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../../DataBase/Turni/TurnoModel.dart';
+import '../../../../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../../../../notifications/notification_service.dart';
 import '../../../../widgets/add_turno_dialog/logic/turni_validator.dart';
 import '../../../../../l10n/app_localizations.dart';
-import '../../../../../main.dart'; // IMPORTANTE: per accedere al turniController globale
+import '../../../../../main.dart'; 
 
 class ShiftSheetActions extends StatelessWidget {
   final TurnoModel turno;
   final TimeOfDay inizio;
   final TimeOfDay fine;
+  final DipendenteModel? currentDipendente; // <--- AGGIUNTO
   final bool isEditing;
   final bool hasChanges;
   final Function(bool) onEditToggle;
@@ -20,18 +22,20 @@ class ShiftSheetActions extends StatelessWidget {
     required this.turno,
     required this.inizio,
     required this.fine,
+    this.currentDipendente, // <--- AGGIUNTO
     required this.isEditing,
     required this.hasChanges,
     required this.onEditToggle,
     required this.onReset,
   });
 
-  /// Gestisce il salvataggio tramite il Provider
   Future<void> _handleSave(BuildContext context, AppLocalizations l10n) async {
-    // 1. Validazione
+    // Usiamo l'ID del dipendente correntemente selezionato, non quello vecchio del turno
+    final int idDipendenteEffettivo = currentDipendente?.id ?? turno.idDipendente;
+
     final bool valido = await TurniValidator.isTurnoValido(
       context: context,
-      idDipendente: turno.idDipendente,
+      idDipendente: idDipendenteEffettivo,
       data: turno.data,
       inizio: inizio,
       fine: fine,
@@ -41,28 +45,25 @@ class ShiftSheetActions extends StatelessWidget {
     if (!valido) return;
 
     try {
-      // 2. Creazione dell'oggetto aggiornato tramite copyWith
+      // Creiamo il turno aggiornato includendo il (potenziale) nuovo ID dipendente
       final turnoAggiornato = turno.copyWith(
+        idDipendente: idDipendenteEffettivo, // <--- ORA SALVA IL NUOVO DIPENDENTE
         inizio: inizio,
         fine: fine,
       );
 
-      // 3. ESECUZIONE TRAMITE PROVIDER (Gestisce DB e RAM)
       await turniController.aggiornaTurno(turnoAggiornato);
 
-      // 4. Feedback e chiusura
       if (context.mounted) {
         NotificationService().showSuccess(l10n.turno_salvato_con_successo);
-        // Non serve più passare 'true' perché il ListenableBuilder aggiorna tutto da solo
         Navigator.pop(context); 
       }
     } catch (e) {
-      debugPrint("Errore salvataggio provider: $e");
+      debugPrint("Errore salvataggio: $e");
       NotificationService().showError(l10n.turno_salvato_errore);
     }
   }
 
-  /// Gestisce l'eliminazione tramite il Provider
   Future<void> _handleDelete(BuildContext context, AppLocalizations l10n) async {
     HapticFeedback.heavyImpact();
 
@@ -88,15 +89,13 @@ class ShiftSheetActions extends StatelessWidget {
 
     if (confirm == true && context.mounted) {
       try {
-        // ESECUZIONE TRAMITE PROVIDER (Gestisce DB e RAM)
         await turniController.eliminaTurno(turno.id!);
-
         if (context.mounted) {
           NotificationService().showSuccess("Turno eliminato");
-          Navigator.pop(context); // Chiude il BottomSheet
+          Navigator.pop(context); 
         }
       } catch (e) {
-        debugPrint("Errore eliminazione provider: $e");
+        debugPrint("Errore eliminazione: $e");
       }
     }
   }
