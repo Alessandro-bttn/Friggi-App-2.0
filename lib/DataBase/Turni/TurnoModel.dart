@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class TurnoModel {
   final int? id;
-  final int idDipendente;      // <--- RIFERIMENTO ALLA TABELLA DIPENDENTI
-  final DateTime data;         // Il giorno del turno
-  final TimeOfDay inizio;      // Orario inizio
-  final TimeOfDay fine;        // Orario fine
+  final int idDipendente; // <--- RIFERIMENTO ALLA TABELLA DIPENDENTI
+  final DateTime data; // Il giorno del turno
+  final TimeOfDay inizio; // Orario inizio
+  final TimeOfDay fine; // Orario fine
 
   TurnoModel({
     this.id,
@@ -25,7 +25,7 @@ class TurnoModel {
     return TurnoModel(
       id: map['id'],
       idDipendente: map['idDipendente'], // Leggiamo l'ID
-      data: DateTime.parse(map['data']), 
+      data: DateTime.parse(map['data']),
       inizio: stringToTime(map['inizio']),
       fine: stringToTime(map['fine']),
     );
@@ -33,14 +33,31 @@ class TurnoModel {
 
   // --- CONVERSIONE IN MAPPA (Oggetto -> Database) ---
   Map<String, dynamic> toMap() {
-    String timeToString(TimeOfDay t) => "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}";
+    String timeToString(TimeOfDay t) =>
+        "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}";
 
     return {
       'id': id,
       'idDipendente': idDipendente, // Salviamo l'ID
-      'data': data.toIso8601String().split('T')[0], 
+      'data': data.toIso8601String().split('T')[0],
       'inizio': timeToString(inizio),
       'fine': timeToString(fine),
     };
+  }
+
+  TurnoModel copyWith({
+    int? id,
+    int? idDipendente,
+    DateTime? data,
+    TimeOfDay? inizio,
+    TimeOfDay? fine,
+  }) {
+    return TurnoModel(
+      id: id ?? this.id,
+      idDipendente: idDipendente ?? this.idDipendente,
+      data: data ?? this.data,
+      inizio: inizio ?? this.inizio,
+      fine: fine ?? this.fine,
+    );
   }
 }

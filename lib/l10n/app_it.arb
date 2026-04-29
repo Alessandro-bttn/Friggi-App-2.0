@@ -1,6 +1,13 @@
 {
     "appTitle": "Gestione Spese",
     "btnSalva": "SALVA E CONTINUA",
+    
+    "btnAnnulla": "ANNULLA",
+    "btnElimina": "ELIMINA",
+    "btnModifica": "MODIFICA",
+    "btnAggiungi": "AGGIUNGI",
+    "btnConferma": "CONFERMA",
+
     "lingua_seleziona": "Seleziona Lingua",
     "lingua_nome": "Italiano",
 

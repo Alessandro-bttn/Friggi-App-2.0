@@ -91,5 +91,11 @@
     "errore_orario_chiusura": "The end time cannot be after the closing time",
     "errore_turno_sovrapposto": "The shift overlaps with an existing shift",
 
-    "tocca_per_cambiare": "Tap to change"
+    "tocca_per_cambiare": "Tap to change",
+
+    "btnAnnulla": "CANCEL",
+    "btnElimina": "DELETE",
+    "btnModifica": "EDIT",
+    "btnAggiungi": "ADD",
+    "btnConferma": "CONFIRM"
 }

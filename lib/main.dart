@@ -3,9 +3,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 // IMPORT STANDARD PER L10N GENERATO (Se usi file .arb)
 import 'l10n/app_localizations.dart';
 
+import '../Provider/TurniProvider.dart';
+
 import 'rootPage.dart';
-import 'Lingua/language_controller.dart'; 
-import 'service/preferences_service.dart'; 
+import 'Lingua/language_controller.dart';
+import 'service/preferences_service.dart';
 
 // 1. Controller Globale Lingua
 final languageController = LanguageController();
@@ -16,6 +18,8 @@ final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 // 3. Chiave Globale Navigazione
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+final turniController = TurniController();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -24,6 +28,9 @@ void main() async {
 
   // Carica Lingua salvata
   languageController.loadSavedLanguage();
+
+  // Inizializza i dati dei turni prima di avviare l'app
+  await turniController.inizializzaDati();
 
   // Carica Tema salvato
   bool isDarkSaved = PreferencesService().temaScuro;
@@ -39,16 +46,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // ListenableBuilder ora ascolta SIA la lingua CHE il tema
     return ListenableBuilder(
-      listenable: Listenable.merge([languageController, themeNotifier]),
+      listenable: Listenable.merge(
+          [languageController, themeNotifier, turniController]),
       builder: (context, child) {
-        
         return MaterialApp(
-          navigatorKey: navigatorKey, 
+          navigatorKey: navigatorKey,
           title: 'Gestione Spese',
           debugShowCheckedModeBanner: false,
 
           // --- LOCALIZZAZIONE ---
-          locale: languageController.locale, 
+          locale: languageController.locale,
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -56,28 +63,24 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [
-            Locale('it'), 
-            Locale('en'), 
-            Locale('es'), 
+            Locale('it'),
+            Locale('en'),
+            Locale('es'),
           ],
-          
+
           // --- GESTIONE TEMI ---
           // Qui usiamo il valore del notifier, non direttamente le preferenze statiche
-          themeMode: themeNotifier.value, 
+          themeMode: themeNotifier.value,
 
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.deepPurple, 
-              brightness: Brightness.light
-            ),
+                seedColor: Colors.deepPurple, brightness: Brightness.light),
             useMaterial3: true,
           ),
-          
+
           darkTheme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.deepPurple, 
-              brightness: Brightness.dark 
-            ),
+                seedColor: Colors.deepPurple, brightness: Brightness.dark),
             useMaterial3: true,
           ),
 

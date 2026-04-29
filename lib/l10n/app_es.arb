@@ -89,5 +89,11 @@
     "errore_orario_chiusura": "El horario de finalización no puede ser después del horario de cierre",
     "errore_turno_sovrapposto": "El turno se superpone con otro turno existente",
 
-    "tocca_per_cambiare": "Toca para cambiar"
+    "tocca_per_cambiare": "Toca para cambiar",
+
+    "btnAnnulla": "ANULAR",
+    "btnElimina": "ELIMINAR",
+    "btnModifica": "MODIFICAR",
+    "btnAggiungi": "AGREGAR",
+    "btnConferma": "CONFIRMAR"
 }

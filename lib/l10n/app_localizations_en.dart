@@ -15,6 +15,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnSalva => 'SAVE AND CONTINUE';
 
   @override
+  String get btnAnnulla => 'CANCEL';
+
+  @override
+  String get btnElimina => 'DELETE';
+
+  @override
+  String get btnModifica => 'EDIT';
+
+  @override
+  String get btnAggiungi => 'ADD';
+
+  @override
+  String get btnConferma => 'CONFIRM';
+
+  @override
   String get lingua_seleziona => 'Select Language';
 
   @override

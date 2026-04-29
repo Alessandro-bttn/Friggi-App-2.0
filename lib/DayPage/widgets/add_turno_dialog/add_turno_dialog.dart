@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../DataBase/Turni/TurnoModel.dart';
-import '../../../DataBase/Turni/TurniDB.dart';
 import '../../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/time_range_selector.dart';
@@ -10,15 +9,11 @@ import 'logic/turni_validator.dart';
 
 import '../../../../notifications/notification_service.dart';
 
+import '../../../main.dart'; // Per accedere alla variabile globale turniController
+
 class AddTurnoDialog extends StatefulWidget {
   final DateTime date;
-  final VoidCallback onSaved;
-
-  const AddTurnoDialog({
-    super.key,
-    required this.date,
-    required this.onSaved,
-  });
+  const AddTurnoDialog({super.key, required this.date}); // rimosso onSaved
 
   @override
   State<AddTurnoDialog> createState() => _AddTurnoDialogState();
@@ -29,9 +24,9 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
   TimeOfDay _inizio = const TimeOfDay(hour: 9, minute: 0);
   TimeOfDay _fine = const TimeOfDay(hour: 17, minute: 0);
   late AppLocalizations l10n;
-  
-  // TODO: Recupera questo valore dalle impostazioni dell'utente (PreferencesService)
-  final bool _use24h = true; // Per ora forziamo il formato 24h, ma dovrebbe essere dinamico in base alla localizzazione o preferenza utente
+
+  final bool _use24h =
+      true; // Per ora forziamo il formato 24h, ma dovrebbe essere dinamico in base alla localizzazione o preferenza utente
 
   @override
   void didChangeDependencies() {
@@ -44,11 +39,12 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
       context: context,
       initialTime: isStart ? _inizio : _fine,
       initialEntryMode: TimePickerEntryMode.input,
-      helpText: isStart ? l10n.settings_orario_inizio : l10n.settings_orario_fine,
+      helpText:
+          isStart ? l10n.settings_orario_inizio : l10n.settings_orario_fine,
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(
           // Forza il formato basandosi sulla preferenza dell'utente
-          alwaysUse24HourFormat: _use24h, 
+          alwaysUse24HourFormat: _use24h,
         ),
         child: child!,
       ),
@@ -78,12 +74,12 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
       fine: _fine,
     );
 
-    await TurniDB().insertTurno(nuovoTurno);
+    await turniController.aggiungiTurno(nuovoTurno);
 
-    NotificationService().showSuccess(l10n.turno_salvato_con_successo);
-
-    widget.onSaved();
-    if (mounted) Navigator.pop(context);
+    if (mounted) {
+      NotificationService().showSuccess(l10n.turno_salvato_con_successo);
+      Navigator.pop(context); // Chiude il dialogo
+    }
   }
 
   @override
@@ -146,7 +142,8 @@ class _DialogHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(l10n.turni_nuovo_titolo,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Text("${date.day}/${date.month}/${date.year}",
                 style: TextStyle(fontSize: 13, color: Colors.grey[600])),
           ],

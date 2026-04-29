@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:friggi_app_2/DataBase/Turni/TurniDB.dart';
 import '../../../../../DataBase/Turni/TurnoModel.dart';
 import '../../../../../notifications/notification_service.dart';
 import '../../../../widgets/add_turno_dialog/logic/turni_validator.dart';
 import '../../../../../l10n/app_localizations.dart';
-
-// Questo widget gestisce i pulsanti di azione (Salva, Elimina, Modifica) all'interno del ShiftDetailSheet
+import '../../../../../main.dart'; // IMPORTANTE: per accedere al turniController globale
 
 class ShiftSheetActions extends StatelessWidget {
   final TurnoModel turno;
@@ -28,53 +26,50 @@ class ShiftSheetActions extends StatelessWidget {
     required this.onReset,
   });
 
-  /// Gestisce il salvataggio delle modifiche
+  /// Gestisce il salvataggio tramite il Provider
   Future<void> _handleSave(BuildContext context, AppLocalizations l10n) async {
-    // 1. Validazione (escludendo il turno stesso dal controllo sovrapposizione)
+    // 1. Validazione
     final bool valido = await TurniValidator.isTurnoValido(
       context: context,
       idDipendente: turno.idDipendente,
       data: turno.data,
       inizio: inizio,
       fine: fine,
-      idTurnoCorrente: turno.id, // Evita il conflitto con se stesso
+      idTurnoCorrente: turno.id, 
     );
 
     if (!valido) return;
 
     try {
-      // 2. Creazione dell'oggetto aggiornato
-      final turnoAggiornato = TurnoModel(
-        id: turno.id, // Fondamentale: deve essere lo stesso ID
-        idDipendente: turno.idDipendente,
-        data: turno.data,
+      // 2. Creazione dell'oggetto aggiornato tramite copyWith
+      final turnoAggiornato = turno.copyWith(
         inizio: inizio,
         fine: fine,
       );
 
-      // 3. Esecuzione query nel DB
-      await TurniDB().updateTurno(turnoAggiornato);
+      // 3. ESECUZIONE TRAMITE PROVIDER (Gestisce DB e RAM)
+      await turniController.aggiornaTurno(turnoAggiornato);
 
       // 4. Feedback e chiusura
-      NotificationService().showSuccess(l10n.turno_salvato_con_successo);
-
-      // Ritorna true o chiama una callback se devi rinfrescare la UI della timeline
-      Navigator.pop(context, true);
+      if (context.mounted) {
+        NotificationService().showSuccess(l10n.turno_salvato_con_successo);
+        // Non serve più passare 'true' perché il ListenableBuilder aggiorna tutto da solo
+        Navigator.pop(context); 
+      }
     } catch (e) {
-      debugPrint("Errore durante l'aggiornamento del turno: $e");
+      debugPrint("Errore salvataggio provider: $e");
       NotificationService().showError(l10n.turno_salvato_errore);
     }
   }
 
-  /// Mostra un dialogo di conferma prima di eliminare
-  Future<void> _handleDelete(
-      BuildContext context, AppLocalizations l10n) async {
+  /// Gestisce l'eliminazione tramite il Provider
+  Future<void> _handleDelete(BuildContext context, AppLocalizations l10n) async {
     HapticFeedback.heavyImpact();
 
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.msg_elimina_conferma), // Dal tuo JSON
+        title: Text(l10n.msg_elimina_conferma),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -93,16 +88,15 @@ class ShiftSheetActions extends StatelessWidget {
 
     if (confirm == true && context.mounted) {
       try {
-        // Esecuzione reale dell'eliminazione
-        await TurniDB().deleteTurno(turno.id!);
+        // ESECUZIONE TRAMITE PROVIDER (Gestisce DB e RAM)
+        await turniController.eliminaTurno(turno.id!);
 
-        // Feedback (usa una stringa appropriata del tuo l10n)
-        NotificationService().showSuccess(l10n.btn_annulla);
-
-        Navigator.pop(context,
-            true); // Chiude il BottomSheet passando 'true' per il refresh
+        if (context.mounted) {
+          NotificationService().showSuccess("Turno eliminato");
+          Navigator.pop(context); // Chiude il BottomSheet
+        }
       } catch (e) {
-        debugPrint("Errore eliminazione: $e");
+        debugPrint("Errore eliminazione provider: $e");
       }
     }
   }
@@ -115,13 +109,11 @@ class ShiftSheetActions extends StatelessWidget {
     return Row(
       children: [
         if (!isEditing) ...[
-          // --- MODALITÀ VISUALIZZAZIONE ---
           Expanded(
             child: OutlinedButton.icon(
               onPressed: () => _handleDelete(context, l10n),
               icon: const Icon(Icons.delete_outline),
-              label: Text(l10n.btn_annulla
-                  .toUpperCase()), // Usa la tua chiave per "Elimina" se l'hai aggiunta
+              label: Text(l10n.btnElimina.toUpperCase()), 
               style: OutlinedButton.styleFrom(
                 foregroundColor: colorScheme.error,
                 side: BorderSide(color: colorScheme.error),
@@ -137,7 +129,6 @@ class ShiftSheetActions extends StatelessWidget {
             ),
           ),
         ] else ...[
-          // --- MODALITÀ EDITING ---
           Expanded(
             child: TextButton(
               onPressed: () {

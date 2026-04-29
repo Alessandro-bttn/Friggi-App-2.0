@@ -112,6 +112,36 @@ abstract class AppLocalizations {
   /// **'SALVA E CONTINUA'**
   String get btnSalva;
 
+  /// No description provided for @btnAnnulla.
+  ///
+  /// In it, this message translates to:
+  /// **'ANNULLA'**
+  String get btnAnnulla;
+
+  /// No description provided for @btnElimina.
+  ///
+  /// In it, this message translates to:
+  /// **'ELIMINA'**
+  String get btnElimina;
+
+  /// No description provided for @btnModifica.
+  ///
+  /// In it, this message translates to:
+  /// **'MODIFICA'**
+  String get btnModifica;
+
+  /// No description provided for @btnAggiungi.
+  ///
+  /// In it, this message translates to:
+  /// **'AGGIUNGI'**
+  String get btnAggiungi;
+
+  /// No description provided for @btnConferma.
+  ///
+  /// In it, this message translates to:
+  /// **'CONFERMA'**
+  String get btnConferma;
+
   /// No description provided for @lingua_seleziona.
   ///
   /// In it, this message translates to:

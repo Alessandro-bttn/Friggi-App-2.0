@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
-import '../../../l10n/app_localizations.dart'; // Assicurati che il percorso sia corretto
 import 'package:flutter/services.dart';
-import '../DayPage/widgets/timeline/logic/shift_detail_sheet.dart'; // Controlla il percorso reale
-// Import DB e Modelli
+import '../../../l10n/app_localizations.dart';
+
+// IMPORT DB E MODELLI
 import '../DataBase/Locale/LocaleDB.dart';
 import '../DataBase/Locale/LocaleModel.dart';
-import '../DataBase/Turni/TurniDB.dart';
 import '../DataBase/Turni/TurnoModel.dart';
-import '../DataBase/Dipendente/DipendenteDB.dart';
 import '../DataBase/Dipendente/DipendenteModel.dart';
 
 import '../service/preferences_service.dart';
 import '../MonthPage/TopBar/month_app_bar.dart';
 
-// Widget della pagina
+// WIDGET
 import 'widgets/timeline/day_timeline.dart';
 import '../widgets/calendar_gesture_detector.dart';
 import 'widgets/day_fab.dart';
+import '../DayPage/widgets/timeline/logic/shift_detail_sheet.dart';
 
-// IMPORTA IL SERVIZIO DI NAVIGAZIONE
+// NAVIGAZIONE E PROVIDER
 import '../CalanderNavigator/calendar_navigation.dart';
+import '../../main.dart'; // Per accedere a turniController globale
 
 class DayPage extends StatefulWidget {
   final DateTime selectedDate;
@@ -32,14 +32,8 @@ class DayPage extends StatefulWidget {
 
 class _DayPageState extends State<DayPage> {
   ItemModel? localeCorrente;
-  bool isLoading = true;
   late DateTime currentDate;
-
-  // Rimosso l'inizializzazione fissa di _currentView qui
   String? _currentView;
-
-  List<TurnoModel> _turniDelGiorno = [];
-  List<DipendenteModel> _dipendenti = [];
 
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
@@ -53,70 +47,48 @@ class _DayPageState extends State<DayPage> {
     _startTime = prefs.orarioInizio;
     _endTime = prefs.orarioFine;
 
-    _caricaDati();
+    _caricaLocale();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Inizializziamo la vista corrente con la traduzione corretta
     _currentView ??= AppLocalizations.of(context)!.calendar_day;
   }
 
-  Future<void> _caricaDati() async {
-    setState(() => isLoading = true);
+  // Carichiamo solo i dati del locale (il resto è nel provider)
+  Future<void> _caricaLocale() async {
     final int? idLocale = PreferencesService().idLocaleCorrente;
-
-    try {
-      if (idLocale != null) {
-        localeCorrente = await DBHelper().getItemById(idLocale);
-        _dipendenti = await DipendenteDB().getDipendentiByLocale(idLocale);
+    if (idLocale != null) {
+      try {
+        final locale = await DBHelper().getItemById(idLocale);
+        if (mounted) setState(() => localeCorrente = locale);
+      } catch (e) {
+        debugPrint("Errore caricamento locale: $e");
       }
-    } catch (e) {
-      debugPrint("Errore caricamento dati DayPage: $e");
-    }
-
-    await _aggiornaTurni();
-    if (mounted) setState(() => isLoading = false);
-  }
-
-  Future<void> _aggiornaTurni() async {
-    final turni = await TurniDB().getTurniDelGiorno(currentDate);
-    if (mounted) {
-      setState(() => _turniDelGiorno = turni);
     }
   }
 
   void _giornoSuccessivo() {
-    setState(() {
-      currentDate = currentDate.add(const Duration(days: 1));
-      _aggiornaTurni();
-    });
+    setState(() => currentDate = currentDate.add(const Duration(days: 1)));
   }
 
   void _giornoPrecedente() {
-    setState(() {
-      currentDate = currentDate.subtract(const Duration(days: 1));
-      _aggiornaTurni();
-    });
+    setState(() => currentDate = currentDate.subtract(const Duration(days: 1)));
   }
 
   void _handleViewChange(String targetViewLabel) {
     final l10n = AppLocalizations.of(context)!;
-
-    // Aggiorniamo lo stato interno per far partire l'animazione nel ViewSelector
     setState(() => _currentView = targetViewLabel);
 
     CalendarNavigationService.switchToView(
       context: context,
       targetView: targetViewLabel,
-      currentView: l10n.calendar_day, // Usiamo la traduzione per il confronto
+      currentView: l10n.calendar_day,
       referenceDate: currentDate,
       onReturn: () {
-        if (mounted) {
-          setState(() => _currentView = l10n.calendar_day);
-          _caricaDati();
-        }
+        if (mounted) setState(() => _currentView = l10n.calendar_day);
+        // Non serve ricaricare i turni, il provider si aggiorna da solo
       },
     );
   }
@@ -125,59 +97,69 @@ class _DayPageState extends State<DayPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    if (isLoading) {
-      return const Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    // Usiamo ListenableBuilder per rendere la pagina reattiva al provider
+    return ListenableBuilder(
+      listenable: turniController,
+      builder: (context, child) {
+        // Se il provider sta caricando e la RAM è vuota
+        if (turniController.isLoading && turniController.turni.isEmpty) {
+          return const Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: MonthAppBar(
-        localeCorrente: localeCorrente,
-        dataOggi: currentDate,
-        showDay: true,
-        currentView: _currentView ?? l10n.calendar_day,
-        onViewChanged: _handleViewChange,
-      ),
-      body: CalendarGestureDetector(
-        onSwipeNext: _giornoSuccessivo,
-        onSwipePrev: _giornoPrecedente,
-        onZoomOut: () => _handleViewChange(l10n.calendar_week),
-        child: DayTimeline(
-          currentDate: currentDate,
-          startTime: _startTime,
-          endTime: _endTime,
-          turni: _turniDelGiorno,
-          dipendenti: _dipendenti,
-          // COLLEGA LA FUNZIONE QUI
-          onTurnoTap: showShiftDetails,
-        ),
-      ),
-      floatingActionButton: DayPageFab(
-        date: currentDate,
-        onTurnoAdded: _aggiornaTurni,
-      ),
+        // Filtriamo i turni del giorno direttamente dalla memoria
+        final turniGiorno = turniController.turniDelGiorno(currentDate);
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: MonthAppBar(
+            localeCorrente: localeCorrente,
+            dataOggi: currentDate,
+            showDay: true,
+            currentView: _currentView ?? l10n.calendar_day,
+            onViewChanged: _handleViewChange,
+          ),
+          body: CalendarGestureDetector(
+            onSwipeNext: _giornoSuccessivo,
+            onSwipePrev: _giornoPrecedente,
+            onZoomOut: () => _handleViewChange(l10n.calendar_week),
+            child: DayTimeline(
+              currentDate: currentDate,
+              startTime: _startTime,
+              endTime: _endTime,
+              turni: turniGiorno, // Dati dal provider
+              dipendenti: turniController.dipendenti, // Dati dal provider
+              onTurnoTap: showShiftDetails,
+            ),
+          ),
+          floatingActionButton: DayPageFab(
+            date: currentDate,
+            // Passiamo l'azione al provider (non serve callback di refresh)
+            onTurnoAdded: (nuovoTurno) => turniController.aggiungiTurno(nuovoTurno),
+          ),
+        );
+      },
     );
   }
 
-  Future<void> showShiftDetails(
-      TurnoModel turno, DipendenteModel? dipendente) async {
+  Future<void> showShiftDetails(TurnoModel turno, DipendenteModel? dipendente) async {
     HapticFeedback.selectionClick();
 
-    final bool? refreshNeeded = await showModalBottomSheet<bool>(
+    // Quando apriamo il foglio, le azioni interne (salva/elimina)
+    // dovranno chiamare turniController.aggiornaTurno o eliminaTurno
+    await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => ShiftDetailSheet(
         turno: turno,
-        dipendente: dipendente, // Passalo finalmente al pannello!
+        dipendente: dipendente,
       ),
     );
-
-    if (refreshNeeded == true && mounted) {
-      await _aggiornaTurni();
-    }
+    
+    // NOTA: Non serve più fare if(refreshNeeded) { _aggiornaTurni() }
+    // perché il provider notifica il cambiamento e il build sopra si riesegue da solo.
   }
 }
