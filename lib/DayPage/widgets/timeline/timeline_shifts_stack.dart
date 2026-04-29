@@ -8,9 +8,7 @@ class TimelineShiftsStack extends StatelessWidget {
   final List<DipendenteModel> dipendenti;
   final int startHour;
   final double pixelsPerMinute;
-  
-  // MODIFICA: Ora la funzione accetta sia il turno che il dipendente (opzionale)
-  final Function(TurnoModel, DipendenteModel?) onTurnoTap; 
+  final Function(TurnoModel, DipendenteModel?) onTurnoTap;
 
   const TimelineShiftsStack({
     super.key,
@@ -18,7 +16,7 @@ class TimelineShiftsStack extends StatelessWidget {
     required this.dipendenti,
     required this.startHour,
     required this.pixelsPerMinute,
-    required this.onTurnoTap, 
+    required this.onTurnoTap,
   });
 
   @override
@@ -42,6 +40,7 @@ class TimelineShiftsStack extends StatelessWidget {
   List<Widget> _buildOrganizedShifts(BuildContext context, double availableWidth) {
     if (turni.isEmpty) return [];
 
+    // 1. Ordinamento
     List<TurnoModel> sortedTurni = List.from(turni)
       ..sort((a, b) {
         int startA = a.inizio.hour * 60 + a.inizio.minute;
@@ -49,6 +48,7 @@ class TimelineShiftsStack extends StatelessWidget {
         return startA.compareTo(startB);
       });
 
+    // 2. Algoritmo colonne (First Fit)
     List<int> columnsEndTime = [];
     List<Map<String, dynamic>> positionedShifts = [];
 
@@ -70,48 +70,53 @@ class TimelineShiftsStack extends StatelessWidget {
         columnsEndTime.add(endMin);
       }
 
-      positionedShifts.add({
-        'turno': turno,
-        'colIndex': placedColumn,
-      });
+      positionedShifts.add({'turno': turno, 'colIndex': placedColumn});
     }
 
     int totalColumns = columnsEndTime.isEmpty ? 1 : columnsEndTime.length;
     double columnWidth = availableWidth / totalColumns;
 
+    // --- COSTANTE DI ALLINEAMENTO ---
+    // Deve essere identica al margin top della linea in TimelineBackground
+    const double visualOffset = 8.0; 
+
+    // 3. Mappatura dei Widget
     return positionedShifts.map((data) {
       final TurnoModel turno = data['turno'];
       final int colIndex = data['colIndex'];
 
-      final int startMinutesFromBase =
-          ((turno.inizio.hour - startHour) * 60) + turno.inizio.minute;
-      final double topPosition = startMinutesFromBase * pixelsPerMinute;
+      // --- CALCOLO POSIZIONE VERTICALE (TOP) ---
+      final int turnoInizioMinuti = (turno.inizio.hour * 60) + turno.inizio.minute;
+      final int grigliaInizioMinuti = startHour * 60;
+      
+      // Aggiungiamo visualOffset per "spingere" il turno giù quanto la linea della griglia
+      final double topPosition = 
+          ((turnoInizioMinuti - grigliaInizioMinuti) * pixelsPerMinute) + visualOffset;
 
-      final int startInMinutes = (turno.inizio.hour * 60) + turno.inizio.minute;
-      final int endInMinutes = (turno.fine.hour * 60) + turno.fine.minute;
-      final int durationMinutes = endInMinutes - startInMinutes;
+      // --- CALCOLO ALTEZZA (HEIGHT) ---
+      final int turnoFineMinuti = (turno.fine.hour * 60) + turno.fine.minute;
+      int durationMinutes = turnoFineMinuti - turnoInizioMinuti;
+      if (durationMinutes < 0) durationMinutes += 24 * 60;
+
       final double height = durationMinutes * pixelsPerMinute;
 
+      // Trova dipendente
       DipendenteModel? dipendenteTrovato;
       try {
-        dipendenteTrovato =
-            dipendenti.firstWhere((d) => d.id == turno.idDipendente);
+        dipendenteTrovato = dipendenti.firstWhere((d) => d.id == turno.idDipendente);
       } catch (e) {
         dipendenteTrovato = null;
       }
 
-      final double leftPosition = colIndex * columnWidth;
-
       return Positioned(
         top: topPosition,
-        left: leftPosition + 2,
+        left: (colIndex * columnWidth) + 2,
         width: columnWidth - 4,
         height: height,
         child: ShiftWidget(
           turno: turno,
           dipendente: dipendenteTrovato,
-          // MODIFICA: Passiamo entrambi gli oggetti alla callback
-          onTap: () => onTurnoTap(turno, dipendenteTrovato), 
+          onTap: () => onTurnoTap(turno, dipendenteTrovato),
         ),
       );
     }).toList();
