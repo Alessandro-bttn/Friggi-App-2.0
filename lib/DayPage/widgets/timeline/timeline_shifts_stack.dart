@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../DataBase/Turni/TurnoModel.dart';
 import '../../../DataBase/Dipendente/DipendenteModel.dart';
-import 'shift_widget.dart';
+import 'components/shift_widget.dart';
 
 class TimelineShiftsStack extends StatelessWidget {
   final List<TurnoModel> turni;

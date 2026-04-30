@@ -5,7 +5,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/time_range_selector.dart';
 
 import 'employee_selector_field.dart';
-import 'logic/turni_validator.dart';
+import 'turni_validator.dart';
 
 import '../../../../notifications/notification_service.dart';
 

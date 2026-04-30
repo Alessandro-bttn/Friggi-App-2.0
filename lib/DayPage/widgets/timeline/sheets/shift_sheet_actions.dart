@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../../DataBase/Turni/TurnoModel.dart';
-import '../../../../../DataBase/Dipendente/DipendenteModel.dart';
-import '../../../../../notifications/notification_service.dart';
-import '../../../../widgets/add_turno_dialog/logic/turni_validator.dart';
-import '../../../../../l10n/app_localizations.dart';
-import '../../../../../main.dart'; 
+import '../../../../DataBase/Turni/TurnoModel.dart';
+import '../../../../DataBase/Dipendente/DipendenteModel.dart';
+import '../../../../notifications/notification_service.dart';
+import '../../add_shift/turni_validator.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../main.dart'; 
 
 class ShiftSheetActions extends StatelessWidget {
   final TurnoModel turno;

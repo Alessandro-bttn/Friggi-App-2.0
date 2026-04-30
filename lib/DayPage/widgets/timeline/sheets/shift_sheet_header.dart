@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../../DataBase/Dipendente/DipendenteModel.dart';
-import '../../../../../l10n/app_localizations.dart';
-import '../../../add_turno_dialog/employee_selector_field.dart'; 
-import 'pattern_painter.dart';
+import '../../../../DataBase/Dipendente/DipendenteModel.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../add_shift/employee_selector_field.dart'; 
+import '../../shared/painting/pattern_painter.dart';
 
 // Questo widget è il header del ShiftDetailSheet, mostra il nome e il colore del dipendente associato al turno, 
 // e un titolo che cambia se stiamo modificando o solo visualizzando.

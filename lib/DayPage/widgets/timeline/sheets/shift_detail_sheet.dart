@@ -3,9 +3,9 @@ import '../../../../DataBase/Turni/TurnoModel.dart';
 import '../../../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../../../DataBase/Dipendente/DipendenteDB.dart'; // Import per caricare i dipendenti
 import '../../../../service/preferences_service.dart';
-import 'components/shift_sheet_header.dart';
-import 'components/shift_time_editor.dart';
-import 'components/shift_sheet_actions.dart';
+import 'shift_sheet_header.dart';
+import 'shift_time_editor.dart';
+import 'shift_sheet_actions.dart';
 
 class ShiftDetailSheet extends StatefulWidget {
   final TurnoModel turno;

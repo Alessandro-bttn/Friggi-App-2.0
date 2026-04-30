@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../service/preferences_service.dart';
-import '../../../../l10n/app_localizations.dart';
-import '../../../../../DataBase/Turni/TurniDB.dart';
-import '../../../../notifications/notification_service.dart';
+import '../../../service/preferences_service.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../../DataBase/Turni/TurniDB.dart';
+import '../../../notifications/notification_service.dart';
 
 class TurniValidator {
   static int _toMinutes(TimeOfDay time) => time.hour * 60 + time.minute;

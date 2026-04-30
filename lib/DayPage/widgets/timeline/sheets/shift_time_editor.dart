@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../l10n/app_localizations.dart';
-import '../../../../../widgets/time_range_selector.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/time_range_selector.dart';
 
 // Questo widget è specifico per l'editing degli orari dei turni, ma utilizza il TimeRangeSelector universale per la UI.
 

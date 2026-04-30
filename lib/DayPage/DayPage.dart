@@ -15,7 +15,7 @@ import '../MonthPage/TopBar/month_app_bar.dart';
 import 'widgets/timeline/day_timeline.dart';
 import '../widgets/calendar_gesture_detector.dart';
 import 'widgets/day_fab.dart';
-import '../DayPage/widgets/timeline/logic/shift_detail_sheet.dart';
+import 'widgets/timeline/sheets/shift_detail_sheet.dart';
 
 // NAVIGAZIONE E PROVIDER
 import '../CalanderNavigator/calendar_navigation.dart';

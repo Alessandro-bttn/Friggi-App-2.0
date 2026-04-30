@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../DataBase/Turni/TurnoModel.dart';
-import '../../../../DataBase/Dipendente/DipendenteModel.dart';
-import '../../widgets/timeline/logic/components/pattern_painter.dart'; // Assicurati di avere il file del painter qui
+import '../../../../../DataBase/Turni/TurnoModel.dart';
+import '../../../../../DataBase/Dipendente/DipendenteModel.dart';
+import '../../shared/painting/pattern_painter.dart'; // Assicurati di avere il file del painter qui
 
 class ShiftWidget extends StatelessWidget {
   final TurnoModel turno;
