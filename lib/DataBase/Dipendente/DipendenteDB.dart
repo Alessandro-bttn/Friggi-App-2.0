@@ -109,4 +109,17 @@ class DipendenteDB {
       return DipendenteModel.fromMap(maps[i]);
     });
   }
+
+  Future<List<DipendenteModel>> getDipendenti() async {
+  final db = await database; // O il nome della tua variabile che contiene il db
+  
+  // Esegui la query sulla tabella (assicurati che il nome sia corretto)
+  final List<Map<String, dynamic>> maps = await db.query('dipendenti'); 
+
+  // Converti la lista di mappe in una lista di DipendenteModel
+  return List.generate(maps.length, (i) {
+    // Assicurati che nel tuo DipendenteModel esista un factory fromMap
+    return DipendenteModel.fromMap(maps[i]); 
+  });
+}
 }

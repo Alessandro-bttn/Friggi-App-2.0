@@ -30,6 +30,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get btnConferma => 'CONFERMA';
 
   @override
+  String get btn_seleziona => 'SELEZIONA';
+
+  @override
   String get lingua_seleziona => 'Seleziona Lingua';
 
   @override
@@ -207,6 +210,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get settings_logout => 'Esci dall\'account';
+
+  @override
+  String get titolo_selettore_colore => 'Seleziona colore';
 
   @override
   String get settings_turni_label => 'Suddivisione Giornata';

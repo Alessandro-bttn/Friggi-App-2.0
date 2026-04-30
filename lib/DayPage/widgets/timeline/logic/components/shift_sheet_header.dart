@@ -2,21 +2,32 @@ import 'package:flutter/material.dart';
 import '../../../../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../add_turno_dialog/employee_selector_field.dart'; 
+import 'pattern_painter.dart';
 
-// Questo widget è il header del ShiftDetailSheet, mostra il nome e il colore del dipendente associato al turno, e un titolo che cambia se stiamo modificando o solo visualizzando.
+// Questo widget è il header del ShiftDetailSheet, mostra il nome e il colore del dipendente associato al turno, 
+// e un titolo che cambia se stiamo modificando o solo visualizzando.
 
 class ShiftSheetHeader extends StatelessWidget {
   final DipendenteModel? dipendente;
   final bool isEditing;
-
+  final int patternType; // 0 (normale), 1, 2, 3 (texture)
   final Function(DipendenteModel?) onDipendenteChanged;
 
   const ShiftSheetHeader({
     super.key, 
     this.dipendente, 
     required this.isEditing,
-    required this.onDipendenteChanged, // Obbligatoria
+    this.patternType = 0, // Default 0
+    required this.onDipendenteChanged,
   });
+
+  String _getIniziali() {
+    if (dipendente == null) return "?";
+    String n = dipendente!.nome.isNotEmpty ? dipendente!.nome[0] : "";
+    String c = (dipendente!.cognome != null && dipendente!.cognome!.isNotEmpty) 
+               ? dipendente!.cognome![0] : "";
+    return (n + c).toUpperCase();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +37,33 @@ class ShiftSheetHeader extends StatelessWidget {
 
     return Row(
       children: [
-        // Avatar rimane lo stesso (si aggiornerà grazie al setState del padre)
-        CircleAvatar(
-          backgroundColor: dipendente != null ? Color(dipendente!.colore) : colorScheme.surfaceVariant,
-          radius: 24,
-          child: Text(
-            dipendente?.nome.isNotEmpty == true ? dipendente!.nome[0].toUpperCase() : "?",
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+        // Sostituiamo il semplice CircleAvatar con uno Stack che supporta le texture
+        Container(
+          width: 48, height: 48,
+          decoration: BoxDecoration(
+            color: dipendente != null ? Color(dipendente!.colore) : colorScheme.surfaceVariant,
+            shape: BoxShape.circle,
+          ),
+          child: Stack(
+            children: [
+              CustomPaint(
+                painter: TexturePainter(patternType),
+                child: Container(),
+              ),
+              Center(
+                child: Text(
+                  _getIniziali(),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: isEditing 
-            ? _buildEmployeeSelector(context) // Se editi, mostra il selettore
-            : _buildStaticInfo(theme, l10n),  // Altrimenti solo testo
+            ? _buildEmployeeSelector(context) 
+            : _buildStaticInfo(theme, l10n),
         ),
       ],
     );

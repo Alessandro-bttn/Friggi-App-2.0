@@ -12,23 +12,29 @@ class ColorSelector extends StatelessWidget {
     required this.onColorChanged,
   });
 
-  // Lista colori (spostata qui)
+  // Palette ottimizzata: colori molto distinguibili tra loro
   static const List<Color> _coloriDisponibili = [
-    Colors.red, Colors.pink, Colors.purple, Colors.deepPurple,
-    Colors.indigo, Colors.blue, Colors.lightBlue, Colors.cyan,
-    Colors.teal, Colors.green, Colors.lightGreen, Colors.lime,
-    Colors.yellow, Colors.amber, Colors.orange, Colors.deepOrange,
-    Colors.brown, Colors.grey, Colors.blueGrey, Colors.black
+    Colors.red,
+    Colors.orange,
+    Colors.yellow,
+    Colors.green,
+    Colors.teal,
+    Colors.blue,
+    Colors.purple,
+    Colors.pink,
+    Colors.grey,
   ];
 
-  // Funzione per aprire il selettore avanzato
   void _apriSelettoreAvanzato(BuildContext context) {
+    // Recuperiamo l10n qui perché il Dialog è un nuovo contesto
+    final l10n = AppLocalizations.of(context)!;
     Color coloreTemp = selectedColor;
+
     showDialog(
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text('Seleziona un colore'),
+          title: Text(l10n.titolo_selettore_colore), // KEY L10N
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: selectedColor,
@@ -39,13 +45,13 @@ class ColorSelector extends StatelessWidget {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Annulla'),
+              child: Text(l10n.btn_annulla.toUpperCase()), // KEY L10N
               onPressed: () => Navigator.of(ctx).pop(),
             ),
             ElevatedButton(
-              child: const Text('Seleziona'),
+              child: Text(l10n.btn_seleziona.toUpperCase()), // KEY L10N
               onPressed: () {
-                onColorChanged(coloreTemp); // Notifica il cambio
+                onColorChanged(coloreTemp);
                 Navigator.of(ctx).pop();
               },
             ),
@@ -57,16 +63,15 @@ class ColorSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final testo = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Column(
       children: [
-        // Intestazione Sezione Colore
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(testo.label_colore, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(l10n.label_colore, style: const TextStyle(fontWeight: FontWeight.bold)),
             Container(
               width: 24, height: 24,
               decoration: BoxDecoration(
@@ -79,12 +84,10 @@ class ColorSelector extends StatelessWidget {
         ),
         const SizedBox(height: 8),
 
-        // Lista Orizzontale
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              // A. Colori Predefiniti
               ..._coloriDisponibili.map((colore) {
                 return GestureDetector(
                   onTap: () => onColorChanged(colore),
@@ -105,7 +108,7 @@ class ColorSelector extends StatelessWidget {
                 );
               }),
 
-              // B. Bottone "Altro..."
+              // Bottone "Personalizzato"
               GestureDetector(
                 onTap: () => _apriSelettoreAvanzato(context),
                 child: Container(

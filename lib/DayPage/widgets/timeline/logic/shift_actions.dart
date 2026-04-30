@@ -3,6 +3,9 @@ import '../../../../DataBase/Turni/TurnoModel.dart';
 import '../../../../DataBase/Dipendente/DipendenteModel.dart';
 import 'shift_detail_sheet.dart';
 
+// Questa classe contiene le azioni legate ai turni, come ad esempio l'apertura del dettaglio del turno al tap. 
+//In questo modo, se in futuro volessimo aggiungere altre azioni (es. swipe per eliminare), possiamo centralizzarle qui.
+
 class ShiftActions {
   static void handleShiftTap(
       BuildContext context, TurnoModel turno, DipendenteModel? dipendente) {

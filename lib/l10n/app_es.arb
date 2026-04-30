@@ -96,5 +96,8 @@
     "btnModifica": "MODIFICAR",
     "btnAggiungi": "AGREGAR",
     "btnConferma": "CONFIRMAR",
-    "dipendente_sconosciuto": "Empleado Desconocido"
+    "dipendente_sconosciuto": "Empleado Desconocido",
+
+    "btn_seleziona": "SELECCIONAR",
+    "titolo_selettore_colore": "Seleccionar Color"
 }

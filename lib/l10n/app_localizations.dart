@@ -142,6 +142,12 @@ abstract class AppLocalizations {
   /// **'CONFERMA'**
   String get btnConferma;
 
+  /// No description provided for @btn_seleziona.
+  ///
+  /// In it, this message translates to:
+  /// **'SELEZIONA'**
+  String get btn_seleziona;
+
   /// No description provided for @lingua_seleziona.
   ///
   /// In it, this message translates to:
@@ -489,6 +495,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Esci dall\'account'**
   String get settings_logout;
+
+  /// No description provided for @titolo_selettore_colore.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona colore'**
+  String get titolo_selettore_colore;
 
   /// No description provided for @settings_turni_label.
   ///

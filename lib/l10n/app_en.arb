@@ -98,5 +98,8 @@
     "btnModifica": "EDIT",
     "btnAggiungi": "ADD",
     "btnConferma": "CONFIRM",
-    "dipendente_sconosciuto": "Unknown Employee"
+    "dipendente_sconosciuto": "Unknown Employee",
+
+    "btn_seleziona": "SELECT",
+    "titolo_selettore_colore": "Select Color"
 }

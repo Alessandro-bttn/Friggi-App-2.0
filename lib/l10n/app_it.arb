@@ -7,6 +7,7 @@
     "btnModifica": "MODIFICA",
     "btnAggiungi": "AGGIUNGI",
     "btnConferma": "CONFERMA",
+    "btn_seleziona": "SELEZIONA",
 
     "lingua_seleziona": "Seleziona Lingua",
     "lingua_nome": "Italiano",
@@ -74,6 +75,8 @@
     "settings_versione": "Versione App",
     "settings_privacy": "Privacy Policy",
     "settings_logout": "Esci dall'account",
+
+    "titolo_selettore_colore": "Seleziona colore",
 
     "settings_turni_label": "Suddivisione Giornata",
     "settings_turni_sub": "Numero di turni giornalieri",

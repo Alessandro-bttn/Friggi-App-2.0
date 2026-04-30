@@ -40,15 +40,36 @@ class TimelineShiftsStack extends StatelessWidget {
   List<Widget> _buildOrganizedShifts(BuildContext context, double availableWidth) {
     if (turni.isEmpty) return [];
 
-    // 1. Ordinamento
-    List<TurnoModel> sortedTurni = List.from(turni)
+    // 1. DICHIARAZIONE E ORDINAMENTO (Inizializzato subito!)
+    final List<TurnoModel> sortedTurni = List.from(turni)
       ..sort((a, b) {
         int startA = a.inizio.hour * 60 + a.inizio.minute;
         int startB = b.inizio.hour * 60 + b.inizio.minute;
         return startA.compareTo(startB);
       });
 
-    // 2. Algoritmo colonne (First Fit)
+    // 2. PRE-CALCOLO COLLISIONI LOCALI
+    // Mappa: Colore -> Lista di ID dipendenti che lavorano oggi (ordinata cronologicamente)
+    final Map<int, List<int>> localColorConflicts = {};
+    
+    for (var turno in sortedTurni) {
+      final dip = dipendenti.firstWhere(
+        (d) => d.id == turno.idDipendente,
+        orElse: () => DipendenteModel(idLocale: 0, nome: "?", colore: 0, oreLavoro: 0),
+      );
+      
+      if (dip.id != null) {
+        if (!localColorConflicts.containsKey(dip.colore)) {
+          localColorConflicts[dip.colore] = [];
+        }
+        // Aggiungi solo se non è già in lista (preserva ordine cronologico)
+        if (!localColorConflicts[dip.colore]!.contains(dip.id)) {
+          localColorConflicts[dip.colore]!.add(dip.id!);
+        }
+      }
+    }
+
+    // 3. Algoritmo colonne (First Fit)
     List<int> columnsEndTime = [];
     List<Map<String, dynamic>> positionedShifts = [];
 
@@ -69,43 +90,39 @@ class TimelineShiftsStack extends StatelessWidget {
         placedColumn = columnsEndTime.length;
         columnsEndTime.add(endMin);
       }
-
       positionedShifts.add({'turno': turno, 'colIndex': placedColumn});
     }
 
     int totalColumns = columnsEndTime.isEmpty ? 1 : columnsEndTime.length;
     double columnWidth = availableWidth / totalColumns;
 
-    // --- COSTANTE DI ALLINEAMENTO ---
-    // Deve essere identica al margin top della linea in TimelineBackground
-    const double visualOffset = 8.0; 
-
-    // 3. Mappatura dei Widget
+    // 4. Mappatura Widget
     return positionedShifts.map((data) {
       final TurnoModel turno = data['turno'];
       final int colIndex = data['colIndex'];
 
-      // --- CALCOLO POSIZIONE VERTICALE (TOP) ---
       final int turnoInizioMinuti = (turno.inizio.hour * 60) + turno.inizio.minute;
       final int grigliaInizioMinuti = startHour * 60;
+      final double topPosition = ((turnoInizioMinuti - grigliaInizioMinuti) * pixelsPerMinute) + 8.0;
       
-      // Aggiungiamo visualOffset per "spingere" il turno giù quanto la linea della griglia
-      final double topPosition = 
-          ((turnoInizioMinuti - grigliaInizioMinuti) * pixelsPerMinute) + visualOffset;
-
-      // --- CALCOLO ALTEZZA (HEIGHT) ---
       final int turnoFineMinuti = (turno.fine.hour * 60) + turno.fine.minute;
       int durationMinutes = turnoFineMinuti - turnoInizioMinuti;
       if (durationMinutes < 0) durationMinutes += 24 * 60;
-
       final double height = durationMinutes * pixelsPerMinute;
 
-      // Trova dipendente
-      DipendenteModel? dipendenteTrovato;
-      try {
-        dipendenteTrovato = dipendenti.firstWhere((d) => d.id == turno.idDipendente);
-      } catch (e) {
-        dipendenteTrovato = null;
+      final DipendenteModel dipendenteTrovato = dipendenti.firstWhere(
+        (d) => d.id == turno.idDipendente,
+        orElse: () => DipendenteModel(idLocale: 0, nome: "N/A", colore: 0xFF9E9E9E, oreLavoro: 0),
+      );
+
+      // --- CALCOLO PATTERN LOCALE ---
+      int pattern = 0;
+      final List<int> conflicts = localColorConflicts[dipendenteTrovato.colore] ?? [];
+      
+      if (conflicts.length > 1) {
+        final int index = conflicts.indexOf(dipendenteTrovato.id!);
+        // index 0 è il primo (solido), gli altri hanno pattern 1-3
+        pattern = (index == 0) ? 0 : ((index - 1) % 3) + 1;
       }
 
       return Positioned(
@@ -116,6 +133,7 @@ class TimelineShiftsStack extends StatelessWidget {
         child: ShiftWidget(
           turno: turno,
           dipendente: dipendenteTrovato,
+          patternType: pattern, 
           onTap: () => onTurnoTap(turno, dipendenteTrovato),
         ),
       );
