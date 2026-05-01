@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
-import 'DataBase/Locale/LocaleDB.dart';
-import 'NewLocale/NewLocale.dart';
+import '../NewLocale/NewLocale.dart';
 import '../MonthPage/MonthPage.dart';
+// Assicurati che questo import punti al tuo file preferences_service.dart
+import '../../service/preferences_service.dart'; 
 
 class RootPage extends StatelessWidget {
   const RootPage({super.key});
 
-  Future<bool> _checkDatabaseAndRows() async {
-    // --- ZONA TEST: Scommenta QUI per CANCELLARE il DB ---
-    // await DBHelper().deleteDB(); 
-    // -----------------------------------------------------
-
-    return await DBHelper().hasData();
+  /// Controlla se l'utente ha già selezionato un locale salvato
+  Future<bool> _haLocaleConfigurato() async {
+    // Inizializza le preferences se necessario
+    await PreferencesService().init();
+    
+    // Se idLocaleCorrente non è nullo, abbiamo un locale valido
+    return PreferencesService().idLocaleCorrente != null;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: _checkDatabaseAndRows(), 
+      future: _haLocaleConfigurato(), 
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
 
         // 1. Attesa (Loading)
@@ -31,15 +33,15 @@ class RootPage extends StatelessWidget {
         if (snapshot.hasError) {
            return Scaffold(
              body: Center(
-               child: Text('Errore nel caricamento DB: ${snapshot.error}')
+               child: Text('Errore nel caricamento: ${snapshot.error}')
              )
            );
         }
 
-        // 3. Dati caricati
-        final bool haDati = snapshot.data ?? false;
+        // 3. Decisione: Ha un locale?
+        final bool haLocale = snapshot.data ?? false;
 
-        if (haDati) {
+        if (haLocale) {
           return const MonthPage(); 
         } else {
           return const NewLocale(); 

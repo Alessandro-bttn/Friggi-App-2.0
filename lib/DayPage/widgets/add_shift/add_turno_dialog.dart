@@ -57,8 +57,10 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
   }
 
   void _submitForm() async {
+    // 1. Controllo sicurezza (già presente)
     if (_selectedDipendente?.id == null) return;
 
+    // 2. Validazione (già presente)
     final bool valido = await TurniValidator.isTurnoValido(
       context: context,
       idDipendente: _selectedDipendente!.id!,
@@ -69,18 +71,21 @@ class _AddTurnoDialogState extends State<AddTurnoDialog> {
 
     if (!valido) return;
 
+    // 3. Creazione TurnoModel CON idLocale estratto dal dipendente
     final nuovoTurno = TurnoModel(
       idDipendente: _selectedDipendente!.id!,
+      idLocale: _selectedDipendente!.idLocale, // <--- ECCO LA CORREZIONE
       data: widget.date,
       inizio: _inizio,
       fine: _fine,
     );
 
+    // 4. Salvataggio
     await turniController.aggiungiTurno(nuovoTurno);
 
     if (mounted) {
       NotificationService().showSuccess(l10n.turno_salvato_con_successo);
-      Navigator.pop(context); // Chiude il dialogo
+      Navigator.pop(context); 
     }
   }
 

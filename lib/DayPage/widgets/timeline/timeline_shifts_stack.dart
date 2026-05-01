@@ -55,7 +55,7 @@ class TimelineShiftsStack extends StatelessWidget {
     for (var turno in sortedTurni) {
       final dip = dipendenti.firstWhere(
         (d) => d.id == turno.idDipendente,
-        orElse: () => DipendenteModel(idLocale: 0, nome: "?", colore: 0, oreLavoro: 0),
+        orElse: () => DipendenteModel(idLocale: 0, nome: "?", colore: 0),
       );
       
       if (dip.id != null) {
@@ -112,7 +112,7 @@ class TimelineShiftsStack extends StatelessWidget {
 
       final DipendenteModel dipendenteTrovato = dipendenti.firstWhere(
         (d) => d.id == turno.idDipendente,
-        orElse: () => DipendenteModel(idLocale: 0, nome: "N/A", colore: 0xFF9E9E9E, oreLavoro: 0),
+        orElse: () => DipendenteModel(idLocale: 0, nome: "N/A", colore: 0xFF9E9E9E),
       );
 
       // --- CALCOLO PATTERN LOCALE ---

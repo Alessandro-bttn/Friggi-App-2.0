@@ -7,7 +7,7 @@ import 'widgets/app_bar_avatar.dart';
 import 'widgets/view_selector.dart'; // Importa il nuovo file
 
 class MonthAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final ItemModel? localeCorrente;
+  final LocaleModel? localeCorrente;
   final DateTime dataOggi;
   final bool showDay;
   final String currentView;

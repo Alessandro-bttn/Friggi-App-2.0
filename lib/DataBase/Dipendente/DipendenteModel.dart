@@ -1,41 +1,49 @@
-// File: lib/DataBase/Dipendente/DipendenteModel.dart
-
 class DipendenteModel {
   final int? id;
-  final int idLocale;           // <--- NUOVO CAMPO (Collegamento al Locale)
+  final int idLocale;
   final String nome;
   final String? cognome;
   final int colore;
-  final double oreLavoro;
+  final String? userId; // <--- AGGIUNTO
 
   const DipendenteModel({
     this.id,
-    required this.idLocale,     // <--- Aggiunto al costruttore
+    required this.idLocale,
     required this.nome,
     this.cognome,
     required this.colore,
-    required this.oreLavoro,
+    this.userId, // <--- AGGIUNTO
   });
 
-  factory DipendenteModel.fromMap(Map<String, dynamic> map) {
-    return DipendenteModel(
-      id: map['id'],
-      idLocale: map['idLocale'], // <--- Leggi dalla mappa
-      nome: map['nome'],
-      cognome: map['cognome'],
-      colore: map['colore'],
-      oreLavoro: map['oreLavoro'],
-    );
-  }
+  // Converti da JSON (Supabase -> Dart)
+  factory DipendenteModel.fromJson(Map<String, dynamic> json) {
+  return DipendenteModel(
+    id: json['id'],
+    // Se è int lo prende diretto, se è stringa la converte, altrimenti default 0
+    idLocale: (json['id_locale'] is int) 
+        ? json['id_locale'] 
+        : int.tryParse(json['id_locale'].toString()) ?? 0,
+    
+    nome: json['nome'] ?? '',
+    cognome: json['cognome'],
+    
+    // Fai la stessa cosa per il colore, che potrebbe arrivare come stringa
+    colore: (json['colore'] is int) 
+        ? json['colore'] 
+        : int.tryParse(json['colore'].toString()) ?? 0xFF000000, // Colore di default
+    
+    userId: json['user_id'],
+  );
+}
 
-  Map<String, dynamic> toMap() {
+  // Converti in JSON (Dart -> Supabase)
+  Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'idLocale': idLocale,      // <--- Scrivi nella mappa
+      'id_locale': idLocale,
       'nome': nome,
       'cognome': cognome,
       'colore': colore,
-      'oreLavoro': oreLavoro,
+      'user_id': userId, // <--- AGGIUNTO
     };
   }
 }

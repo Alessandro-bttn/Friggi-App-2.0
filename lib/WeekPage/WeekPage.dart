@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 
-// IMPORTA I MODELLI E DB
+// MODELLI
 import '../DataBase/Locale/LocaleModel.dart';
-import '../DataBase/Locale/LocaleDB.dart';
+
+// SERVIZI (Aggiornati)
+import '../service/locale_service.dart'; 
 import '../service/preferences_service.dart';
 
-// IMPORTA I WIDGET
+// WIDGET
 import '../MonthPage/TopBar/month_app_bar.dart';
 import 'widgets/week_view.dart';
 import '../widgets/calendar_gesture_detector.dart';
@@ -26,7 +28,7 @@ class WeekPage extends StatefulWidget {
 }
 
 class _WeekPageState extends State<WeekPage> {
-  ItemModel? localeCorrente;
+  LocaleModel? localeCorrente;
   late DateTime currentWeekStart;
   String? _currentView;
 
@@ -53,11 +55,12 @@ class _WeekPageState extends State<WeekPage> {
     _currentView ??= AppLocalizations.of(context)!.calendar_week;
   }
 
-  // Carichiamo solo il locale, i turni arrivano dal controller
+  // Carichiamo il locale tramite il nuovo servizio
   Future<void> _caricaLocale() async {
     final int? idLocale = PreferencesService().idLocaleCorrente;
     if (idLocale != null) {
-      final locale = await DBHelper().getItemById(idLocale);
+      // UTILIZZO DEL SERVIZIO AL POSTO DEL VECCHIO DB
+      final locale = await LocaleService().getLocaleById(idLocale);
       if (mounted) setState(() => localeCorrente = locale);
     }
   }
@@ -81,7 +84,6 @@ class _WeekPageState extends State<WeekPage> {
       referenceDate: currentWeekStart,
       onReturn: () {
         if (mounted) setState(() => _currentView = l10n.calendar_week);
-        // I dati si aggiornano da soli grazie al ListenableBuilder
       },
     );
   }
@@ -93,7 +95,6 @@ class _WeekPageState extends State<WeekPage> {
     return ListenableBuilder(
       listenable: turniController,
       builder: (context, child) {
-        // Se il controller sta ancora caricando i dati iniziali
         if (turniController.isLoading && turniController.turni.isEmpty) {
           return const Scaffold(
             backgroundColor: Colors.white,
@@ -101,7 +102,6 @@ class _WeekPageState extends State<WeekPage> {
           );
         }
 
-        // Filtriamo i turni della settimana corrente in memoria (istantaneo)
         final turniSettimana = turniController.turniDellaSettimana(currentWeekStart);
 
         return Scaffold(
@@ -129,15 +129,13 @@ class _WeekPageState extends State<WeekPage> {
                     targetView: l10n.calendar_day,
                     currentView: l10n.calendar_week,
                     referenceDate: date, 
-                    onReturn: () {
-                      // Il refresh è automatico
-                    },
+                    onReturn: () {},
                   );
                 },
                 divisions: _divisions,
                 startTime: _startTime,
                 endTime: _endTime,
-                allShifts: turniSettimana, // Dati filtrati in RAM
+                allShifts: turniSettimana,
                 dipendenti: turniController.dipendenti,
               ),
             ),

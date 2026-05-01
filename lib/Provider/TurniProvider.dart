@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../DataBase/Turni/TurniDB.dart';
+import '../service/turno_service.dart';
 import '../DataBase/Turni/TurnoModel.dart';
-import '../DataBase/Dipendente/DipendenteDB.dart';
+import '../service/dipendente_service.dart';
 import '../DataBase/Dipendente/DipendenteModel.dart';
+import '../service/preferences_service.dart';
 
 class TurniController extends ChangeNotifier {
   // --- STATO ---
@@ -23,10 +24,16 @@ class TurniController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Carichiamo tutto in parallelo per massimizzare la velocità
+      final int? idLocale = PreferencesService().idLocaleCorrente;
+      if (idLocale == null) {
+        debugPrint("Nessun locale selezionato.");
+        return;
+      }
+
+      // Ora passiamo l'idLocale ai nuovi metodi dei Service
       final risultati = await Future.wait([
-        TurniDB().getTurni(),
-        DipendenteDB().getAllDipendenti(),
+        TurnoService().getTurniByLocale(idLocale),
+        DipendenteService().getDipendentiByLocale(idLocale),
       ]);
 
       _allTurni = risultati[0] as List<TurnoModel>;
@@ -59,22 +66,17 @@ class TurniController extends ChangeNotifier {
   // --- OPERAZIONI CRUD (DB + MEMORIA) ---
 
   Future<void> aggiungiTurno(TurnoModel nuovo) async {
-    // 1. Salviamo sul DB e otteniamo l'ID generato
-    final id = await TurniDB().insertTurno(nuovo);
-    final turnoConId = nuovo.copyWith(id: id);
-
-    // 2. Aggiorniamo la memoria
-    _allTurni.add(turnoConId);
-
-    // 3. Notifichiamo tutte le pagine (Giorno, Settimana, Mese si aggiornano insieme)
+    // Usiamo addTurno invece di insertTurno
+    final turnoSalvato = await TurnoService().addTurno(nuovo);
+    
+    // Aggiorniamo la memoria con l'oggetto ritornato dal DB
+    _allTurni.add(turnoSalvato);
     notifyListeners();
   }
 
   Future<void> aggiornaTurno(TurnoModel turnoModificato) async {
-    // 1. DB
-    await TurniDB().updateTurno(turnoModificato);
+    await TurnoService().updateTurno(turnoModificato);
 
-    // 2. Memoria
     int index = _allTurni.indexWhere((t) => t.id == turnoModificato.id);
     if (index != -1) {
       _allTurni[index] = turnoModificato;
@@ -83,10 +85,7 @@ class TurniController extends ChangeNotifier {
   }
 
   Future<void> eliminaTurno(int id) async {
-    // 1. DB
-    await TurniDB().deleteTurno(id);
-
-    // 2. Memoria
+    await TurnoService().deleteTurno(id);
     _allTurni.removeWhere((t) => t.id == id);
     notifyListeners();
   }

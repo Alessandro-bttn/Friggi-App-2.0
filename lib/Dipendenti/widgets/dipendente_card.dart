@@ -39,8 +39,6 @@ class DipendenteCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         
-        // 3. ORE LAVORO
-        subtitle: Text("${dipendente.oreLavoro}h"),
         
         // 4. BOTTONI AZIONE
         trailing: Row(

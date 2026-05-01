@@ -1,5 +1,5 @@
 // File: lib/Dipendenti/logic/dipendenti_logic.dart
-import '../../DataBase/Dipendente/DipendenteDB.dart';
+import '../../service/dipendente_service.dart';
 import '../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../service/preferences_service.dart'; 
 
@@ -17,12 +17,12 @@ class DipendentiLogic {
       return [];
     }
 
-    return await DipendenteDB().getDipendentiByLocale(idLocaleCorrente);
+    return await DipendenteService().getDipendentiByLocale(idLocaleCorrente);
   }
 
   // 2. Elimina
   static Future<void> eliminaDipendente(int id) async {
-    await DipendenteDB().deleteDipendente(id);
+    await DipendenteService().deleteDipendente(id);
   }
 
   // 3. Salva (Aggiungi o Modifica)
@@ -45,14 +45,14 @@ class DipendentiLogic {
       idLocale: idLocaleCorrente,
       nome: nome,
       cognome: cognome,
-      oreLavoro: ore,
+
       colore: coloreValue,
     );
 
     if (id == null) {
-      await DipendenteDB().addDipendente(dipendente);
+      await DipendenteService().addDipendente(dipendente);
     } else {
-      await DipendenteDB().updateDipendente(dipendente); 
+      await DipendenteService().updateDipendente(dipendente);
     }
   }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../service/preferences_service.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../../DataBase/Turni/TurniDB.dart';
+import '../../../service/turno_service.dart';
 import '../../../notifications/notification_service.dart';
 
 /// Questa classe contiene la logica per validare i turni, inclusi i controlli di sovrapposizione
@@ -47,7 +47,7 @@ class TurniValidator {
 
     // --- CONTROLLO SOVRAPPOSIZIONE TURNI ---
     try {
-      final turniEsistenti = await TurniDB().getTurniByDipendenteEData(idDipendente, data);
+      final turniEsistenti = await TurnoService().getTurniByDipendenteEData(idDipendente, data);
 
       for (var turno in turniEsistenti) {
         // ESCLUSIONE AUTO-CONFLITTO:

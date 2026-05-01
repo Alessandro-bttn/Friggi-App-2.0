@@ -1,33 +1,31 @@
-class ItemModel {
-  final int? id;          // L'ID è generato automaticamente dal DB
+class LocaleModel {
+  final int? id;
   final String nome;
-  final String pd;        // Campo "P/D" richiesto
-  final String? imagePath; // Qui salviamo solo il PERCORSO della foto
+  final String? userId; // Tieni questo se ti serve per la RLS
+  
+  // Rimuovi 'final String indirizzo;' 
 
-  ItemModel({
+  LocaleModel({
     this.id,
     required this.nome,
-    required this.pd,
-    this.imagePath,
+    this.userId,
+    // Rimuovi 'this.indirizzo' dal costruttore
   });
 
-  // Serve per trasformare i dati dal DB (Mappa) alla nostra Classe
-  factory ItemModel.fromMap(Map<String, dynamic> map) {
-    return ItemModel(
-      id: map['id'],
-      nome: map['nome'],
-      pd: map['pd'],
-      imagePath: map['imagePath'],
+  factory LocaleModel.fromJson(Map<String, dynamic> json) {
+    return LocaleModel(
+      id: json['id'],
+      nome: json['nome'],
+      userId: json['user_id'],
+      // Rimuovi la riga 'indirizzo: json['indirizzo']'
     );
   }
 
-  // Serve per trasformare la nostra Classe in dati per il DB (Mappa)
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'nome': nome,
-      'pd': pd,
-      'imagePath': imagePath,
+      'user_id': userId,
+      // Rimuovi 'indirizzo': indirizzo,
     };
   }
 }

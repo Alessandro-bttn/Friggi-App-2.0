@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../../../DataBase/Locale/LocaleModel.dart';
 
 class AppBarTitle extends StatelessWidget {
-  final ItemModel? localeCorrente;
+  final LocaleModel? localeCorrente;
   final DateTime dataOggi;
   final bool showDay;
 

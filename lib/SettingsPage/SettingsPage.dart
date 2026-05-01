@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // IMPORT GENERATO PER LE TRADUZIONI
-import '../l10n/app_localizations.dart'; 
+import '../l10n/app_localizations.dart';
 
 // IMPORT DEI SERVIZI E DEL MAIN
 import '../service/preferences_service.dart';
@@ -10,6 +10,8 @@ import '../../main.dart'; // Fondamentale per accedere a languageController e th
 import 'widgets/appearance_section.dart';
 import 'widgets/general_section/general_section.dart';
 import 'widgets/info_section.dart';
+
+import '../service/auth_service.dart'; // Per il logout
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -23,7 +25,7 @@ class _SettingsPageState extends State<SettingsPage> {
   late bool _isDarkMode;
   late bool _notificationsEnabled;
   late String _selectedLanguageCode;
-  
+
   // NUOVI STATI PER I SETTAGGI AGGIUNTI
   late int _shiftDivisions;
   late TimeOfDay _startTime;
@@ -65,23 +67,22 @@ class _SettingsPageState extends State<SettingsPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      // Nota: withValues è disponibile dalle versioni recenti di Flutter, 
+      // Nota: withValues è disponibile dalle versioni recenti di Flutter,
       // altrimenti usa .withOpacity(0.05)
       backgroundColor: Colors.grey.withValues(alpha: 0.05),
-      
+
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          
           // 1. SEZIONE ASPETTO
           AppearanceSection(
             isDarkMode: _isDarkMode,
             onThemeChanged: (val) {
               setState(() => _isDarkMode = val);
-              
+
               // 1. Salva nel database locale
               PreferencesService().temaScuro = val;
-              
+
               // 2. Aggiorna l'app in tempo reale usando il Notifier globale
               themeNotifier.value = val ? ThemeMode.dark : ThemeMode.light;
             },
@@ -91,7 +92,7 @@ class _SettingsPageState extends State<SettingsPage> {
           GeneralSection(
             notificationsEnabled: _notificationsEnabled,
             selectedLanguageCode: _selectedLanguageCode,
-            
+
             // Passiamo i valori correnti per i nuovi settaggi
             shiftDivisions: _shiftDivisions,
             startTime: _startTime,
@@ -103,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
             onNotificationChanged: (val) {
               setState(() => _notificationsEnabled = val);
             },
-            
+
             // Callback Lingua
             onLanguageChanged: (langCode) {
               setState(() => _selectedLanguageCode = langCode);
@@ -137,16 +138,29 @@ class _SettingsPageState extends State<SettingsPage> {
 
           // 4. LOGOUT
           TextButton(
-            onPressed: () {
-              // TODO: Logica Logout
-              print("Logout eseguito");
+            onPressed: () async {
+              // Mostriamo un piccolo indicatore di caricamento se vuoi,
+              // ma essendo un'operazione veloce solitamente non serve.
+              try {
+                await AuthService().logout();
+                // Se vuoi essere sicuro di chiudere eventuali dialoghi aperti:
+                if (context.mounted) Navigator.of(context).pop();
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text("Errore logout: $e"),
+                        backgroundColor: Colors.red),
+                  );
+                }
+              }
             },
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
-            child: Text(l10n.settings_logout),
+            child: Text(l10n.settings_logout), // o semplicemente Text("Esci")
           ),
-          
+
           const SizedBox(height: 20),
         ],
       ),

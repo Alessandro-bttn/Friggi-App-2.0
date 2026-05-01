@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import '../../../l10n/app_localizations.dart';
 
 // IMPORT DB E MODELLI
-import '../DataBase/Locale/LocaleDB.dart';
+import '../service/locale_service.dart';
 import '../DataBase/Locale/LocaleModel.dart';
 import '../DataBase/Turni/TurnoModel.dart';
 import '../DataBase/Dipendente/DipendenteModel.dart';
@@ -31,7 +31,7 @@ class DayPage extends StatefulWidget {
 }
 
 class _DayPageState extends State<DayPage> {
-  ItemModel? localeCorrente;
+  LocaleModel? localeCorrente;
   late DateTime currentDate;
   String? _currentView;
 
@@ -61,7 +61,7 @@ class _DayPageState extends State<DayPage> {
     final int? idLocale = PreferencesService().idLocaleCorrente;
     if (idLocale != null) {
       try {
-        final locale = await DBHelper().getItemById(idLocale);
+        final locale = await LocaleService().getLocaleById(idLocale);
         if (mounted) setState(() => localeCorrente = locale);
       } catch (e) {
         debugPrint("Errore caricamento locale: $e");

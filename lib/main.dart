@@ -5,9 +5,12 @@ import 'l10n/app_localizations.dart';
 
 import '../Provider/TurniProvider.dart';
 
-import 'rootPage.dart';
 import 'Lingua/language_controller.dart';
 import 'service/preferences_service.dart';
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'NewLocale/AuthGate.dart';
 
 // 1. Controller Globale Lingua
 final languageController = LanguageController();
@@ -36,11 +39,18 @@ void main() async {
   bool isDarkSaved = PreferencesService().temaScuro;
   themeNotifier.value = isDarkSaved ? ThemeMode.dark : ThemeMode.light;
 
+  await Supabase.initialize(
+    url: 'https://tsjohyuzicjyppvrzppq.supabase.co',
+    anonKey: 'sb_publishable_R3ct8AaqaxOzBmDgxPZFAQ_F0L0R7qP',
+  );
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +94,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
 
-          home: const RootPage(),
+          home: const AuthGate(),
         );
       },
     );

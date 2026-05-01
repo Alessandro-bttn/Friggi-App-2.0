@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../DataBase/Dipendente/DipendenteDB.dart';
+import '../../../service/dipendente_service.dart';
 import '../../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../../service/preferences_service.dart';
 import '../../../l10n/app_localizations.dart';
@@ -37,7 +37,7 @@ class _EmployeeSelectorFieldState extends State<EmployeeSelectorField> {
       return;
     }
     try {
-      final lista = await DipendenteDB().getDipendentiByLocale(idLocale);
+      final lista = await DipendenteService().getDipendentiByLocale(idLocale);
       if (mounted) {
         setState(() {
           _allDipendenti = lista;

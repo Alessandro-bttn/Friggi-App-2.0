@@ -1,41 +1,19 @@
-import 'dart:io';
-
-// IMPORTA I DATABASE, MODELLI E SERVIZI
-import '../../Database/Locale/LocaleDB.dart';
-import '../../Database/Locale/LocaleModel.dart';
+import '../../DataBase/Locale/LocaleModel.dart';
+import '../../service/locale_service.dart';
 import '../../service/preferences_service.dart';
-import '../widgets/image_helper.dart';
 
 class NewLocaleLogic {
-  
-  static Future<void> salvaLocale({
-    required String nome,
-    required String ruolo,
-    File? imageFile,
-  }) async {
-    
-    String? finalImagePath;
+  static Future<void> salvaLocale({required String nome}) async {
+    // 1. Creazione modello (assicurati che in LocaleModel non sia richiesto 'indirizzo')
+    final nuovoLocale = LocaleModel(nome: nome);
 
-    // 1. Gestione Immagine
-    if (imageFile != null) {
-      finalImagePath = await ImageHelper.saveImageToAppDir(imageFile);
+    // 2. Salvataggio su Supabase
+    // Questo metodo ora passerà solo 'nome' e 'user_id' al DB
+    final localeSalvato = await LocaleService().addLocale(nuovoLocale);
+
+    // 3. Salvataggio preferenze
+    if (localeSalvato.id != null) {
+      PreferencesService().idLocaleCorrente = localeSalvato.id;
     }
-
-    // 2. Creazione Modello
-    final newItem = ItemModel(
-      nome: nome,
-      pd: ruolo,
-      imagePath: finalImagePath,
-    );
-
-    // 3. Scrittura su DB e RECUPERO ID
-    // La funzione insertItem restituisce l'ID della riga appena creata (es. 1, 2, 3...)
-    int nuovoId = await DBHelper().insertItem(newItem);
-
-    // 4. SALVATAGGIO NELLE PREFERENZE (ROOT PRINCIPALE)
-    // Diciamo all'app: "Da ora in poi, lavora su questo locale qui"
-    PreferencesService().idLocaleCorrente = nuovoId;
-    
-    print("Locale creato con ID: $nuovoId e impostato come corrente.");
   }
 }

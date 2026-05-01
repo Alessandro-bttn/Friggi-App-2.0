@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 
-// IMPORTA I DATI E MODELLI
+// MODELLI E SERVIZI
 import '../DataBase/Locale/LocaleModel.dart';
-import '../DataBase/Locale/LocaleDB.dart';
+import '../service/locale_service.dart'; // <--- ASSICURATI DI QUESTO IMPORT
 import '../service/preferences_service.dart';
 
-// IMPORTA I WIDGET
+// WIDGET
 import 'TopBar/month_app_bar.dart';
 import 'calander/calendar_grid.dart';
 import 'widgets/app_drawer.dart';
 import '../widgets/calendar_gesture_detector.dart';
 
-// IMPORTA LA LOGICA E ALTRE PAGINE
+// LOGICA E NAVIGAZIONE
 import 'logic/month_logic.dart';
 import '../Dipendenti/DipendentiPage.dart';
 import '../SettingsPage/SettingsPage.dart';
-
-// IMPORTA IL SERVIZIO DI NAVIGAZIONE E IL CONTROLLER GLOBALE
 import '../CalanderNavigator/calendar_navigation.dart';
 import '../../main.dart'; 
 
@@ -29,8 +27,7 @@ class MonthPage extends StatefulWidget {
 }
 
 class _MonthPageState extends State<MonthPage> {
-  // --- STATO LOCALE (Solo UI e Navigazione) ---
-  ItemModel? localeCorrente;
+  LocaleModel? localeCorrente;
   DateTime dataOggi = DateTime.now();
   int _drawerSelectedIndex = 0;
   String? _currentView;
@@ -47,11 +44,12 @@ class _MonthPageState extends State<MonthPage> {
     _currentView ??= AppLocalizations.of(context)!.calendar_month;
   }
 
-  // Carichiamo solo il locale, i turni sono gestiti dal turniController
+  // Carichiamo il locale tramite il nuovo servizio
   Future<void> _caricaLocale() async {
     final int? idLocale = PreferencesService().idLocaleCorrente;
     if (idLocale != null) {
-      final locale = await DBHelper().getItemById(idLocale);
+      // UTILIZZO DEL NUOVO SERVIZIO
+      final locale = await LocaleService().getLocaleById(idLocale);
       if (mounted) setState(() => localeCorrente = locale);
     }
   }
@@ -76,8 +74,6 @@ class _MonthPageState extends State<MonthPage> {
       onReturn: () {
         if (mounted) {
           setState(() => _currentView = l10n.calendar_month);
-          // Non serve ricaricare i dati qui, il ListenableBuilder lo farà da solo
-          // se i dati nel controller sono cambiati.
         }
       },
     );
@@ -106,14 +102,12 @@ class _MonthPageState extends State<MonthPage> {
     return ListenableBuilder(
       listenable: turniController,
       builder: (context, child) {
-        // Se il controller sta caricando e non abbiamo ancora dati in RAM
         if (turniController.isLoading && turniController.turni.isEmpty) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        // Filtraggio istantaneo in memoria
         final turniMese = turniController.turniDelMese(dataOggi);
 
         return Scaffold(

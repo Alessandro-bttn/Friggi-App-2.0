@@ -1,92 +1,143 @@
-// File: lib/Services/preferences_service.dart
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 class PreferencesService {
-  // 1. SINGLETON (Pattern standard)
   static final PreferencesService _instance = PreferencesService._internal();
-
-  factory PreferencesService() {
-    return _instance;
-  }
-
+  factory PreferencesService() => _instance;
   PreferencesService._internal();
 
   late SharedPreferences _prefs;
+  bool _isInitialized = false; // Flag per controllare lo stato
 
-  // 2. INIZIALIZZAZIONE (Da chiamare nel main)
   Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
-
-  // --- DATI DA SALVARE ---
-
-  // LINGUA (Codice lingua: 'it', 'en', 'es')
-  String? get lingua => _prefs.getString('chiave_lingua');
-
-  set lingua(String? value) {
-    if (value != null) {
-      _prefs.setString('chiave_lingua', value);
-    } else {
-      // Se proviamo a salvare null, rimuoviamo la preferenza
-      _prefs.remove('chiave_lingua');
+    try {
+      _prefs = await SharedPreferences.getInstance();
+      _isInitialized = true;
+    } catch (e) {
+      debugPrint("Errore critico durante inizializzazione Preferences: $e");
+      throw Exception("Impossibile inizializzare lo storage locale.");
     }
   }
 
-  // TEMA SCURO (True = Scuro, False = Chiaro)
-  bool get temaScuro => _prefs.getBool('chiave_tema_scuro') ?? false;
+  // Metodo helper per validare l'accesso
+  void _checkReady() {
+    if (!_isInitialized) {
+      throw StateError("PreferencesService non inizializzato! "
+          "Assicurati di chiamare await PreferencesService().init() nel main().");
+    }
+  }
+
+  // --- DATI DI CONFIGURAZIONE ---
+  String? get lingua {
+    _checkReady();
+    return _prefs.getString('chiave_lingua');
+  }
+
+  set lingua(String? value) {
+    _checkReady();
+    value != null
+        ? _prefs.setString('chiave_lingua', value)
+        : _prefs.remove('chiave_lingua');
+  }
+
+  bool get temaScuro {
+    _checkReady();
+    return _prefs.getBool('chiave_tema_scuro') ?? false;
+  }
 
   set temaScuro(bool value) {
+    _checkReady();
     _prefs.setBool('chiave_tema_scuro', value);
   }
 
-  // C. ID LOCALE CORRENTE (L'ID del negozio su cui si sta lavorando)
-  // Ritorna un int? (può essere null se non è stato ancora selezionato nulla)
-  int? get idLocaleCorrente => _prefs.getInt('chiave_id_locale');
+  // --- DATI UTENTE ---
+
+  int? get idLocaleCorrente {
+    _checkReady(); // Controllo che sia inizializzato
+    return _prefs.getInt('chiave_id_locale');
+  }
 
   set idLocaleCorrente(int? value) {
+    _checkReady();
     if (value != null) {
       _prefs.setInt('chiave_id_locale', value);
     } else {
-      // Se passiamo null, rimuoviamo la preferenza (reset selezione)
       _prefs.remove('chiave_id_locale');
     }
   }
 
-  // Funzione per cancellare tutto (Reset totale app)
-  Future<void> clear() async {
-    await _prefs.clear();
-  }
-
-  int get divisioneTurni => _prefs.getInt('chiave_div_turni') ?? 0;
-  set divisioneTurni(int value) => _prefs.setInt('chiave_div_turni', value);
-
-  // 2. ORARIO INIZIO (Salvataggio "HH:mm", Default 09:00)
+  // Parsing sicuro per TimeOfDay
   TimeOfDay get orarioInizio {
+    _checkReady();
     final s = _prefs.getString('chiave_ora_inizio');
     if (s == null) return const TimeOfDay(hour: 9, minute: 0);
-    final parts = s.split(':');
-    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+
+    try {
+      final parts = s.split(':');
+      return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+    } catch (e) {
+      debugPrint(
+          "Errore parsing orarioInizio (formato corrotto): $s. Reset a 09:00");
+      return const TimeOfDay(hour: 9, minute: 0);
+    }
   }
 
   set orarioInizio(TimeOfDay time) {
-    final s = '${time.hour}:${time.minute}';
-    _prefs.setString('chiave_ora_inizio', s);
+    _checkReady();
+    _prefs.setString('chiave_ora_inizio', '${time.hour}:${time.minute}');
   }
 
-  // 3. ORARIO FINE (Salvataggio "HH:mm", Default 18:00)
   TimeOfDay get orarioFine {
+    _checkReady();
     final s = _prefs.getString('chiave_ora_fine');
     if (s == null) return const TimeOfDay(hour: 18, minute: 0);
-    final parts = s.split(':');
-    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+
+    try {
+      final parts = s.split(':');
+      return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+    } catch (e) {
+      debugPrint(
+          "Errore parsing orarioFine (formato corrotto): $s. Reset a 18:00");
+      return const TimeOfDay(hour: 18, minute: 0);
+    }
   }
 
   set orarioFine(TimeOfDay time) {
-    final s = '${time.hour}:${time.minute}';
-    _prefs.setString('chiave_ora_fine', s);
+    _checkReady();
+    _prefs.setString('chiave_ora_fine', '${time.hour}:${time.minute}');
   }
 
-  bool get use24hFormat => _prefs.getBool('use24hFormat') ?? true;
-  set use24hFormat(bool value) => _prefs.setBool('use24hFormat', value);
+  // --- DIVISIONE TURNI ---
+  int get divisioneTurni {
+    _checkReady();
+    return _prefs.getInt('chiave_div_turni') ?? 0;
+  }
+
+  set divisioneTurni(int value) {
+    _checkReady();
+    _prefs.setInt('chiave_div_turni', value);
+  }
+
+  // --- FORMATO ORA ---
+  bool get use24hFormat {
+    _checkReady();
+    return _prefs.getBool('use24hFormat') ?? true;
+  }
+
+  set use24hFormat(bool value) {
+    _checkReady();
+    _prefs.setBool('use24hFormat', value);
+  }
+
+  Future<void> clearUserSession() async {
+    _checkReady(); // Verifica che il servizio sia inizializzato
+
+    // Rimuoviamo solo le chiavi specifiche dei dati utente
+    await _prefs.remove('chiave_id_locale');
+    await _prefs.remove('chiave_div_turni');
+    await _prefs.remove('chiave_ora_inizio');
+    await _prefs.remove('chiave_ora_fine');
+    await _prefs.remove(
+        'use24hFormat'); // Aggiunto dato che abbiamo creato il getter prima
+  }
 }
