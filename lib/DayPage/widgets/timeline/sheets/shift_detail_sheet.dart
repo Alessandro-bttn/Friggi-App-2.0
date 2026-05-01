@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../DataBase/Turni/TurnoModel.dart';
 import '../../../../DataBase/Dipendente/DipendenteModel.dart';
-import '../../../../DataBase/Dipendente/DipendenteDB.dart'; // Import per caricare i dipendenti
 import '../../../../service/preferences_service.dart';
 import 'shift_sheet_header.dart';
 import 'shift_time_editor.dart';
 import 'shift_sheet_actions.dart';
+
+// Questo widget rappresenta il bottom sheet che mostra i dettagli di un turno, con possibilità di modifica e salvataggio.
 
 class ShiftDetailSheet extends StatefulWidget {
   final TurnoModel turno;
@@ -24,9 +25,7 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
   DipendenteModel? _currentDipendente;
   bool _hasChanges = false;
   late bool _use24hFormat;
-  
-  // Lista necessaria per calcolare i pattern (texture)
-  List<DipendenteModel> _allDipendenti = []; 
+
 
   @override
   void initState() {
@@ -35,19 +34,6 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
     _fine = widget.turno.fine;
     _currentDipendente = widget.dipendente;
     _use24hFormat = PreferencesService().use24hFormat;
-    _loadAllDipendenti(); // Carica tutti per controllare i conflitti
-  }
-
-  Future<void> _loadAllDipendenti() async {
-    final list = await DipendenteDB().getDipendenti();
-    if (mounted) setState(() => _allDipendenti = list);
-  }
-
-  // Logica per distinguere i dipendenti con lo stesso colore
-  int _calcolaPattern(DipendenteModel dip) {
-    final conflitti = _allDipendenti.where((d) => d.colore == dip.colore).toList();
-    if (conflitti.length <= 1) return 0;
-    return (conflitti.indexOf(dip) % 3) + 1; // Ritorna 1, 2 o 3
   }
 
   void _checkChanges() {
@@ -92,7 +78,6 @@ class _ShiftDetailSheetState extends State<ShiftDetailSheet> {
               ShiftSheetHeader(
                 dipendente: _currentDipendente,
                 isEditing: _isEditing,
-                patternType: _currentDipendente != null ? _calcolaPattern(_currentDipendente!) : 0,
                 onDipendenteChanged: (nuovoDipendente) {
                   setState(() { // <--- FONDAMENTALE per aggiornare l'UI
                     _currentDipendente = nuovoDipendente;

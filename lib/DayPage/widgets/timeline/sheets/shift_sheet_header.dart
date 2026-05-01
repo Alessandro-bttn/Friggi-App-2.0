@@ -2,22 +2,19 @@ import 'package:flutter/material.dart';
 import '../../../../DataBase/Dipendente/DipendenteModel.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../add_shift/employee_selector_field.dart'; 
-import '../../shared/painting/pattern_painter.dart';
 
-// Questo widget è il header del ShiftDetailSheet, mostra il nome e il colore del dipendente associato al turno, 
-// e un titolo che cambia se stiamo modificando o solo visualizzando.
+// Questo widget rappresenta l'intestazione del ShiftDetailSheet, mostrando le iniziali del dipendente e il suo nome,
+// con la possibilità di modificare il dipendente se siamo in modalità editing.
 
 class ShiftSheetHeader extends StatelessWidget {
   final DipendenteModel? dipendente;
   final bool isEditing;
-  final int patternType; // 0 (normale), 1, 2, 3 (texture)
   final Function(DipendenteModel?) onDipendenteChanged;
 
   const ShiftSheetHeader({
     super.key, 
     this.dipendente, 
     required this.isEditing,
-    this.patternType = 0, // Default 0
     required this.onDipendenteChanged,
   });
 
@@ -37,26 +34,19 @@ class ShiftSheetHeader extends StatelessWidget {
 
     return Row(
       children: [
-        // Sostituiamo il semplice CircleAvatar con uno Stack che supporta le texture
-        Container(
-          width: 48, height: 48,
-          decoration: BoxDecoration(
-            color: dipendente != null ? Color(dipendente!.colore) : colorScheme.surfaceVariant,
-            shape: BoxShape.circle,
-          ),
-          child: Stack(
-            children: [
-              CustomPaint(
-                painter: TexturePainter(patternType),
-                child: Container(),
-              ),
-              Center(
-                child: Text(
-                  _getIniziali(),
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-              ),
-            ],
+        // Semplificato: torniamo a CircleAvatar per massima pulizia
+        CircleAvatar(
+          radius: 24,
+          backgroundColor: dipendente != null 
+              ? Color(dipendente!.colore) 
+              : colorScheme.surfaceVariant,
+          child: Text(
+            _getIniziali(),
+            style: const TextStyle(
+              color: Colors.white, 
+              fontWeight: FontWeight.bold, 
+              fontSize: 18
+            ),
           ),
         ),
         const SizedBox(width: 16),
@@ -69,7 +59,6 @@ class ShiftSheetHeader extends StatelessWidget {
     );
   }
 
-  // Widget quando NON è in modalità editing
   Widget _buildStaticInfo(ThemeData theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,9 +71,7 @@ class ShiftSheetHeader extends StatelessWidget {
     );
   }
 
-  // Widget quando SIAMO in modalità editing
   Widget _buildEmployeeSelector(BuildContext context) {
-    // Qui usiamo il tuo widget di selezione esistente
     return EmployeeSelectorField(
       selectedDipendente: dipendente,
       onSelected: onDipendenteChanged,

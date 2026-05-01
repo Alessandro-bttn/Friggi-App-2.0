@@ -7,6 +7,8 @@ import '../../add_shift/turni_validator.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../main.dart'; 
 
+// Questo widget contiene i pulsanti di azione (modifica, elimina, salva, annulla) per il ShiftDetailSheet, con tutta la logica associata.
+
 class ShiftSheetActions extends StatelessWidget {
   final TurnoModel turno;
   final TimeOfDay inizio;

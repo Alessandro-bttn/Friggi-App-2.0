@@ -4,6 +4,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../../DataBase/Turni/TurniDB.dart';
 import '../../../notifications/notification_service.dart';
 
+/// Questa classe contiene la logica per validare i turni, inclusi i controlli di sovrapposizione
+
 class TurniValidator {
   static int _toMinutes(TimeOfDay time) => time.hour * 60 + time.minute;
 

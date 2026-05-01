@@ -9,7 +9,9 @@ import 'turni_validator.dart';
 
 import '../../../../notifications/notification_service.dart';
 
-import '../../../main.dart'; // Per accedere alla variabile globale turniController
+import '../../../main.dart'; 
+
+// Questo widget rappresenta un dialogo per aggiungere un nuovo turno, con selezione del dipendente e orari di inizio/fine.
 
 class AddTurnoDialog extends StatefulWidget {
   final DateTime date;
