@@ -26,23 +26,22 @@ final turniController = TurniController();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inizializza Preferenze
-  await PreferencesService().init();
-
-  // Carica Lingua salvata
-  languageController.loadSavedLanguage();
-
-  // Inizializza i dati dei turni prima di avviare l'app
-  await turniController.inizializzaDati();
-
-  // Carica Tema salvato
-  bool isDarkSaved = PreferencesService().temaScuro;
-  themeNotifier.value = isDarkSaved ? ThemeMode.dark : ThemeMode.light;
-
+  // 1. Inizializza Supabase per primo, è la fondazione di tutto
   await Supabase.initialize(
     url: 'https://tsjohyuzicjyppvrzppq.supabase.co',
     anonKey: 'sb_publishable_R3ct8AaqaxOzBmDgxPZFAQ_F0L0R7qP',
   );
+
+  // 2. Inizializza Preferenze
+  await PreferencesService().init();
+
+  await turniController.inizializzaDati();
+  turniController.ascoltaModificheTurni(); 
+
+  // 4. Carica Lingua e Tema
+  languageController.loadSavedLanguage();
+  bool isDarkSaved = PreferencesService().temaScuro;
+  themeNotifier.value = isDarkSaved ? ThemeMode.dark : ThemeMode.light;
 
   runApp(const MyApp());
 }

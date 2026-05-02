@@ -48,6 +48,11 @@ class _DayPageState extends State<DayPage> {
     _endTime = prefs.orarioFine;
 
     _caricaLocale();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       turniController.inizializzaDati();
+       turniController.ascoltaModificheTurni();
+    });
   }
 
   @override

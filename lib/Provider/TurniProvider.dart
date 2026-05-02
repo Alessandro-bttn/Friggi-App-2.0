@@ -4,8 +4,11 @@ import '../DataBase/Turni/TurnoModel.dart';
 import '../service/dipendente_service.dart';
 import '../DataBase/Dipendente/DipendenteModel.dart';
 import '../service/preferences_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:async';
 
 class TurniController extends ChangeNotifier {
+  StreamSubscription? _turnoSubscription;
   // --- STATO ---
   List<TurnoModel> _allTurni = [];
   List<DipendenteModel> _allDipendenti = [];
@@ -66,21 +69,23 @@ class TurniController extends ChangeNotifier {
   // --- OPERAZIONI CRUD (DB + MEMORIA) ---
 
   Future<void> aggiungiTurno(TurnoModel nuovo) async {
-    // Usiamo addTurno invece di insertTurno
-    final turnoSalvato = await TurnoService().addTurno(nuovo);
-    
-    // Aggiorniamo la memoria con l'oggetto ritornato dal DB
-    _allTurni.add(turnoSalvato);
-    notifyListeners();
-  }
-
-  Future<void> aggiornaTurno(TurnoModel turnoModificato) async {
-    await TurnoService().updateTurno(turnoModificato);
-
-    int index = _allTurni.indexWhere((t) => t.id == turnoModificato.id);
-    if (index != -1) {
-      _allTurni[index] = turnoModificato;
+    try {
+      // 1. Aggiungi subito alla lista (UI veloce)
+      _allTurni.add(nuovo);
       notifyListeners();
+
+      // 2. Prova a salvare sul DB
+      final turnoSalvato = await TurnoService().addTurno(nuovo);
+
+      // 3. Se serve, sostituisci il segnaposto con l'oggetto reale (con ID generato dal DB)
+      final index = _allTurni.indexOf(nuovo);
+      _allTurni[index] = turnoSalvato;
+      notifyListeners();
+    } catch (e) {
+      // 4. Se fallisce, rimuovi l'elemento e avvisa l'utente
+      _allTurni.remove(nuovo);
+      notifyListeners();
+      throw e; // Rilancia l'errore per gestirlo nella UI
     }
   }
 
@@ -101,5 +106,38 @@ class TurniController extends ChangeNotifier {
       return t.data.isAfter(startOfWeek.subtract(const Duration(seconds: 1))) &&
           t.data.isBefore(endOfWeek);
     }).toList();
+  }
+
+  void ascoltaModificheTurni() {
+    _turnoSubscription = Supabase.instance.client
+        .from('turni')
+        .stream(primaryKey: ['id'])
+        .eq(
+            'id_locale',
+            PreferencesService()
+                .idLocaleCorrente!) // Filtra solo per questo locale
+        .listen((data) {
+          print(
+              "DEBUG: Ho ricevuto ${data.length} turni dal database!"); // <-- AGGIUNGI QUESTO
+          _allTurni = data.map((json) => TurnoModel.fromJson(json)).toList();
+          notifyListeners();
+        });
+  }
+
+// Ricordati di chiudere la subscription quando il controller viene distrutto
+  @override
+  void dispose() {
+    _turnoSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> aggiornaTurno(TurnoModel turnoModificato) async {
+    await TurnoService().updateTurno(turnoModificato);
+
+    int index = _allTurni.indexWhere((t) => t.id == turnoModificato.id);
+    if (index != -1) {
+      _allTurni[index] = turnoModificato;
+      notifyListeners();
+    }
   }
 }
