@@ -10,7 +10,7 @@ import 'service/preferences_service.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'NewLocale/AuthGate.dart';
+import 'register_login/auth_gate/AuthGate.dart';
 
 // 1. Controller Globale Lingua
 final languageController = LanguageController();
@@ -35,7 +35,11 @@ void main() async {
   // 2. Inizializza Preferenze
   await PreferencesService().init();
 
-  await turniController.inizializzaDati();
+  // Dovrai passare l'ID del locale attivo
+  final int? idLocale = PreferencesService().idLocaleCorrente;
+  if (idLocale != null) {
+    await turniController.inizializzaDati(idLocale);
+  }
   turniController.ascoltaModificheTurni(); 
 
   // 4. Carica Lingua e Tema

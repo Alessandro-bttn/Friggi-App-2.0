@@ -1,15 +1,14 @@
 class LocaleModel {
   final int? id;
   final String nome;
-  final String? userId; // Tieni questo se ti serve per la RLS
-  
-  // Rimuovi 'final String indirizzo;' 
+  final String? userId;
+  final String? codiceInvito; // Campo aggiunto per la logica di invito
 
   LocaleModel({
     this.id,
     required this.nome,
     this.userId,
-    // Rimuovi 'this.indirizzo' dal costruttore
+    this.codiceInvito, // Aggiunto al costruttore
   });
 
   factory LocaleModel.fromJson(Map<String, dynamic> json) {
@@ -17,7 +16,7 @@ class LocaleModel {
       id: json['id'],
       nome: json['nome'],
       userId: json['user_id'],
-      // Rimuovi la riga 'indirizzo: json['indirizzo']'
+      codiceInvito: json['codice_invito'], // Aggiunto lettura da JSON
     );
   }
 
@@ -25,7 +24,7 @@ class LocaleModel {
     return {
       'nome': nome,
       'user_id': userId,
-      // Rimuovi 'indirizzo': indirizzo,
+      'codice_invito': codiceInvito, // Aggiunto invio al DB
     };
   }
 }

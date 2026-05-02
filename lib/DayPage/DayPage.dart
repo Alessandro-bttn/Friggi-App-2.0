@@ -19,7 +19,7 @@ import 'widgets/timeline/sheets/shift_detail_sheet.dart';
 
 // NAVIGAZIONE E PROVIDER
 import '../CalanderNavigator/calendar_navigation.dart';
-import '../../main.dart'; 
+import '../../main.dart';
 
 class DayPage extends StatefulWidget {
   final DateTime selectedDate;
@@ -39,6 +39,7 @@ class _DayPageState extends State<DayPage> {
   late TimeOfDay _endTime;
 
   @override
+  @override
   void initState() {
     super.initState();
     currentDate = widget.selectedDate;
@@ -50,8 +51,18 @@ class _DayPageState extends State<DayPage> {
     _caricaLocale();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       turniController.inizializzaDati();
-       turniController.ascoltaModificheTurni();
+      // 1. Estrai il valore in una variabile sicura
+      final idLocale = PreferencesService().idLocaleCorrente;
+
+      // 2. Controllo di sicurezza: procedi solo se idLocale non è null
+      if (idLocale != null) {
+        turniController.inizializzaDati(idLocale);
+        turniController.ascoltaModificheTurni();
+      } else {
+        // Opzionale: logga l'errore o naviga altrove
+        debugPrint(
+            "ERRORE: Tentato accesso alla DayPage senza un locale attivo!");
+      }
     });
   }
 
@@ -142,14 +153,16 @@ class _DayPageState extends State<DayPage> {
           floatingActionButton: DayPageFab(
             date: currentDate,
             // Passiamo l'azione al provider (non serve callback di refresh)
-            onTurnoAdded: (nuovoTurno) => turniController.aggiungiTurno(nuovoTurno),
+            onTurnoAdded: (nuovoTurno) =>
+                turniController.aggiungiTurno(nuovoTurno),
           ),
         );
       },
     );
   }
 
-  Future<void> showShiftDetails(TurnoModel turno, DipendenteModel? dipendente) async {
+  Future<void> showShiftDetails(
+      TurnoModel turno, DipendenteModel? dipendente) async {
     HapticFeedback.selectionClick();
 
     // Quando apriamo il foglio, le azioni interne (salva/elimina)
@@ -163,7 +176,7 @@ class _DayPageState extends State<DayPage> {
         dipendente: dipendente,
       ),
     );
-    
+
     // NOTA: Non serve più fare if(refreshNeeded) { _aggiornaTurni() }
     // perché il provider notifica il cambiamento e il build sopra si riesegue da solo.
   }

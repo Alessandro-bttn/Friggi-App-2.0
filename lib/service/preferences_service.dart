@@ -1,6 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
+// Questo servizio gestisce tutte le preferenze locali dell'app, come lingua, tema, e dati utente temporanei (es. idLocaleCorrente).
+
 class PreferencesService {
   static final PreferencesService _instance = PreferencesService._internal();
   factory PreferencesService() => _instance;
@@ -25,6 +27,10 @@ class PreferencesService {
       throw StateError("PreferencesService non inizializzato! "
           "Assicurati di chiamare await PreferencesService().init() nel main().");
     }
+  }
+
+  Future<void> setIdLocaleCorrente(int id) async {
+    await _prefs.setInt('id_locale_corrente', id);
   }
 
   // --- DATI DI CONFIGURAZIONE ---
@@ -127,6 +133,10 @@ class PreferencesService {
   set use24hFormat(bool value) {
     _checkReady();
     _prefs.setBool('use24hFormat', value);
+  }
+
+  Future<void> clearAll() async {
+    await _prefs.clear(); // Pulisce tutte le preferenze salvate
   }
 
   Future<void> clearUserSession() async {

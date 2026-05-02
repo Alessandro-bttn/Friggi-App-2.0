@@ -1,6 +1,6 @@
-import '../../DataBase/Locale/LocaleModel.dart';
-import '../../service/locale_service.dart';
-import '../../service/preferences_service.dart';
+import '../DataBase/Locale/LocaleModel.dart';
+import '../service/locale_service.dart';
+import '../service/preferences_service.dart';
 
 class NewLocaleLogic {
   static Future<void> salvaLocale({required String nome}) async {

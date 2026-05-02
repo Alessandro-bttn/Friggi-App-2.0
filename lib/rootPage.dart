@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../NewLocale/NewLocale.dart';
+import '../NewLocale/new_locale_page.dart';
 import '../MonthPage/MonthPage.dart';
 // Assicurati che questo import punti al tuo file preferences_service.dart
 import '../../service/preferences_service.dart'; 
@@ -44,7 +44,7 @@ class RootPage extends StatelessWidget {
         if (haLocale) {
           return const MonthPage(); 
         } else {
-          return const NewLocale(); 
+          return const NewLocalePage(); 
         }
       },
     );

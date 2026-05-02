@@ -22,32 +22,34 @@ class TurniController extends ChangeNotifier {
   // --- LOGICA DI CARICAMENTO ---
 
   /// Carica tutto in memoria. Da chiamare all'avvio dell'app.
-  Future<void> inizializzaDati() async {
-    _isLoading = true;
+  // Nel file TurniController.dart
+
+Future<void> inizializzaDati(int idLocale) async {
+  // Se vuoi mantenere il flag _isInitialized, dovresti resettarlo 
+  // se idLocale cambia, altrimenti il caricamento non parte più.
+  // Per semplicità, se passi l'ID, carichiamo sempre.
+  _isLoading = true;
+  notifyListeners();
+
+  try {
+    // Non serve più chiedere a PreferencesService, usiamo l'idLocale passato come argomento
+    debugPrint("Inizializzo dati per locale: $idLocale");
+
+    final risultati = await Future.wait([
+      TurnoService().getTurniByLocale(idLocale),
+      DipendenteService().getDipendentiByLocale(idLocale),
+    ]);
+
+    _allTurni = risultati[0] as List<TurnoModel>;
+    _allDipendenti = risultati[1] as List<DipendenteModel>;
+    
+  } catch (e) {
+    debugPrint("Errore inizializzazione Controller: $e");
+  } finally {
+    _isLoading = false;
     notifyListeners();
-
-    try {
-      final int? idLocale = PreferencesService().idLocaleCorrente;
-      if (idLocale == null) {
-        debugPrint("Nessun locale selezionato.");
-        return;
-      }
-
-      // Ora passiamo l'idLocale ai nuovi metodi dei Service
-      final risultati = await Future.wait([
-        TurnoService().getTurniByLocale(idLocale),
-        DipendenteService().getDipendentiByLocale(idLocale),
-      ]);
-
-      _allTurni = risultati[0] as List<TurnoModel>;
-      _allDipendenti = risultati[1] as List<DipendenteModel>;
-    } catch (e) {
-      debugPrint("Errore inizializzazione Controller: $e");
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
+}
 
   // --- FILTRI VELOCI (In Memoria, no DB query) ---
 
@@ -97,8 +99,13 @@ class TurniController extends ChangeNotifier {
 
   /// Utile se cambi locale o vuoi forzare un ricaricamento totale
   Future<void> refreshTotale() async {
-    await inizializzaDati();
+    // Dovrai passare l'ID del locale attivo
+    final int? idLocale = PreferencesService().idLocaleCorrente;
+    if (idLocale != null) {
+      await inizializzaDati(idLocale);
+    }
   }
+  
 
   List<TurnoModel> turniDellaSettimana(DateTime startOfWeek) {
     final endOfWeek = startOfWeek.add(const Duration(days: 7));
@@ -109,16 +116,21 @@ class TurniController extends ChangeNotifier {
   }
 
   void ascoltaModificheTurni() {
+    // 1. Estrai il valore in una variabile locale
+    final int? idLocale = PreferencesService().idLocaleCorrente;
+
+    // 2. Controllo di sicurezza (Guard Clause)
+    if (idLocale == null) {
+      debugPrint("Errore: Nessun locale selezionato. Stream non avviato.");
+      return; // Esce dalla funzione senza crashare
+    }
+
+    // 3. Ora idLocale è sicuramente non-null, Dart lo sa e non serve il '!'
     _turnoSubscription = Supabase.instance.client
         .from('turni')
         .stream(primaryKey: ['id'])
-        .eq(
-            'id_locale',
-            PreferencesService()
-                .idLocaleCorrente!) // Filtra solo per questo locale
+        .eq('id_locale', idLocale) // <--- Niente '!' qui, è sicuro!
         .listen((data) {
-          print(
-              "DEBUG: Ho ricevuto ${data.length} turni dal database!"); // <-- AGGIUNGI QUESTO
           _allTurni = data.map((json) => TurnoModel.fromJson(json)).toList();
           notifyListeners();
         });
@@ -139,5 +151,19 @@ class TurniController extends ChangeNotifier {
       _allTurni[index] = turnoModificato;
       notifyListeners();
     }
+  }
+
+  Future<int?> getLocaleAttivoDalDb() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return null;
+
+    // Cerchiamo nella tabella di giunzione che abbiamo creato
+    final res = await Supabase.instance.client
+        .from('workspace_members')
+        .select('locale_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    return res?['locale_id'];
   }
 }
